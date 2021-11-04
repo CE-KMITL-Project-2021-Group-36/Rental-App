@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rental_app/home_page.dart';
 
 class NavigationBar extends StatefulWidget {
   const NavigationBar({Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class _NavigationBarState extends State<NavigationBar> {
 
   //Test pages
   final pages = [
-    const Center(child: Text('หน้าแรก')),
+    const HomePage(),
     const Center(child: Text('ข้อความ')),
     const Center(child: Text('รถเข็น')),
     const Center(child: Text('แจ้งเตือน')),
