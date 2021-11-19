@@ -11,11 +11,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Test Flutter',
       theme: ThemeData(
         primarySwatch: Colors.indigo,
       ),
-      home: const NavigationBar(),
+      home: const Navigation_Bar(),
     );
   }
 }

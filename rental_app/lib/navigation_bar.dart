@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/home_page.dart';
 
-class NavigationBar extends StatefulWidget {
-  const NavigationBar({Key? key}) : super(key: key);
+class Navigation_Bar extends StatefulWidget {
+  const Navigation_Bar({Key? key}) : super(key: key);
 
   @override
-  _NavigationBarState createState() => _NavigationBarState();
+  _Navigation_BarState createState() => _Navigation_BarState();
 }
 
-class _NavigationBarState extends State<NavigationBar> {
+class _Navigation_BarState extends State<Navigation_Bar> {
   int _currentIndex = 0;
 
   //Test pages
