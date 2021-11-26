@@ -8,106 +8,123 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Map> myCategories =
-      List.generate(24, (index) => {"id": index, "name": "ชนิด $index", "image": "https://picsum.photos/250?image=$index"})
-          .toList();
+  final List<Map> myCategories = List.generate(
+      24,
+      (index) => {
+            "id": index,
+            "name": "ชนิด $index",
+            "image": "https://picsum.photos/250?image=$index"
+          }).toList();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          "หน้าแรก",
-          style: TextStyle(
-              color: Theme.of(context).primaryColor,
-              fontWeight: FontWeight.bold),
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            "หน้าแรก",
+            style: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.white,
+          elevation: 2,
+          //shadowColor: Colors.transparent,
         ),
-        backgroundColor: Colors.white,
-        shadowColor: Colors.transparent,
-      ),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          children: [
-            Container(
-                // padding: EdgeInsets.all(16.0),
-                child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextButton(
-                    onPressed: () => {},
-                    style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(24.0),
-                                    side: BorderSide(color: Colors.grey)))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text("ค้นหาสินค้า",
-                            style: TextStyle(color: Colors.grey)),
-                        Icon(Icons.search),
-                      ],
+        body: Container(
+          //color: Colors.red,
+          height: double.infinity,
+          width: double.infinity,
+          //margin: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              Container(
+                margin:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search),
+                    hintText: "ค้นหา",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
                     ),
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("หมวดหมู่แนะนำ",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text(
+                        "ประเภทสินค้าเช่า",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "ดูทั้งหมด",
+                        style: TextStyle(color: Colors.indigo),
+                      ),
+                    ]),
+              ),
+              SingleChildScrollView(
+                //color: Colors.red,
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                child: Row(
+                  children: [
+                    _buildCategoryProduct("เสื้อผ้าผู้ชาย",
+                        "https://assets.ajio.com/medias/sys_master/root/20210403/OjjF/6068dc44aeb269a9e33a52ba/-288Wx360H-462103975-pink-MODEL.jpg"),
+                    _buildCategoryProduct("เสื้อผ้าผู้หญิง",
+                        "https://image.freepik.com/free-photo/stunning-curly-female-model-jumping-purple-indoor-portrait-slim-girl-bright-yellow-dress_197531-10836.jpg"),
+                    _buildCategoryProduct("กล้อง และอุปกรณ์", "https://image.freepik.com/free-photo/photographer-snapping-with-analog-camera_53876-105703.jpg"),
+                    _buildCategoryProduct("ตั้งแคมป์", "https://image.freepik.com/free-photo/group-man-woman-enjoy-camping-picnic-barbecue-lake-with-tents-background-young-mixed-race-asian-woman-man-young-people-s-hands-toasting-cheering-bottles-beer_1253-1041.jpg"),
+                    _buildCategoryProduct("หนังสือ", "https://image.freepik.com/free-photo/book-library-with-open-textbook_1150-5924.jpg"),
+                  ],
                 ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 416,
-                  child: GridView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 144,
-                              childAspectRatio: 1.5,
-                              crossAxisSpacing: 4,
-                              mainAxisSpacing: 4),
-                      itemCount: myCategories.length,
-                      itemBuilder: (BuildContext ctx, index) {
-                        return Card(
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          elevation: 0,
-                          //color: Colors.indigo,
-                          child: InkWell(
-                              onTap: () => {},
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    height: 88,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        fit: BoxFit.fill,
-                                        image: NetworkImage(
-                                            myCategories[index]['image']),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Center(
-                                          child: Text(
-                                              myCategories[index]['name'])))
-                                ],
-                              )),
-                        );
-                      }),
-                ),
-              ],
-            )),
-          ],
-        ),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text(
+                        "สินค้าน่าสนใจ",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "ดูทั้งหมด",
+                        style: TextStyle(color: Colors.indigo),
+                      ),
+                    ]),
+              ),
+            ],
+          ),
+        ));
+  }
+
+  Widget _buildCategoryProduct(String name, String imageUrl) {
+    return Container(
+      //color: Colors.blue,
+      margin: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: 40,
+            backgroundImage: NetworkImage(imageUrl),
+          ),
+          Container(
+              //color: Colors.indigo,
+              height: 40,
+              width: 80,
+              child: Text(
+                name,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12),
+              ))
+        ],
       ),
     );
   }
