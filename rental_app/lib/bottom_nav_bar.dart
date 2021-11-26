@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:rental_app/home_page.dart';
 
-class Navigation_Bar extends StatefulWidget {
-  const Navigation_Bar({Key? key}) : super(key: key);
+
+class BottomNavBar extends StatefulWidget {
+  const BottomNavBar({Key? key}) : super(key: key);
 
   @override
-  _Navigation_BarState createState() => _Navigation_BarState();
+  _BottomNavBarState createState() => _BottomNavBarState();
 }
 
-class _Navigation_BarState extends State<Navigation_Bar> {
+class _BottomNavBarState extends State<BottomNavBar> {
+
   int _currentIndex = 0;
 
   //Test pages
   final pages = [
-    const Center(child: Text('หน้าแรก')),
+    const HomePage(),
     const Center(child: Text('ข้อความ')),
     const Center(child: Text('รถเข็น')),
     const Center(child: Text('แจ้งเตือน')),
