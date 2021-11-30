@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rental_app/login/login_page.dart';
+import 'package:rental_app/presentation/bottom_nav_bar.dart';
+import 'package:rental_app/presentation/login/login_page.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({Key? key}) : super(key: key);
@@ -7,11 +8,11 @@ class AppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Test Flutter',
+      title: 'Rental App',
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: LoginPage(),
+      home: const BottomNavBar(),
     );
   }
 }

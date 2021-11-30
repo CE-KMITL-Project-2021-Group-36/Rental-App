@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rental_app/core/app_widget.dart';
+import 'package:rental_app/presentation/core/app_widget.dart';
 
-import 'bottom_nav_bar.dart';
+import 'presentation/bottom_nav_bar.dart';
 
 void main() {
   runApp(const AppWidget());
