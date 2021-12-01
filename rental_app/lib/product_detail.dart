@@ -36,7 +36,7 @@ class _ProductDetailState extends State<ProductDetail> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          color: Colors.indigo[200],
+          color: Colors.indigo[100],
           child: Column(
             children: [
               Container(
@@ -99,6 +99,10 @@ class _ProductDetailState extends State<ProductDetail> {
                         Text('เช่าแล้ว 33 ครั้ง'),
                       ]),
                     ),
+                    Text('ราคาเช่า'),
+                    SizedBox(
+                      height: 4,
+                    ),
                     Text(
                       '฿100 /ชม.\n฿700 /วัน\n฿4,500 /สัปดาห์',
                       style: TextStyle(
@@ -116,6 +120,109 @@ class _ProductDetailState extends State<ProductDetail> {
                   width: double.infinity,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'การจัดส่ง/รับของ',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'รับสินค้าที่ร้าน',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            'ฟรี',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'นัดรับสินค้า',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            'ฟรี',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'ส่งด่วนในบริเวณ',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            'ตามระยะทาง',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'ส่งไปรษณีย์แบบธรรมดา',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            '฿40',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'ส่งไปรษณีย์แบบ EMS',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            '฿60',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )),
+              Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
                       Text(
                         'ค่ามัดจำ',
@@ -126,7 +233,8 @@ class _ProductDetailState extends State<ProductDetail> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        '''ราคาสินค้าจริง ฿50,000
+                        '''
+ราคาสินค้าจริง ฿50,000
 เอกสาร 1 ชิ้น: 90% ของราคาสินค้า - ฿45,000
 เอกสาร 2 ชิ้น: 70% ของราคาสินค้า - ฿35,000
 เอกสาร 3 ชิ้น: 50% ของราคาสินค้า - ฿25,000
@@ -135,6 +243,250 @@ class _ProductDetailState extends State<ProductDetail> {
                           fontSize: 14,
                         ),
                       ),
+                    ],
+                  )),
+              Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        'รายละเอียด',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        '''
+กล้องรุ่น EOS 1500D + เลนส์ Kit (EF S18-55 IS II) กล้องสภาพดีมาก ใช้งานได้ปกติ
+- เซ็นเซอร์ CMOS APS-C ความละเอียด 24.1 ล้านพิกเซล และชิปประมวลผลภาพ DIGIC 4+
+- ระบบออโต้โฟกัส 9 จุด พร้อมออโต้โฟกัสแบบ cross-type 1 จุดตรงกลางภาพ
+- ความไวแสงมาตรฐาน ISO 100 - 6400 (ขยายได้ถึง ISO 12800)
+- รองรับ Wi-Fi / NFC''',
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  )),
+              Container(
+                color: Colors.white,
+                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      CircleAvatar(
+                        radius: 20,
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.storefront,
+                                      color: Colors.black, size: 16),
+                                  Text('RentKlong',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold))
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Icon(Icons.location_on,
+                                      color: Colors.red, size: 16),
+                                  Text('จตุจักร, กรุงเทพ')
+                                ],
+                              ),
+                            ]),
+                      ),
+                      TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            'ดูร้านค้า',
+                          ),
+                          style: ButtonStyle(
+                              side: MaterialStateProperty.all(
+                                  BorderSide(width: 1, color: Colors.indigo)),
+                              foregroundColor:
+                                  MaterialStateProperty.all(Colors.indigo),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.symmetric(
+                                      vertical: 8, horizontal: 16)),
+                              textStyle: MaterialStateProperty.all(TextStyle(
+                                fontSize: 14,
+                              )))),
+                    ]),
+                    Text('10 รายการสินค้า'),
+                    Text('64 รายการสินค้า'),
+                  ],
+                ),
+              ),
+              Container(
+                  color: Colors.white,
+                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'คะแนนสินค้า',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 32,
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.star,
+                                              color: Colors.yellow[600],
+                                              size: 16),
+                                          Icon(Icons.star,
+                                              color: Colors.yellow[600],
+                                              size: 16),
+                                          Icon(Icons.star,
+                                              color: Colors.yellow[600],
+                                              size: 16),
+                                          Icon(Icons.star,
+                                              color: Colors.yellow[600],
+                                              size: 16),
+                                          Icon(Icons.star_half,
+                                              color: Colors.yellow[600],
+                                              size: 16),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                '4.5/5',
+                                                style: TextStyle(
+                                                  color: Colors.indigo,
+                                                ),
+                                              ),
+                                              Text('(6 รีวิว)'),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ]),
+                            ),
+                            TextButton(
+                              onPressed: () {},
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Flexible(child: Text('ดูทั้งหมด')),
+                                  Icon(
+                                    Icons.chevron_right,
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Divider(
+                        height: 0,
+                      ),
+                      Container(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 16,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('มานี'),
+                                        Text('06-09-2021 21:24',
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 12))
+                                      ],
+                                    )
+                                  ]),
+                              const SizedBox(height: 4),
+                              Row(children: [
+                                Icon(Icons.star,
+                                    color: Colors.yellow[600], size: 16),
+                                Icon(Icons.star,
+                                    color: Colors.yellow[600], size: 16),
+                                Icon(Icons.star,
+                                    color: Colors.yellow[600], size: 16),
+                                Icon(Icons.star,
+                                    color: Colors.yellow[600], size: 16),
+                                Icon(Icons.star,
+                                    color: Colors.yellow[600], size: 16),
+                              ]),
+                              const SizedBox(height: 4),
+                              Text('ตอบกลับไวมากค่ะ ได้ของครบ สภาพดีมากก'),
+                              const SizedBox(height: 4),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(right: 4),
+                                    width: 88,
+                                    height: 88,
+                                    decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8))),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(right: 4),
+                                    width: 88,
+                                    height: 88,
+                                    decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8))),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(right: 4),
+                                    width: 88,
+                                    height: 88,
+                                    decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8))),
+                                  ),
+                                ]),
+                              ),
+                            ],
+                          )),
+                      Divider(
+                        height: 0,
+                      ),
+                      Container(
+                          width: double.infinity,
+                          child: TextButton(
+                              onPressed: () {}, child: Text('ดูทั้งหมด'))),
                     ],
                   )),
             ],
