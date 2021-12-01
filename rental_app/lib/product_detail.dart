@@ -136,7 +136,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         ),
                         IconButton(
                           icon: Icon(
-                            Icons.favorite,
+                            Icons.favorite_outline,
                             color: Colors.red,
                           ),
                           onPressed: () {},
@@ -353,6 +353,8 @@ class _ProductDetailState extends State<ProductDetail> {
                     Row(children: [
                       CircleAvatar(
                         radius: 20,
+                        backgroundImage:
+                            AssetImage('assets/images/shop_profile.png'),
                       ),
                       SizedBox(width: 8),
                       Expanded(
@@ -484,6 +486,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                   children: [
                                     CircleAvatar(
                                       radius: 16,
+                                      backgroundImage: AssetImage(
+                                          'assets/images/manee_profile.png'),
                                     ),
                                     SizedBox(width: 4),
                                     Column(
@@ -522,7 +526,11 @@ class _ProductDetailState extends State<ProductDetail> {
                                     width: 88,
                                     height: 88,
                                     decoration: BoxDecoration(
-                                        color: Colors.green,
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/images/review_image1.png'),
+                                          fit: BoxFit.fill,
+                                        ),
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(8))),
                                   ),
@@ -531,7 +539,11 @@ class _ProductDetailState extends State<ProductDetail> {
                                     width: 88,
                                     height: 88,
                                     decoration: BoxDecoration(
-                                        color: Colors.green,
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/images/review_image2.png'),
+                                          fit: BoxFit.fill,
+                                        ),
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(8))),
                                   ),
@@ -540,7 +552,11 @@ class _ProductDetailState extends State<ProductDetail> {
                                     width: 88,
                                     height: 88,
                                     decoration: BoxDecoration(
-                                        color: Colors.green,
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/images/review_image3.png'),
+                                          fit: BoxFit.fill,
+                                        ),
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(8))),
                                   ),
