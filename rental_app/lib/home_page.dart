@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rental_app/product_detail.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -145,7 +146,12 @@ class _HomePageState extends State<HomePage> {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProductDetail()),
+            );
+        },
         child: Container(
           width: 164,
           height: 300,
