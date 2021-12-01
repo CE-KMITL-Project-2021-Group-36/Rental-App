@@ -1,6 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:carousel_pro/carousel_pro.dart';
 
 class ProductDetail extends StatefulWidget {
   const ProductDetail({Key? key}) : super(key: key);
@@ -40,11 +39,25 @@ class _ProductDetailState extends State<ProductDetail> {
           child: Column(
             children: [
               Container(
-                color: Colors.lightGreen,
-                width: double.infinity,
-                height: MediaQuery.of(context).size.width,
-                child: const Center(child: Text('picture')),
-              ),
+                  //color: Colors.lightGreen,
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.width,
+                  child: Carousel(
+                    boxFit: BoxFit.cover,
+                    images: [
+                      NetworkImage(
+                          'https://www.ec-mall.com/wp-content/uploads/2018/03/eos-1500d_02-1-768x768.jpg'),
+                      NetworkImage(
+                          'https://www.ec-mall.com/wp-content/uploads/2018/03/Canon-EOS-1500D_2.jpg'),
+                      NetworkImage(
+                          'https://www.ec-mall.com/wp-content/uploads/2018/03/Canon-EOS-1500D_3.jpg'),
+                      NetworkImage(
+                          'https://www.ec-mall.com/wp-content/uploads/2018/03/Canon-EOS-1500D_4.jpg'),
+                    ],
+                    dotSize: 8.0,
+                    dotSpacing: 25.0,
+                    dotBgColor: Colors.grey[800]!.withOpacity(0.25),
+                  )),
               Container(
                 color: Colors.white,
                 width: double.infinity,
