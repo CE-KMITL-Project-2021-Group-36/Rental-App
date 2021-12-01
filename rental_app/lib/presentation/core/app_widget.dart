@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/presentation/bottom_nav_bar.dart';
-import 'package:rental_app/presentation/login/login_page.dart';
+import 'package:rental_app/presentation/sign_in//sign_in_page.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({Key? key}) : super(key: key);
