@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:rental_app/bottom_nav_bar.dart';
 
 class ProductDetail extends StatefulWidget {
   const ProductDetail({Key? key}) : super(key: key);
@@ -32,6 +33,60 @@ class _ProductDetailState extends State<ProductDetail> {
         ],
         backgroundColor: Colors.white,
         elevation: 0,
+      ),
+      bottomNavigationBar: Container(
+        height: 80,
+        color: Colors.white,
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+                flex: 2,
+                child: TextButton(
+                    onPressed: () {},
+                    child: Column(
+                      children: [
+                        Icon(Icons.chat_bubble),
+                        Text('ส่งข้อความ'),
+                      ],
+                    ),
+                    style: ButtonStyle(
+                        textStyle: MaterialStateProperty.all(
+                            TextStyle(fontSize: 14))))),
+            const SizedBox(width: 8),
+            Expanded(
+                flex: 2,
+                child: TextButton(
+                    onPressed: () {},
+                    child: Column(
+                      children: [
+                        Icon(Icons.shopping_cart),
+                        Text('ใส่รถเข็น'),
+                      ],
+                    ),
+                    style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.indigo),
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.indigo[50]),
+                        textStyle: MaterialStateProperty.all(
+                            TextStyle(fontSize: 14))))),
+            const SizedBox(width: 8),
+            Expanded(
+                flex: 3,
+                child: TextButton(
+                    onPressed: () {},
+                    child: Text('ส่งคำขอเช่า'),
+                    style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.indigo),
+                        textStyle: MaterialStateProperty.all(
+                            TextStyle(fontSize: 14))))),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -126,6 +181,35 @@ class _ProductDetailState extends State<ProductDetail> {
                   ],
                 ),
               ),
+              Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        'ค่ามัดจำ',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        '''
+ราคาสินค้าจริง ฿50,000
+เอกสาร 1 ชิ้น: 90% ของราคาสินค้า - ฿45,000
+เอกสาร 2 ชิ้น: 70% ของราคาสินค้า - ฿35,000
+เอกสาร 3 ชิ้น: 50% ของราคาสินค้า - ฿25,000
+บัตรนักศึกษา: 30% ของราคาสินค้า - ฿15,000''',
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  )),
               Container(
                   color: Colors.white,
                   padding: const EdgeInsets.all(16),
@@ -238,35 +322,6 @@ class _ProductDetailState extends State<ProductDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
                       Text(
-                        'ค่ามัดจำ',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        '''
-ราคาสินค้าจริง ฿50,000
-เอกสาร 1 ชิ้น: 90% ของราคาสินค้า - ฿45,000
-เอกสาร 2 ชิ้น: 70% ของราคาสินค้า - ฿35,000
-เอกสาร 3 ชิ้น: 50% ของราคาสินค้า - ฿25,000
-บัตรนักศึกษา: 30% ของราคาสินค้า - ฿15,000''',
-                        style: TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  )),
-              Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.all(16),
-                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
                         'รายละเอียด',
                         style: TextStyle(
                           fontSize: 16,
@@ -276,11 +331,11 @@ class _ProductDetailState extends State<ProductDetail> {
                       SizedBox(height: 8),
                       Text(
                         '''
-กล้องรุ่น EOS 1500D + เลนส์ Kit (EF S18-55 IS II) กล้องสภาพดีมาก ใช้งานได้ปกติ
-- เซ็นเซอร์ CMOS APS-C ความละเอียด 24.1 ล้านพิกเซล และชิปประมวลผลภาพ DIGIC 4+
-- ระบบออโต้โฟกัส 9 จุด พร้อมออโต้โฟกัสแบบ cross-type 1 จุดตรงกลางภาพ
-- ความไวแสงมาตรฐาน ISO 100 - 6400 (ขยายได้ถึง ISO 12800)
-- รองรับ Wi-Fi / NFC''',
+      กล้องรุ่น EOS 1500D + เลนส์ Kit (EF S18-55 IS II) กล้องสภาพดีมาก ใช้งานได้ปกติ
+      - เซ็นเซอร์ CMOS APS-C ความละเอียด 24.1 ล้านพิกเซล และชิปประมวลผลภาพ DIGIC 4+
+      - ระบบออโต้โฟกัส 9 จุด พร้อมออโต้โฟกัสแบบ cross-type 1 จุดตรงกลางภาพ
+      - ความไวแสงมาตรฐาน ISO 100 - 6400 (ขยายได้ถึง ISO 12800)
+      - รองรับ Wi-Fi / NFC''',
                         style: TextStyle(
                           fontSize: 14,
                         ),
