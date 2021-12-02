@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rental_app/chat_page.dart';
 import 'package:rental_app/home_page.dart';
 
 
@@ -16,7 +17,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   //Test pages
   final pages = [
     const HomePage(),
-    const Center(child: Text('ข้อความ')),
+    const ChatPage(),
     const Center(child: Text('รถเข็น')),
     const Center(child: Text('แจ้งเตือน')),
     const Center(child: Text('บัญชี')),
