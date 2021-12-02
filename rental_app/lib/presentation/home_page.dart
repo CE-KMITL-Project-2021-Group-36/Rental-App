@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rental_app/product_detail.dart';
+import 'package:rental_app/presentation/product_detail.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -148,9 +148,9 @@ class _HomePageState extends State<HomePage> {
       child: InkWell(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ProductDetail()),
-            );
+            context,
+            MaterialPageRoute(builder: (context) => const ProductDetail()),
+          );
         },
         child: Container(
           width: 164,

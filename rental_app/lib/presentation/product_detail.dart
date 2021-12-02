@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_nullsafety/carousel_nullsafety.dart';
-import 'package:rental_app/bottom_nav_bar.dart';
 
 class ProductDetail extends StatefulWidget {
   const ProductDetail({Key? key}) : super(key: key);
