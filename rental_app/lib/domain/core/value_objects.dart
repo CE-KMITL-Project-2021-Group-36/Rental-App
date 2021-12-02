@@ -7,6 +7,7 @@ import 'failures.dart';
 @immutable
 abstract class ValueObject<T> {
   const ValueObject();
+
   Either<ValueFailure<T>, T> get value;
 
   T getOrCrash() {
@@ -30,3 +31,21 @@ abstract class ValueObject<T> {
     return 'ValueObject{' ' value: $value,' '}';
   }
 }
+
+//todo
+// class UniqueId extends ValueObject<String> {
+//   @override
+//   final Either<ValueFailure, String> value;
+//
+//   factory UniqueId() {
+//     return UniqueId._(
+//         //
+//         );
+//   }
+//
+//   factory UniqueId.fromUniqueString(String? uniqueId) {
+//     return UniqueId._(
+//         //
+//         );
+//   }
+// }

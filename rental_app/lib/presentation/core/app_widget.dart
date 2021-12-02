@@ -9,6 +9,7 @@ class AppWidget extends StatelessWidget {
     return MaterialApp(
       title: 'Rental App',
       theme: ThemeData(
+        fontFamily: 'SFThonburi',
         primarySwatch: Colors.deepPurple,
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
@@ -17,6 +18,7 @@ class AppWidget extends StatelessWidget {
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
+            textStyle: const TextStyle(fontFamily: 'SFThonburi'),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -24,6 +26,7 @@ class AppWidget extends StatelessWidget {
         ),
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
+            textStyle: const TextStyle(fontFamily: 'SFThonburi'),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
