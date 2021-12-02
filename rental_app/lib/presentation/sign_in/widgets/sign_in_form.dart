@@ -1,3 +1,5 @@
+import 'package:another_flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,9 +11,29 @@ class SignInForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SignInFormBloc, SignInFormState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        state.authFailureOrSuccessOption.fold(
+            () {},
+            (either) => either.fold(
+                    (failure) => {
+                          FlushbarHelper.createError(
+                            message: failure.map(
+                              cancelledByUser: (_) => 'Cancelled',
+                              serverError: (_) => 'Server error',
+                              emailAlreadyInUse: (_) => 'Email already in use',
+                              invalidEmailAndPasswordCombination: (_) =>
+                                  'Invalid email and password combination',
+                            ),
+                          ).show(context)
+                        }, (_) {
+                  //todo
+                }));
+      },
       builder: (context, state) {
         return Form(
+          autovalidateMode: state.showErrorMessages
+              ? AutovalidateMode.always
+              : AutovalidateMode.disabled,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: ListView(
@@ -34,6 +56,16 @@ class SignInForm extends StatelessWidget {
                     labelText: 'อีเมล',
                   ),
                   autocorrect: false,
+                  onChanged: (value) => context
+                      .read<SignInFormBloc>()
+                      .add(SignInFormEvent.emailChanged(value)),
+                  validator: (_) => context
+                          .read<SignInFormBloc>()
+                          .state
+                          .emailAddress
+                          .isValid()
+                      ? null
+                      : 'Invalid Email',
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
@@ -43,6 +75,13 @@ class SignInForm extends StatelessWidget {
                   ),
                   autocorrect: false,
                   obscureText: true,
+                  onChanged: (value) => context
+                      .read<SignInFormBloc>()
+                      .add(SignInFormEvent.passwordChanged(value)),
+                  validator: (_) =>
+                      context.read<SignInFormBloc>().state.password.isValid()
+                          ? null
+                          : 'Invalid Password',
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -56,35 +95,40 @@ class SignInForm extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Text('ลงชื่อเข้าใช้'),
-                    style: TextButton.styleFrom(
-                      primary: Colors.white,
-                      backgroundColor: Colors.deepPurple,
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      textStyle: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                TextButton(
+                  onPressed: () {
+                    context.read<SignInFormBloc>().add(
+                          const SignInFormEvent
+                              .signInWithEmailAndPasswordPressed(),
+                        );
+                  },
+                  child: const Text('ลงชื่อเข้าใช้'),
+                  style: TextButton.styleFrom(
+                    primary: Colors.white,
+                    backgroundColor: Colors.deepPurple,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    textStyle: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 const SizedBox(height: 30),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(FontAwesomeIcons.google),
-                    label: const Text('ดำเนินการต่อด้วย Google'),
-                    style: TextButton.styleFrom(
-                      primary: Colors.black,
-                      backgroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    context.read<SignInFormBloc>().add(
+                          const SignInFormEvent.signInWithGooglePressed(),
+                        );
+                  },
+                  icon: const Icon(FontAwesomeIcons.google),
+                  label: const Text('ดำเนินการต่อด้วย Google'),
+                  style: TextButton.styleFrom(
+                    primary: Colors.black,
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -96,7 +140,12 @@ class SignInForm extends StatelessWidget {
                 ),
                 const SizedBox(height: 30),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<SignInFormBloc>().add(
+                          const SignInFormEvent
+                              .registerWithEmailAndPasswordPressed(),
+                        );
+                  },
                   child: const Text('สมัครสมาชิกด้วยอีเมล'),
                   style: TextButton.styleFrom(
                     alignment: Alignment.center,

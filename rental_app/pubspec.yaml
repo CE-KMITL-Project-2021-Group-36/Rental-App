@@ -41,6 +41,7 @@ dependencies:
   get_it: ^7.2.0
   carousel_nullsafety: ^0.1.1
   font_awesome_flutter: ^9.2.0
+  another_flushbar: ^1.10.26
 
 dev_dependencies:
   flutter_test:
@@ -54,7 +55,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^1.0.4
-  build_runner:
+  build_runner: ^2.1.5
   freezed: ^1.0.0
 
 

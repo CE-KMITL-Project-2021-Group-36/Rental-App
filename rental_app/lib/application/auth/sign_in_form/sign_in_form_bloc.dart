@@ -34,7 +34,7 @@ class SignInFormBloc extends Bloc<SignInFormEvent, SignInFormState> {
       },
       passwordChanged: (e) async {
         emit(state.copyWith(
-          emailAddress: EmailAddress(e.passwordString),
+          password: Password(e.passwordString),
           authFailureOrSuccessOption: none(),
         ));
       },
