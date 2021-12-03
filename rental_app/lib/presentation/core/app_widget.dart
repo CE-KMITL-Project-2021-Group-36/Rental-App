@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/presentation/bottom_nav_bar.dart';
+import 'package:rental_app/presentation/sign_in/sign_in_page.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({Key? key}) : super(key: key);
@@ -18,7 +19,6 @@ class AppWidget extends StatelessWidget {
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-            textStyle: const TextStyle(fontFamily: 'SFThonburi'),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -26,14 +26,14 @@ class AppWidget extends StatelessWidget {
         ),
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
-            textStyle: const TextStyle(fontFamily: 'SFThonburi'),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
           ),
         ),
       ),
-      home: const BottomNavBar(),
+      // home: const BottomNavBar(),
+      home: const SignInPage(),
       debugShowCheckedModeBanner: false,
     );
   }

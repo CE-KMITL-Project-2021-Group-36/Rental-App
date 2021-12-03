@@ -18,11 +18,12 @@ class SignInForm extends StatelessWidget {
                     (failure) => {
                           FlushbarHelper.createError(
                             message: failure.map(
-                              cancelledByUser: (_) => 'Cancelled',
-                              serverError: (_) => 'Server error',
-                              emailAlreadyInUse: (_) => 'Email already in use',
+                              cancelledByUser: (_) => 'ยกเลิก',
+                              serverError: (_) => 'ระบบผิดพลาด',
+                              emailAlreadyInUse: (_) =>
+                                  'อีเมลนี้มีผู้ใช้งานแล้ว',
                               invalidEmailAndPasswordCombination: (_) =>
-                                  'Invalid email and password combination',
+                                  'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
                             ),
                           ).show(context)
                         }, (_) {
@@ -65,7 +66,7 @@ class SignInForm extends StatelessWidget {
                           .emailAddress
                           .isValid()
                       ? null
-                      : 'Invalid Email',
+                      : 'อีเมลไม่ถูกต้อง',
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
@@ -81,7 +82,7 @@ class SignInForm extends StatelessWidget {
                   validator: (_) =>
                       context.read<SignInFormBloc>().state.password.isValid()
                           ? null
-                          : 'Invalid Password',
+                          : 'รหัสผ่านไม่ถูกต้อง',
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -102,15 +103,17 @@ class SignInForm extends StatelessWidget {
                               .signInWithEmailAndPasswordPressed(),
                         );
                   },
-                  child: const Text('ลงชื่อเข้าใช้'),
+                  child: const Text(
+                    'เข้าสู่ระบบ',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   style: TextButton.styleFrom(
                     primary: Colors.white,
                     backgroundColor: Colors.deepPurple,
                     padding: const EdgeInsets.symmetric(vertical: 15),
-                    textStyle: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -121,15 +124,17 @@ class SignInForm extends StatelessWidget {
                         );
                   },
                   icon: const Icon(FontAwesomeIcons.google),
-                  label: const Text('ดำเนินการต่อด้วย Google'),
+                  label: const Text(
+                    'ดำเนินการต่อด้วย Google',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   style: TextButton.styleFrom(
                     primary: Colors.black,
                     backgroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 15),
-                    textStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -146,14 +151,16 @@ class SignInForm extends StatelessWidget {
                               .registerWithEmailAndPasswordPressed(),
                         );
                   },
-                  child: const Text('สมัครสมาชิกด้วยอีเมล'),
-                  style: TextButton.styleFrom(
-                    alignment: Alignment.center,
-                    textStyle: const TextStyle(
+                  child: const Text(
+                    'สมัครสมาชิกด้วยอีเมล',
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
                     ),
+                  ),
+                  style: TextButton.styleFrom(
+                    alignment: Alignment.center,
                   ),
                 ),
               ],
