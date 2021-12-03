@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/chat_page.dart';
 import 'package:rental_app/home_page.dart';
+import 'package:rental_app/notification_page.dart';
 
 
 class BottomNavBar extends StatefulWidget {
@@ -19,7 +20,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     const HomePage(),
     const ChatPage(),
     const Center(child: Text('รถเข็น')),
-    const Center(child: Text('แจ้งเตือน')),
+    const NotificationPage(),
     const Center(child: Text('บัญชี')),
   ];
 
