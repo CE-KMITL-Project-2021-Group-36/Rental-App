@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/product_detail.dart';
+import 'package:rental_app/search_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -84,15 +85,25 @@ class _HomePageState extends State<HomePage> {
                 margin: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
+                    children: [
                       Text(
                         "สินค้าน่าสนใจ",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(
-                        "ดูทั้งหมด",
-                        style: TextStyle(fontSize: 12, color: Colors.indigo),
-                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => GridSearchScreen()),
+                          );
+                        },
+                        child: Text(
+                          "ดูทั้งหมด",
+                          style: TextStyle(fontSize: 12, color: Colors.indigo),
+                        ),
+                        style: TextButton.styleFrom(),
+                      )
                     ]),
               ),
               const SizedBox(
@@ -105,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     _buildItemCard(
                         'กล้อง Canon EOS พร้อมเลนส์ ให้เช่าราคาถูก',
-                        '฿100 /ชม.\n฿700 /วัน.\n฿4500 /สัปดาห์.\n',
+                        '฿100 /ชม.\n฿700 /วัน.\n฿4500 /สัปดาห์.',
                         'https://www.ec-mall.com/wp-content/uploads/2018/03/eos-1500d_02-1.jpg'),
                     _buildItemCard('กล้อง Instax กล้องฟิล์ม', '฿600 /วัน.',
                         'https://m.media-amazon.com/images/I/71HmLp20ovL._AC_SL1500_.jpg'),
@@ -148,9 +159,9 @@ class _HomePageState extends State<HomePage> {
       child: InkWell(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ProductDetail()),
-            );
+            context,
+            MaterialPageRoute(builder: (context) => const ProductDetail()),
+          );
         },
         child: Container(
           width: 164,
