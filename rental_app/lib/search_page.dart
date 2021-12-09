@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:rental_app/data/product_data.dart';
 import 'package:rental_app/model/product.dart';
 
@@ -12,14 +11,12 @@ class GridSearchScreen extends StatefulWidget {
 }
 
 class _GridSearchScreenState extends State<GridSearchScreen> {
-
   late List<Product> products;
   String query = '';
 
   @override
   void initState() {
     super.initState();
-
     products = allProducts;
   }
 
@@ -42,7 +39,9 @@ class _GridSearchScreenState extends State<GridSearchScreen> {
                     disabledBorder: InputBorder.none,
                     hintText: 'ค้นหา',
                     contentPadding: EdgeInsets.all(8)),
-                onChanged: (text) {searchProduct(text);},
+                onChanged: (text) {
+                  searchProduct(text);
+                },
               ),
             )),
         body: GridView.builder(
@@ -125,10 +124,8 @@ class _GridSearchScreenState extends State<GridSearchScreen> {
                   children: [
                     Text(
                       product.name,
-                      //'กล้อง Canon EOS พร้อมเลนส์ ให้เช่าราคาถูก',
                       style: TextStyle(
                         fontSize: 12,
-                        //fontStyle: FontStylefontWeight: FontWeight.bold,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -147,11 +144,8 @@ class _GridSearchScreenState extends State<GridSearchScreen> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        //'฿100 /ชม.\n฿700 /วัน.\n฿4500 /สัปดาห์.\n',
                         product.price,
-                        style: TextStyle(fontSize: 12, color: Colors.indigo
-                            //fontStyle: FontStylefontWeight: FontWeight.bold,
-                            ),
+                        style: TextStyle(fontSize: 12, color: Colors.indigo),
                         maxLines: 3,
                       ),
                     ),
