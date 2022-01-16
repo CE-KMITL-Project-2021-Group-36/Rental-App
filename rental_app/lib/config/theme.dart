@@ -6,7 +6,26 @@ ThemeData theme() {
     primaryColor: primaryColor,
     primarySwatch: primaryColor,
     scaffoldBackgroundColor: backgroundColor,
-    fontFamily: "Roboto",
+    fontFamily: 'SFThonburi',
+    inputDecorationTheme: InputDecorationTheme(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    ),
     //textTheme: textTheme(),
   );
 }
