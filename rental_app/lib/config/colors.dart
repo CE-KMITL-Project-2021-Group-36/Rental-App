@@ -8,5 +8,5 @@ const textColor = Color(0xff212121);
 const surfaceColor = Color(0xffFFFFFF);
 const backgroundColor = Color(0xffFBFBFF);
 const errorColor = Color(0xffFF3D48);
-const warningdColor = Color(0xffFBBC05);
-const successdColor = Color(0xff3AFFA1);
+const warningColor = Color(0xffFBBC05);
+const successColor = Color(0xff3AFFA1);
