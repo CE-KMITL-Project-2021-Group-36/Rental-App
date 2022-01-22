@@ -1,10 +1,21 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 
-class Palette { 
+const primaryColor = Palette.bluePurple;
+const primaryLightColor = Color(0xffF0EEFF);
+const secondaryColor = Color(0xff0ACF97);
+const textColor = Color(0xff212121);
+const surfaceColor = Color(0xffFFFFFF);
+const backgroundColor = Color(0xffFBFBFF);
+const errorColor = Color(0xffFF3D48);
+const warningColor = Color(0xffFBBC05);
+const successColor = Color(0xff3AFFA1);
+const outlineColor = Color(0xffE5E5E5);
+
+class Palette {
   static const MaterialColor bluePurple = MaterialColor(
     0xff5343c3,
-    <int, Color>{ 
-      50: Color(0xffa9a1e1 ),
+    <int, Color>{
+      50: Color(0xffa9a1e1),
       100: Color(0xff988edb),
       200: Color(0xff877bd5),
       300: Color(0xff7569cf),
