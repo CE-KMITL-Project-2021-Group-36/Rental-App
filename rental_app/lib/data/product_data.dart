@@ -1,4 +1,4 @@
-import 'package:rental_app/model/product.dart';
+import 'package:rental_app/model/product_model.dart';
 
 final allProducts = <Product>[
   Product(

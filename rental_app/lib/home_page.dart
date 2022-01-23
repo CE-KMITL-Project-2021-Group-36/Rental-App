@@ -10,6 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,11 +26,7 @@ class _HomePageState extends State<HomePage> {
           elevation: 2,
           //shadowColor: Colors.transparent,
         ),
-        body: Container(
-          //color: Colors.red,
-          height: double.infinity,
-          width: double.infinity,
-          //margin: const EdgeInsets.symmetric(horizontal: 16),
+        body: SingleChildScrollView(
           child: Column(
             children: [
               Container(
