@@ -60,6 +60,11 @@ class _DisplayProductsState extends State<DisplayProducts> {
                                 child: Image.network(
                                   data.docs[index]['imageUrl'],
                                   fit: BoxFit.cover,
+                                  errorBuilder: (BuildContext context,
+                                      Object exception,
+                                      StackTrace? stackTrace) {
+                                    return const Center(child: Icon(Icons.error_outline, color: Colors.white, size: 40));
+                                  },
                                 ),
                               ),
                               const Divider(
@@ -132,7 +137,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   labelText: 'Price per day',
                 ),
                 onChanged: (value) {
-                  pricePerDay = int.parse(value);
+                  pricePerDay = int.tryParse(value) ?? 0;
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -167,7 +172,11 @@ class MyCustomFormState extends State<MyCustomForm> {
                       content: Text('Sending Data to Cloud Firestore'),
                     ));
                     products
-                        .add({'name': name, 'pricePerDay': pricePerDay, 'imageUrl': imageUrl})
+                        .add({
+                          'name': name,
+                          'pricePerDay': pricePerDay,
+                          'imageUrl': imageUrl
+                        })
                         .then((value) => print('Product Added'))
                         .catchError(
                             (error) => print('Failed to add product: $error'));

@@ -10,6 +10,7 @@ ThemeData theme() {
     appBarTheme: const AppBarTheme(
       backgroundColor: surfaceColor,
       foregroundColor: primaryColor,
+      centerTitle: true,
       elevation: 0,
     ),
     inputDecorationTheme: InputDecorationTheme(
