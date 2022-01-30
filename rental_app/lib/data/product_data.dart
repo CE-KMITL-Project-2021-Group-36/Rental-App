@@ -1,4 +1,4 @@
-import 'package:rental_app/model/product.dart';
+import 'package:rental_app/models/product.dart';
 
 final allProducts = <Product>[
   Product(
@@ -24,12 +24,14 @@ final allProducts = <Product>[
     id: 4,
     name: "ชุดสูทชาย ทรงเข้ารูป สีดำ รอบอก 44 ",
     price: "฿500 /วัน.\n฿2000 /สัปดาห์.",
-    imageUrl: "https://image.makewebeasy.net/makeweb/0/Bah9vh8Ox/LazadaSuits2017/Hi_class_Suit_%E0%B8%8A%E0%B8%B8%E0%B8%94%E0%B8%AA%E0%B8%B9%E0%B8%97_%E0%B8%8A%E0%B8%B2%E0%B8%A2_%E0%B8%97%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%82%E0%B9%89%E0%B8%B2%E0%B8%A3%E0%B8%B9%E0%B8%9B_Slim_%E0%B8%AA%E0%B8%B5%E0%B8%94%E0%B8%B3_black_.jpg",
+    imageUrl:
+        "https://image.makewebeasy.net/makeweb/0/Bah9vh8Ox/LazadaSuits2017/Hi_class_Suit_%E0%B8%8A%E0%B8%B8%E0%B8%94%E0%B8%AA%E0%B8%B9%E0%B8%97_%E0%B8%8A%E0%B8%B2%E0%B8%A2_%E0%B8%97%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%82%E0%B9%89%E0%B8%B2%E0%B8%A3%E0%B8%B9%E0%B8%9B_Slim_%E0%B8%AA%E0%B8%B5%E0%B8%94%E0%B8%B3_black_.jpg",
   ),
   Product(
     id: 5,
     name: "Gucci belt เข็มขัดสีดำ Gucci ของแท้",
     price: "฿850 /วัน.",
-    imageUrl: "https://img.mytheresa.com/1088/1088/66/jpeg/catalog/product/bf/P00398351.jpg",
+    imageUrl:
+        "https://img.mytheresa.com/1088/1088/66/jpeg/catalog/product/bf/P00398351.jpg",
   ),
 ];
