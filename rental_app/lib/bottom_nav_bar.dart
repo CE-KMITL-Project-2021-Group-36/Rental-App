@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rental_app/chat_page.dart';
 import 'package:rental_app/home_page.dart';
 import 'package:rental_app/notification_page.dart';
-import 'package:rental_app/screens/account_page.dart';
+
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({Key? key}) : super(key: key);
@@ -12,6 +12,7 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
+
   int _currentIndex = 0;
 
   //Test pages
@@ -20,7 +21,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     const ChatPage(),
     const Center(child: Text('รถเข็น')),
     const NotificationPage(),
-    const AccountPage(),
+    const Center(child: Text('บัญชี')),
   ];
 
   @override
@@ -38,8 +39,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
             _currentIndex = index;
           });
         },
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+        items:  const <BottomNavigationBarItem>[
+           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home),
             label: 'หน้าแรก',

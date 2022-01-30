@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                     _buildCategoryProduct("เสื้อผ้าผู้ชาย",
                         "https://assets.ajio.com/medias/sys_master/root/20210403/OjjF/6068dc44aeb269a9e33a52ba/-288Wx360H-462103975-pink-MODEL.jpg"),
                     _buildCategoryProduct("เสื้อผ้าผู้หญิง",
-                        "https://image.freepik.com/free-photo/stunning-curly-female-models-jumping-purple-indoor-portrait-slim-girl-bright-yellow-dress_197531-10836.jpg"),
+                        "https://image.freepik.com/free-photo/stunning-curly-female-model-jumping-purple-indoor-portrait-slim-girl-bright-yellow-dress_197531-10836.jpg"),
                     _buildCategoryProduct("กล้อง และอุปกรณ์",
                         "https://image.freepik.com/free-photo/photographer-snapping-with-analog-camera_53876-105703.jpg"),
                     _buildCategoryProduct("ตั้งแคมป์",

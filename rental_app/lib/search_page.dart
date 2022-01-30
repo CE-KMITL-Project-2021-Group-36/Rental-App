@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:rental_app/data/product_data.dart';
-import 'package:rental_app/models/product.dart';
+import 'package:rental_app/model/product.dart';
 
 class GridSearchScreen extends StatefulWidget {
   @override
