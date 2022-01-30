@@ -86,6 +86,8 @@ class Authentication {
   }
 
   Future<void> signOut() async {
+    final GoogleSignIn googleUser = GoogleSignIn();
     await _auth.signOut();
+    await googleUser.signOut();
   }
 }
