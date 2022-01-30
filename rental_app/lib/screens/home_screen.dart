@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rental_app/product_detail.dart';
-import 'package:rental_app/search_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -94,11 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => GridSearchScreen()),
-                          );
+                          Navigator.of(context).pushNamed('/search');
                         },
                         child: const Text(
                           "ดูทั้งหมด",

@@ -21,6 +21,8 @@ class AppRouter {
         return NotificationScreen.route();
       case ProductScreen.routeName:
         return ProductScreen.route();
+      case SearchScreen.routeName:
+        return SearchScreen.route();
 
       default:
         return _errorRoute();

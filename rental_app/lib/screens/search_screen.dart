@@ -8,6 +8,14 @@ class SearchScreen extends StatefulWidget {
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
+  static const String routeName = '/search';
+
+  static Route route() {
+    return MaterialPageRoute(
+      settings: const RouteSettings(name: routeName),
+      builder: (_) => const SearchScreen(),
+    );
+  }
 }
 
 class _SearchScreenState extends State<SearchScreen> {
