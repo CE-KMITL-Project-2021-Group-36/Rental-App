@@ -56,7 +56,7 @@ class _DisplayProductsState extends State<DisplayProducts> {
                               Container(
                                 width: 100,
                                 height: 100,
-                                color: Palette.bluePurple[50],
+                                color: bluePurple[50],
                                 child: Image.network(
                                   data.docs[index]['imageUrl'],
                                   fit: BoxFit.cover,

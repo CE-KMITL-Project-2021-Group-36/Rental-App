@@ -15,6 +15,12 @@ class AppRouter {
         return HomeScreen.route();
       case ChatScreen.routeName:
         return ChatScreen.route();
+      case ChatDetailScreen.routeName:
+        return ChatDetailScreen.route();
+      case NotificationScreen.routeName:
+        return NotificationScreen.route();
+      case ProductScreen.routeName:
+        return ProductScreen.route();
 
       default:
         return _errorRoute();

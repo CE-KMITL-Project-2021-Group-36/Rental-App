@@ -8,7 +8,7 @@ class ChatScreen extends StatefulWidget {
   @override
   _ChatScreenState createState() => _ChatScreenState();
 
-    static const String routeName = '/chat';
+  static const String routeName = '/chat';
 
   static Route route() {
     return MaterialPageRoute(
@@ -57,24 +57,36 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildChatRoom('assets/images/shop_profile.png','RentKlong','ได้ครับ😀','วันนี้\n9:10 PM'),
-                    _buildChatRoom('assets/images/manee_profile.png','มานี มีนา','ขอลดหน่อยได้มั้ย','เมื่อวาน\n8:10 AM'),
-                    _buildChatRoom('assets/images/tony_profile.png','โทนี่ พีรศักดิ์','ขอดูสินค้าเพิ่มเติมหน่อยครับ','30 พ.ย.\n11:12 PM'),
+                    _buildChatRoom('assets/images/shop_profile.png',
+                        'RentKlong', 'ได้ครับ😀', 'วันนี้\n9:10 PM'),
+                    _buildChatRoom('assets/images/manee_profile.png',
+                        'มานี มีนา', 'ขอลดหน่อยได้มั้ย', 'เมื่อวาน\n8:10 AM'),
+                    _buildChatRoom(
+                        'assets/images/tony_profile.png',
+                        'โทนี่ พีรศักดิ์',
+                        'ขอดูสินค้าเพิ่มเติมหน่อยครับ',
+                        '30 พ.ย.\n11:12 PM'),
                   ]),
             ),
             SingleChildScrollView(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildChatRoom('assets/images/shop_profile.png','RentKlong','ได้ครับ😀','วันนี้\n9:10 PM'),
+                    _buildChatRoom('assets/images/shop_profile.png',
+                        'RentKlong', 'ได้ครับ😀', 'วันนี้\n9:10 PM'),
                   ]),
             ),
             SingleChildScrollView(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildChatRoom('assets/images/manee_profile.png','มานี มีนา','ขอลดหน่อยได้มั้ย','เมื่อวาน\n8:10 AM'),
-                    _buildChatRoom('assets/images/tony_profile.png','โทนี่ พีรศักดิ์','ขอดูสินค้าเพิ่มเติมหน่อยครับ','30 พ.ย.\n11:12 PM'),
+                    _buildChatRoom('assets/images/manee_profile.png',
+                        'มานี มีนา', 'ขอลดหน่อยได้มั้ย', 'เมื่อวาน\n8:10 AM'),
+                    _buildChatRoom(
+                        'assets/images/tony_profile.png',
+                        'โทนี่ พีรศักดิ์',
+                        'ขอดูสินค้าเพิ่มเติมหน่อยครับ',
+                        '30 พ.ย.\n11:12 PM'),
                   ]),
             ),
           ],
@@ -85,13 +97,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildChatRoom(profileImage, name, lastMessage, timestamp) {
     return TextButton(
-      onPressed: () { Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ChatDetail()),
-            );},
+      onPressed: () {
+        Navigator.of(context).pushNamed('/chat_detail');
+      },
       style: ButtonStyle(
-        //side: MaterialStateProperty.all(BorderSide(width: 2, color: Colors.red)),
-        //foregroundColor: MaterialStateProperty.all(Colors.black),
         backgroundColor: MaterialStateProperty.all(Colors.white),
         padding: MaterialStateProperty.all(
             const EdgeInsets.symmetric(vertical: 16, horizontal: 16)),
@@ -107,7 +116,8 @@ class _ChatScreenState extends State<ChatScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(name,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
               const SizedBox(height: 2),
               Text(lastMessage,
                   style: const TextStyle(color: Colors.black54, fontSize: 16))
@@ -115,7 +125,9 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
         Text(timestamp,
-                style: const TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w400), textAlign: TextAlign.right),
+            style: const TextStyle(
+                fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w400),
+            textAlign: TextAlign.right),
       ]),
     );
   }

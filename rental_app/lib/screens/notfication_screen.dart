@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:rental_app/config/palette.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({ Key? key }) : super(key: key);
 
   @override
   _NotificationScreenState createState() => _NotificationScreenState();
+  
+  static const String routeName = '/notification';
+
+  static Route route() {
+    return MaterialPageRoute(
+      settings: const RouteSettings(name: routeName),
+      builder: (_) => const NotificationScreen(),
+    );
+  }
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
@@ -14,18 +24,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.indigo,
           centerTitle: true,
           title: const Text(
             'แจ้งเตือน',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          //shadowColor: Colors.transparent,
+
           elevation: 2,
           bottom: const TabBar(
-            labelColor: Colors.indigo,
-            indicatorColor: Colors.indigo,
+            labelColor: primaryColor,
             tabs: [
               Tab(
                 text: 'แจ้งเตือนฝั่งผู้เช่า',
@@ -71,7 +78,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         padding: const EdgeInsets.all(8),
         child: ListTile(
           horizontalTitleGap: 2,
-          leading: Icon(icon, color: Colors.indigo),
+          leading: Icon(icon, color: primaryColor),
           title: Text(title),
           subtitle: Text(
             subtitle,

@@ -159,10 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ProductDetail()),
-          );
+          Navigator.of(context).pushNamed('/product');
         },
         child: Container(
           width: 164,

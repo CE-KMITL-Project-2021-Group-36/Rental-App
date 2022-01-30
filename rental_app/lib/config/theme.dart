@@ -21,14 +21,14 @@ ThemeData theme() {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: const BorderSide(
-            width: 2,
+            width: 1,
             color: outlineColor,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: const BorderSide(
-            width: 2,
+            width: 1,
             color: outlineColor,
           ),
         ),
