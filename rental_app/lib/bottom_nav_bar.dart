@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rental_app/chat_page.dart';
 import 'package:rental_app/home_page.dart';
 import 'package:rental_app/notification_page.dart';
-import 'package:rental_app/views/account_page.dart';
+import 'package:rental_app/screens/account_page.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({Key? key}) : super(key: key);
