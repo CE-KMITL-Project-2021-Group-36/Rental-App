@@ -1,6 +1,5 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter/material.dart';
+import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/screens.dart';
 import 'package:rental_app/widgets/widget.dart';
 
@@ -23,6 +22,8 @@ class AppRouter {
         return ProductScreen.route();
       case SearchScreen.routeName:
         return SearchScreen.route();
+      case CatalogScreen.routeName:
+        return CatalogScreen.route(category: settings.arguments as Category);
 
       default:
         return _errorRoute();
