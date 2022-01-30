@@ -6,7 +6,7 @@ ThemeData theme() {
     primaryColor: primaryColor,
     primarySwatch: primaryColor,
     scaffoldBackgroundColor: backgroundColor,
-    // fontFamily: "Roboto",
+    fontFamily: "SFThonburi",
     appBarTheme: const AppBarTheme(
       backgroundColor: surfaceColor,
       foregroundColor: primaryColor,
@@ -33,7 +33,7 @@ ThemeData theme() {
           ),
         ),
         disabledBorder: InputBorder.none),
-    // textTheme: textTheme(),
+    //textTheme: textTheme(),
   );
 }
 

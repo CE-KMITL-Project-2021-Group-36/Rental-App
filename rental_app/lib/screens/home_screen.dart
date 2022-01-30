@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/models/models.dart';
+import 'package:rental_app/widgets/widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -29,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontWeight: FontWeight.bold),
           ),
         ),
+        backgroundColor: surfaceColor,
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -58,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Text(
                         "ดูทั้งหมด",
-                        style: TextStyle(fontSize: 12, color: Colors.indigo),
+                        style: TextStyle(fontSize: 12, color: primaryColor),
                       ),
                     ]),
               ),
@@ -96,28 +100,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         child: const Text(
                           "ดูทั้งหมด",
-                          style: TextStyle(fontSize: 12, color: Colors.indigo),
+                          style: TextStyle(fontSize: 12, color: primaryColor),
                         ),
                         style: TextButton.styleFrom(),
                       )
                     ]),
               ),
-              const SizedBox(
-                height: 8,
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildItemCard(
-                        'กล้อง Canon EOS พร้อมเลนส์ ให้เช่าราคาถูก',
-                        '฿100 /ชม.\n฿700 /วัน.\n฿4500 /สัปดาห์.',
-                        'https://www.ec-mall.com/wp-content/uploads/2018/03/eos-1500d_02-1.jpg'),
-                    _buildItemCard('กล้อง Instax กล้องฟิล์ม', '฿600 /วัน.',
-                        'https://m.media-amazon.com/images/I/71HmLp20ovL._AC_SL1500_.jpg'),
-                  ],
-                ),
+              SizedBox(
+                height: 280,
+                
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: Product.products.length,
+                  itemBuilder: (context, index) {
+                    return ProductCard(product: Product.products[index]);
+                  }
+                )
               )
             ],
           ),
@@ -144,73 +144,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: const TextStyle(fontSize: 12),
               ))
         ],
-      ),
-    );
-  }
-
-  Widget _buildItemCard(String name, String price, String imageUrl) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).pushNamed('/product');
-        },
-        child: Container(
-          width: 164,
-          height: 300,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: 164,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(imageUrl),
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Text(
-                      name,
-                      //'กล้อง Canon EOS พร้อมเลนส์ ให้เช่าราคาถูก',
-                      style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Row(children: [
-                        Icon(Icons.star, color: Colors.yellow[600], size: 16),
-                        Icon(Icons.star, color: Colors.yellow[600], size: 16),
-                        Icon(Icons.star, color: Colors.yellow[600], size: 16),
-                        Icon(Icons.star, color: Colors.yellow[600], size: 16),
-                        Icon(Icons.star, color: Colors.yellow[600], size: 16),
-                      ]),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        //'฿100 /ชม.\n฿700 /วัน.\n฿4500 /สัปดาห์.\n',
-                        price,
-                        style:
-                            const TextStyle(fontSize: 12, color: Colors.indigo),
-                        maxLines: 3,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              //Image.asset('assets/card-sample-image-2.jpg'),
-            ],
-          ),
-        ),
       ),
     );
   }

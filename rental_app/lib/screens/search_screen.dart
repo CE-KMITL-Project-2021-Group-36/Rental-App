@@ -89,7 +89,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                 );
               }
-            }));
+            })
+      );
   }
 
   void searchProduct(String query) {
