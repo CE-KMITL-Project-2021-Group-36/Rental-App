@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rental_app/data/product_data.dart';
 import 'package:rental_app/models/models.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -25,7 +24,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    products = allProducts;
+    products = Product.products;
   }
 
   @override
@@ -94,7 +93,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void searchProduct(String query) {
-    final products = allProducts.where((product) {
+    products = products.where((product) {
       final nameLower = product.name.toLowerCase();
       final searchLower = query.toLowerCase();
 
@@ -153,7 +152,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        product.price,
+                        product.pricePerDay,
                         style: const TextStyle(fontSize: 12, color: Colors.indigo),
                         maxLines: 3,
                       ),

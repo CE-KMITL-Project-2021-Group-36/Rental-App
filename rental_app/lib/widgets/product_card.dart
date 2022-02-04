@@ -67,7 +67,7 @@ class ProductCard extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.bottomLeft,
                           child: Text(
-                            product.price,
+                            '฿'+product.pricePerDay.toString()+'/วัน',
                             style: const TextStyle(
                                 fontSize: 16, color: primaryColor),
                             maxLines: 1,

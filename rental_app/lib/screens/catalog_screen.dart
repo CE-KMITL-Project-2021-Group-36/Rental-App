@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/widgets/widget.dart';
 
@@ -19,7 +19,6 @@ class CatalogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Product> categoryProducts = Product.products.where((product) => product.category == category.name).toList();
     return Scaffold(
       appBar: AppBar(
           iconTheme: const IconThemeData(color: Colors.indigo),
@@ -41,18 +40,35 @@ class CatalogScreen extends StatelessWidget {
           )),
       body: Column(
         children: [
-          Expanded(
-            child: GridView.builder(
-                //physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, childAspectRatio: 0.65),
-                itemCount: categoryProducts.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Center(
-                      child: ProductCard(product: categoryProducts[index]));
-                }),
-          ),
+          StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("products")
+                  .where('category', isEqualTo: category.name)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Somthing went wrong');
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                final data = snapshot.requireData;
+                return Expanded(
+                    child: GridView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2, childAspectRatio: 0.65),
+                        itemCount: data.docs.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Center(
+                              child: ProductCard(
+                                  product:
+                                      Product.fromSnapshot(data.docs[index])));
+                        }));
+              }),
         ],
       ),
     );
