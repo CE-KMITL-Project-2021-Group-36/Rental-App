@@ -1,26 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:rental_app/chat_page.dart';
-import 'package:rental_app/home_page.dart';
-import 'package:rental_app/notification_page.dart';
-import 'package:rental_app/screens/account_page.dart';
+import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/screens/screens.dart';
 
-class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({Key? key}) : super(key: key);
+
+class CustomNavBar extends StatefulWidget {
+  const CustomNavBar({Key? key}) : super(key: key);
 
   @override
-  _BottomNavBarState createState() => _BottomNavBarState();
+  _CustomNavBarState createState() => _CustomNavBarState();
+  
+  static const String routeName = '/';
+
+  static Route route() {
+    return MaterialPageRoute(
+      settings: const RouteSettings(name: routeName),
+      builder: (_) => const CustomNavBar(),
+    );
+  }
 }
 
-class _BottomNavBarState extends State<BottomNavBar> {
+class _CustomNavBarState extends State<CustomNavBar> {
+
   int _currentIndex = 0;
 
   //Test pages
   final pages = [
-    const HomePage(),
-    const ChatPage(),
+    const HomeScreen(),
+    const ChatScreen(),
     const Center(child: Text('รถเข็น')),
-    const NotificationPage(),
-    const AccountPage(),
+    const NotificationScreen(),
+    const Center(child: Text('บัญชี')),
   ];
 
   @override
@@ -28,7 +37,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return Scaffold(
       body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Theme.of(context).primaryColor,
+        backgroundColor: surfaceColor,
         selectedFontSize: 12,
         unselectedFontSize: 12,
         type: BottomNavigationBarType.fixed,
@@ -38,8 +47,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
             _currentIndex = index;
           });
         },
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+        items:  const <BottomNavigationBarItem>[
+           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home),
             label: 'หน้าแรก',
@@ -65,6 +74,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             label: 'บัญชี',
           ),
         ],
+        
       ),
     );
   }

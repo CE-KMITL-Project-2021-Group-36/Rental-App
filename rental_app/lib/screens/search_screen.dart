@@ -1,23 +1,30 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'dart:convert';
-import 'package:rental_app/data/product_data.dart';
-import 'package:rental_app/models/product.dart';
+import 'package:rental_app/models/models.dart';
 
-class GridSearchScreen extends StatefulWidget {
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({Key? key}) : super(key: key);
+
   @override
-  _GridSearchScreenState createState() => _GridSearchScreenState();
+  _SearchScreenState createState() => _SearchScreenState();
+  static const String routeName = '/search';
+
+  static Route route() {
+    return MaterialPageRoute(
+      settings: const RouteSettings(name: routeName),
+      builder: (_) => const SearchScreen(),
+    );
+  }
 }
 
-class _GridSearchScreenState extends State<GridSearchScreen> {
+class _SearchScreenState extends State<SearchScreen> {
   late List<Product> products;
   String query = '';
 
   @override
   void initState() {
     super.initState();
-    products = allProducts;
+    products = Product.products;
   }
 
   @override
@@ -45,7 +52,7 @@ class _GridSearchScreenState extends State<GridSearchScreen> {
               ),
             )),
         body: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 0.6,
               crossAxisSpacing: 2,
@@ -60,16 +67,16 @@ class _GridSearchScreenState extends State<GridSearchScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
                     child: Column(
-                      children: [
+                      children: const [
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(8.0),
                           child: Icon(
                             Icons.search_off,
                             size: 80,
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(8.0),
                           child: Text(
                             'ไม่พบสินค้า\nกรุณาใช้คำอื่น',
                             style: TextStyle(
@@ -81,11 +88,12 @@ class _GridSearchScreenState extends State<GridSearchScreen> {
                   ),
                 );
               }
-            }));
+            })
+      );
   }
 
   void searchProduct(String query) {
-    final products = allProducts.where((product) {
+    products = products.where((product) {
       final nameLower = product.name.toLowerCase();
       final searchLower = query.toLowerCase();
 
@@ -124,7 +132,7 @@ class _GridSearchScreenState extends State<GridSearchScreen> {
                   children: [
                     Text(
                       product.name,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                       ),
                       maxLines: 2,
@@ -144,15 +152,14 @@ class _GridSearchScreenState extends State<GridSearchScreen> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        product.price,
-                        style: TextStyle(fontSize: 12, color: Colors.indigo),
+                        product.pricePerDay,
+                        style: const TextStyle(fontSize: 12, color: Colors.indigo),
                         maxLines: 3,
                       ),
                     ),
                   ],
                 ),
               ),
-              //Image.asset('assets/card-sample-image-2.jpg'),
             ],
           ),
         ),
