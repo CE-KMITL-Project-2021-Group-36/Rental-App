@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/screens/account_page.dart';
 import 'package:rental_app/screens/screens.dart';
 
 
@@ -29,7 +30,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
     const ChatScreen(),
     const Center(child: Text('รถเข็น')),
     const NotificationScreen(),
-    const Center(child: Text('บัญชี')),
+    const AccountPage(),
   ];
 
   @override
@@ -74,7 +75,6 @@ class _CustomNavBarState extends State<CustomNavBar> {
             label: 'บัญชี',
           ),
         ],
-        
       ),
     );
   }
