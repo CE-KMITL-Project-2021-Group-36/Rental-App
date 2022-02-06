@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // isExtended: true,
         child: Icon(Icons.add),
         //backgroundColor: Colors.green,
-        onPressed: () {},
+        onPressed: () {Navigator.pushNamed(context, '/add_product');},
       ),
         appBar: AppBar(
           centerTitle: true,

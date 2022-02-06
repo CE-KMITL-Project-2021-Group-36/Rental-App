@@ -24,6 +24,8 @@ class AppRouter {
         return SearchScreen.route();
       case CatalogScreen.routeName:
         return CatalogScreen.route(category: settings.arguments as Category);
+      case AddProductScreen.routeName:
+        return AddProductScreen.route();
 
       default:
         return _errorRoute();
