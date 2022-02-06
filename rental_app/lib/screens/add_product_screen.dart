@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({Key? key}) : super(key: key);
@@ -22,6 +26,19 @@ bool checkedPricePerWeek = false;
 bool checkedPricePerMonth = false;
 
 class _AddProductScreenState extends State<AddProductScreen> {
+  File? image;
+
+  Future pickImage() async {
+    try {
+      final image = await ImagePicker.pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      final imageTemporary = File(image.path);
+      setState(() => this.image = imageTemporary);
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,13 +48,18 @@ class _AddProductScreenState extends State<AddProductScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            InkWell(
-              onTap: (){},
-              child: Container(
-                  height: 200,
-                  width: 200,
-                  //childrencolor: Colors.blue,
-                  child: Center(child: Text('Upload Image Here!'))),
+            image != null
+                ? Image.file(
+                    image!,
+                    width: 300,
+                    height: 300,
+                    fit: BoxFit.cover,
+                  )
+                : SizedBox(),
+            TextButton.icon(
+              onPressed: () => pickImage(),
+              icon: Icon(Icons.add_photo_alternate),
+              label: Text('เพิ่มรูปภาพ', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 16),
             const Text('ชื่อสินค้าที่ให้เช่า'),
