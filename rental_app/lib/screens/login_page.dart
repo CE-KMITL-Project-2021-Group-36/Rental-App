@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/providers/authentication_provider.dart';
+import 'package:rental_app/screens/register_with_email_page.dart';
 import 'package:rental_app/screens/reset_password_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -31,27 +34,17 @@ class _LoginPageState extends State<LoginPage> {
               setState(() {
                 _continuousValidation = true;
               });
+            } else {
+              await _auth
+                  .signInWithEmailAndPassword(
+                      _email.text, _password.text, context)
+                  .whenComplete(
+                      () => _auth.authStateChange.listen((event) async {
+                            if (event == null) {
+                              return;
+                            }
+                          }));
             }
-
-            await _auth
-                .signInWithEmailAndPassword(
-                    _email.text, _password.text, context)
-                .whenComplete(() => _auth.authStateChange.listen((event) async {
-                      if (event == null) {
-                        return;
-                      }
-                    }));
-
-            // await _auth
-            //     .signUpWithEmailAndPassword(
-            //     _email.text, _password.text, context)
-            //     .whenComplete(
-            //         () => _auth.authStateChange.listen((event) async {
-            //       if (event == null) {
-            //         loading();
-            //         return;
-            //       }
-            //     }));
           }
 
           Future<void> _loginWithGoogle() async {
@@ -81,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
-                        color: Colors.deepPurple,
+                        color: primaryColor,
                       ),
                     ),
                   ),
@@ -92,6 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                       labelText: 'อีเมล',
                     ),
                     autocorrect: false,
+                    keyboardType: TextInputType.emailAddress,
                     validator: (input) {
                       if (input!.isEmpty ||
                           !RegExp(r"""^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])""")
@@ -119,8 +113,9 @@ class _LoginPageState extends State<LoginPage> {
                             MaterialPageRoute(
                                 builder: (context) =>
                                     const ResetPasswordPage())),
-                        child: const Text(
+                        child: Text(
                           'ลืมรหัสผ่าน?',
+                          style: textTheme().bodyText1,
                         ),
                       ),
                     ],
@@ -137,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     style: TextButton.styleFrom(
                       primary: Colors.white,
-                      backgroundColor: Colors.deepPurple,
+                      backgroundColor: primaryColor,
                       padding: const EdgeInsets.symmetric(vertical: 15),
                     ),
                   ),
@@ -166,7 +161,10 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 30),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const RegisterWithEmailPage())),
                     child: const Text(
                       'สมัครสมาชิกด้วยอีเมล',
                       style: TextStyle(

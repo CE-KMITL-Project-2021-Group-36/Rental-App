@@ -1,0 +1,107 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:rental_app/bottom_nav_bar.dart';
+import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/config/theme.dart';
+
+class VerifyEmailPage extends StatefulWidget {
+  const VerifyEmailPage({Key? key}) : super(key: key);
+
+  @override
+  _VerifyEmailPageState createState() => _VerifyEmailPageState();
+}
+
+class _VerifyEmailPageState extends State<VerifyEmailPage> {
+  bool _isEmailVerified = false;
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+    if (!_isEmailVerified) {
+      sendVerificationEmail();
+      timer = Timer.periodic(
+          const Duration(seconds: 3), (_) => checkEmailVerified());
+    }
+  }
+
+  Future checkEmailVerified() async {
+    await FirebaseAuth.instance.currentUser!.reload();
+    setState(() {
+      _isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+    });
+    if (_isEmailVerified) timer?.cancel();
+  }
+
+  Future sendVerificationEmail() async {
+    try {
+      // FirebaseAuth.instance.currentUser!;
+      await FirebaseAuth.instance.currentUser!.sendEmailVerification();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => _isEmailVerified
+      ? const BottomNavBar()
+      : Scaffold(
+          body: SafeArea(
+              child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: ListView(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 50),
+                child: const Text(
+                  'กรุณายืนยันอีเมล',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+              Text(
+                'ระบบได้ส่งลิงค์ไปยังอีเมลของท่านแล้ว\nกรุณากดลิงค์เพื่อทำการยืนยันอีเมล',
+                style: textTheme().bodyText1,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              // TextButton(
+              //   onPressed: () {},
+              //   child: Text(
+              //     'ส่งอีเมลอีกครั้ง',
+              //     style: textTheme().button,
+              //   ),
+              //   style: TextButton.styleFrom(
+              //     primary: Colors.white,
+              //     backgroundColor: Colors.deepPurple,
+              //     padding: const EdgeInsets.symmetric(vertical: 15),
+              //   ),
+              // ),
+              const SizedBox(height: 10),
+              OutlinedButton(
+                onPressed: () {
+                  // timer?.cancel();
+                  // FirebaseAuth.instance.signOut();
+                },
+                child: Text(
+                  'ยกเลิก',
+                  style: textTheme().button,
+                ),
+                style: TextButton.styleFrom(
+                  primary: Colors.black,
+                  backgroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+              ),
+            ],
+          ),
+        )));
+}
