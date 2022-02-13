@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const primaryColor = Palette.bluePurple;
+const primaryColor = bluePurple;
 const primaryLightColor = Color(0xffF0EEFF);
 const secondaryColor = Color(0xff0ACF97);
 const textColor = Color(0xff212121);
@@ -11,8 +11,7 @@ const warningColor = Color(0xffFBBC05);
 const successColor = Color(0xff3AFFA1);
 const outlineColor = Color(0xffE5E5E5);
 
-class Palette {
-  static const MaterialColor bluePurple = MaterialColor(
+const MaterialColor bluePurple = MaterialColor(
     0xff5343c3,
     <int, Color>{
       50: Color(0xffa9a1e1),
@@ -26,5 +25,4 @@ class Palette {
       800: Color(0xff3a2f89),
       900: Color(0xff322875),
     },
-  );
-}
+);

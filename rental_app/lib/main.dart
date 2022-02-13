@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_app/screens/authentication_checker.dart';
 
+import 'config/app_router.dart';
 import 'config/theme.dart';
 
 void main() async {
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Rental App',
       theme: theme(),
+      onGenerateRoute: AppRouter.onGenerateRoute,
       home: const AuthChecker(),
     );
   }

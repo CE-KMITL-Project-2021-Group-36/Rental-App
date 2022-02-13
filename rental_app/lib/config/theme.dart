@@ -10,6 +10,7 @@ ThemeData theme() {
     appBarTheme: const AppBarTheme(
       backgroundColor: surfaceColor,
       foregroundColor: primaryColor,
+      centerTitle: true,
       elevation: 0,
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -27,7 +28,7 @@ ThemeData theme() {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(
-            width: 2,
+            width: 1,
             color: outlineColor,
           ),
         ),
