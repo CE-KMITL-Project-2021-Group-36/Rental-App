@@ -67,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
-                          return const Text('Somthing went wrong');
+                          return const Text('Something went wrong');
                         }
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -114,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
-                            return const Text('Somthing went wrong');
+                            return const Text('Something went wrong');
                           }
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {

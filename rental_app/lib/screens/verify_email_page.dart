@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rental_app/bottom_nav_bar.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
+import 'package:rental_app/widgets/custom_navbar.dart';
 
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({Key? key}) : super(key: key);
@@ -48,7 +48,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
 
   @override
   Widget build(BuildContext context) => _isEmailVerified
-      ? const BottomNavBar()
+      ? const CustomNavBar()
       : Scaffold(
           body: SafeArea(
               child: Padding(
