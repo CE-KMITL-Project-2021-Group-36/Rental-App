@@ -14,7 +14,8 @@ class VerifyEmailPage extends StatefulWidget {
 }
 
 class _VerifyEmailPageState extends State<VerifyEmailPage> {
-  bool _isEmailVerified = false;
+  // bool _isEmailVerified = false;
+  late bool _isEmailVerified;
   Timer? timer;
 
   @override
@@ -88,8 +89,10 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
               const SizedBox(height: 10),
               OutlinedButton(
                 onPressed: () {
-                  // timer?.cancel();
-                  // FirebaseAuth.instance.signOut();
+                  // setState(() {
+                  //   timer?.cancel();
+                  //   FirebaseAuth.instance.signOut();
+                  // });
                 },
                 child: Text(
                   'ยกเลิก',

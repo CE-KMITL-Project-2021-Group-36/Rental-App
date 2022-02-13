@@ -16,6 +16,7 @@ class RegisterWithEmailPage extends StatefulWidget {
 class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   bool _continuousValidation = false;
+  bool isChecked = false;
 
   final _email = TextEditingController();
   final _password = TextEditingController();
@@ -32,6 +33,10 @@ class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
       body: SafeArea(
         child: Consumer(builder: (context, ref, _) {
           final _auth = ref.watch(authenticationProvider);
+
+          Color getColor(Set<MaterialState> states) {
+            return primaryColor;
+          }
 
           Future<void> _onPressedFunction() async {
             if (!_formKey.currentState!.validate()) {
@@ -212,15 +217,37 @@ class _RegisterWithEmailPageState extends State<RegisterWithEmailPage> {
                     },
                   ),
                   const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Checkbox(
+                        checkColor: Colors.white,
+                        fillColor: MaterialStateProperty.resolveWith(getColor),
+                        value: isChecked,
+                        shape: const CircleBorder(),
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isChecked = value!;
+                          });
+                        },
+                      ),
+                      Text(
+                        'ข้าพเจ้ายอมรับเงื่อนไขและข้อกำหนด',
+                        style: textTheme().bodyText1,
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 10),
                   TextButton(
-                    onPressed: _onPressedFunction,
+                    onPressed: isChecked ? _onPressedFunction : null,
                     child: Text(
                       'สมัครสมาชิก',
                       style: textTheme().button,
                     ),
                     style: TextButton.styleFrom(
                       primary: Colors.white,
-                      backgroundColor: primaryColor,
+                      backgroundColor:
+                          isChecked ? primaryColor : primaryLightColor,
                       padding: const EdgeInsets.symmetric(vertical: 15),
                     ),
                   ),
