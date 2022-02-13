@@ -1,8 +1,7 @@
-//import 'package:rental_app/bottom_nav_bar.dart';
-import 'package:rental_app/providers/authentication_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rental_app/widgets/widget.dart';
+import 'package:rental_app/providers/authentication_provider.dart';
+import 'package:rental_app/screens/verify_email_page.dart';
 
 import 'error_screen.dart';
 import 'login_page.dart';
@@ -15,7 +14,7 @@ class AuthChecker extends ConsumerWidget {
     final _authState = ref.watch(authStateProvider);
     return _authState.when(
         data: (data) {
-          if (data != null) return const CustomNavBar();
+          if (data != null) return const VerifyEmailPage();
           return const LoginPage();
         },
         loading: () => const CircularProgressIndicator(),
