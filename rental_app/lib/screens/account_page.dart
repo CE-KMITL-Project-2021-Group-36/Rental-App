@@ -29,6 +29,7 @@ class AccountPage extends ConsumerWidget {
               height: 50,
               child: Text(data.currentUser!.displayName ?? 'ชื่อ นามสกุล'),
             ),
+            
             TextButton(
               onPressed: () => _auth.signOut(),
               child: const Text(
@@ -42,6 +43,16 @@ class AccountPage extends ConsumerWidget {
                 primary: Colors.white,
                 backgroundColor: Colors.deepPurple,
                 padding: const EdgeInsets.symmetric(vertical: 15),
+              ),
+            ),
+            TextButton(
+              onPressed: () {Navigator.pushNamed(context, '/user_store');},
+              child: const Text(
+                'ร้านของคุณ',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             // Container(

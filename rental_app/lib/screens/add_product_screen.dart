@@ -1,9 +1,14 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rental_app/config/palette.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:path/path.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({Key? key}) : super(key: key);
@@ -21,11 +26,32 @@ class AddProductScreen extends StatefulWidget {
   }
 }
 
+final _formKey = GlobalKey<FormState>();
+var name = '';
+var category = '';
+var pricePerDay = 0.0;
+// var pricePerWeek = 0;
+// var pricePerMonth = 0;
+var imageUrl = '';
+
 bool checkedPricePerDay = false;
 bool checkedPricePerWeek = false;
 bool checkedPricePerMonth = false;
+bool checkedPickUp = false;
+bool checkedDelivery = false;
+bool checkedShipping = false;
+
+final FirebaseAuth auth = FirebaseAuth.instance;
+final User? user = auth.currentUser;
+final owner = user?.uid;
+
+final firebase_storage.FirebaseStorage storage =
+    firebase_storage.FirebaseStorage.instance;
 
 class _AddProductScreenState extends State<AddProductScreen> {
+  CollectionReference products =
+      FirebaseFirestore.instance.collection('products');
+
   File? image;
 
   Future pickImage() async {
@@ -39,12 +65,30 @@ class _AddProductScreenState extends State<AddProductScreen> {
     }
   }
 
+  Future uploadFile() async {
+    if (image == null) return;
+    final fileName = basename(image!.path);
+    final destination = 'files/$fileName';
+
+    try {
+      final ref = firebase_storage.FirebaseStorage.instance.ref(destination);
+      //.child('file/');
+      await ref.putFile(image!);
+      await ref.getDownloadURL().then((loc) => setState(() => imageUrl = loc));
+      // final String _imageUrl = await ref.getDownloadURL().toString();
+      // setState(() => imageUrl = _imageUrl);
+      print(imageUrl);
+    } catch (e) {
+      print('error occured');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("เพิ่มสินค้า")),
       body: Form(
-        //key: formKey,
+        key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -58,8 +102,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 : SizedBox(),
             TextButton.icon(
               onPressed: () => pickImage(),
-              icon: Icon(Icons.add_photo_alternate),
-              label: Text('เพิ่มรูปภาพ', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+              icon: const Icon(Icons.add_photo_alternate),
+              label: const Text('เพิ่มรูปภาพ',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 16),
             const Text('ชื่อสินค้าที่ให้เช่า'),
@@ -117,6 +162,82 @@ class _AddProductScreenState extends State<AddProductScreen> {
               dense: true,
             ),
             buildPrice(checkedPricePerMonth),
+            const SizedBox(height: 32),
+            const Text('ที่อยู่ของสินค้าให้เช่า'),
+            const SizedBox(height: 4),
+            buildAddress(),
+            const SizedBox(height: 32),
+            const Text('การส่งสินค้า'),
+            const SizedBox(height: 4),
+            CheckboxListTile(
+              title: const Text('นัดรับสินค้า', style: TextStyle(fontSize: 14)),
+              value: checkedPickUp,
+              onChanged: (newValue) {
+                setState(() {
+                  checkedPickUp = newValue!;
+                });
+              },
+              controlAffinity: ListTileControlAffinity.leading,
+              contentPadding: const EdgeInsets.all(0),
+              dense: true,
+            ),
+            CheckboxListTile(
+              title: const Text('ส่งสินค้าทางไปรษณีย์',
+                  style: TextStyle(fontSize: 14)),
+              value: checkedDelivery,
+              onChanged: (newValue) {
+                setState(() {
+                  checkedDelivery = newValue!;
+                });
+              },
+              controlAffinity: ListTileControlAffinity.leading,
+              contentPadding: const EdgeInsets.all(0),
+              dense: true,
+            ),
+            CheckboxListTile(
+              title: const Text('ส่งสินค้าแบบด่วนในพื้นที่',
+                  style: TextStyle(fontSize: 14)),
+              value: checkedShipping,
+              onChanged: (newValue) {
+                setState(() {
+                  checkedShipping = newValue!;
+                });
+              },
+              controlAffinity: ListTileControlAffinity.leading,
+              contentPadding: const EdgeInsets.all(0),
+              dense: true,
+            ),
+            const SizedBox(height: 32),
+            TextButton(
+              child: const Text('เพิ่มสินค้านี้'),
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  await uploadFile();
+                  products
+                      .add({
+                        'owner': owner,
+                        'name': name,
+                        'pricePerDay': pricePerDay,
+                        'imageUrl': imageUrl,
+                        'category': category,
+                      })
+                      .then((value) => print('Product Added'))
+                      .catchError(
+                          (error) => print('Failed to add product: $error'));
+                  Navigator.pop(context, '/user_store');
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('เพิ่มสินค้าแล้ว'),
+                  ));
+                }
+              },
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                primary: Colors.white,
+                backgroundColor: primaryColor,
+                textStyle:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            )
           ],
         ),
       ),
@@ -126,10 +247,24 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
 Widget buildTitle() => TextFormField(
       decoration: const InputDecoration(
-        //labelText: 'ชื่อสินค้าที่ให้เช่า',
         hintText: 'ใส่ชื่อสินค้า',
       ),
       maxLength: 50,
+      onChanged: (value) {
+        name = value;
+      },
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Plese enter some text';
+        }
+        return null;
+      },
+    );
+
+Widget buildAddress() => TextFormField(
+      decoration: const InputDecoration(
+        hintText: 'ใส่ที่อยู่ของสินค้า',
+      ),
     );
 
 Widget buildDetail() => TextFormField(
@@ -147,22 +282,19 @@ Widget buildPrice(checkedValue) {
       ? TextFormField(
           decoration: const InputDecoration(
             suffix: Text('บาท'),
-            //labelText: 'ราคาเช่าต่อวัน',
             hintText: 'ใส่ราคาเช่า',
           ),
+          inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+          onChanged: (value) {
+            pricePerDay = double.parse(value);
+          },
           maxLength: 10,
           keyboardType: TextInputType.number,
         )
       : const SizedBox();
 }
-
-Widget buildAdress() => TextFormField(
-      decoration: const InputDecoration(
-        //labelText: 'ชื่อสินค้าที่ให้เช่า',
-        hintText: 'ใส่ชื่อสินค้า',
-      ),
-      maxLength: 50,
-    );
 
 Widget buildCategory() {
   final List<String> categories = [
@@ -224,7 +356,8 @@ Widget buildCategory() {
       }
     },
     onChanged: (value) {
-      //Do something when changing the item if you want.
+      category =
+          value.toString(); //Do something when changing the item if you want.
     },
     onSaved: (value) {
       selectedValue = value.toString();
