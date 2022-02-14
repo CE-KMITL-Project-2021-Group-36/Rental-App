@@ -30,8 +30,8 @@ final _formKey = GlobalKey<FormState>();
 var name = '';
 var category = '';
 var pricePerDay = 0.0;
-// var pricePerWeek = 0;
-// var pricePerMonth = 0;
+var pricePerWeek = 0.0;
+var pricePerMonth = 0.0;
 var imageUrl = '';
 
 bool checkedPricePerDay = false;
@@ -218,6 +218,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         'owner': owner,
                         'name': name,
                         'pricePerDay': pricePerDay,
+                        'pricePerWeek': pricePerWeek,
+                        'pricePerMonth': pricePerMonth,
                         'imageUrl': imageUrl,
                         'category': category,
                       })
@@ -282,13 +284,51 @@ Widget buildPrice(checkedValue) {
       ? TextFormField(
           decoration: const InputDecoration(
             suffix: Text('บาท'),
-            hintText: 'ใส่ราคาเช่า',
+            hintText: 'ใส่ราคาเช่าต่อวัน',
           ),
           inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
+            FilteringTextInputFormatter.digitsOnly,
+          ],
           onChanged: (value) {
             pricePerDay = double.parse(value);
+          },
+          maxLength: 10,
+          keyboardType: TextInputType.number,
+        )
+      : const SizedBox();
+}
+
+Widget buildPricePerWeek(checkedValue) {
+  return checkedValue
+      ? TextFormField(
+          decoration: const InputDecoration(
+            suffix: Text('บาท'),
+            hintText: 'ใส่ราคาเช่าต่อสัปดาห์',
+          ),
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+          ],
+          onChanged: (value) {
+            pricePerWeek = double.parse(value);
+          },
+          maxLength: 10,
+          keyboardType: TextInputType.number,
+        )
+      : const SizedBox();
+}
+
+Widget buildPricePerMonth(checkedValue) {
+  return checkedValue
+      ? TextFormField(
+          decoration: const InputDecoration(
+            suffix: Text('บาท'),
+            hintText: 'ใส่ราคาเช่าต่อเดือน',
+          ),
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+          ],
+          onChanged: (value) {
+            pricePerMonth = double.parse(value);
           },
           maxLength: 10,
           keyboardType: TextInputType.number,
