@@ -63,11 +63,11 @@ TextTheme textTheme() {
       fontSize: 20,
       fontWeight: FontWeight.bold,
     ),
-    subtitle1: TextStyle(
+    subtitle1: TextStyle(fontSize: 18),
+    subtitle2: TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.bold,
     ),
-    subtitle2: TextStyle(fontSize: 16),
     bodyText1: TextStyle(fontSize: 16),
     bodyText2: TextStyle(fontSize: 14),
     button: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),

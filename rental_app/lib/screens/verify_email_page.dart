@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
@@ -8,6 +9,15 @@ import 'package:rental_app/widgets/custom_navbar.dart';
 
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({Key? key}) : super(key: key);
+
+  static const String routeName = '/verify';
+
+  static Route route() {
+    return MaterialPageRoute(
+      settings: const RouteSettings(name: routeName),
+      builder: (_) => const VerifyEmailPage(),
+    );
+  }
 
   @override
   _VerifyEmailPageState createState() => _VerifyEmailPageState();
@@ -27,6 +37,12 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       timer = Timer.periodic(
           const Duration(seconds: 3), (_) => checkEmailVerified());
     }
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   Future checkEmailVerified() async {
@@ -89,10 +105,10 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
               const SizedBox(height: 10),
               OutlinedButton(
                 onPressed: () {
-                  // setState(() {
-                  //   timer?.cancel();
-                  //   FirebaseAuth.instance.signOut();
-                  // });
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacementNamed('/');
+                  timer?.cancel();
+                  FirebaseAuth.instance.signOut();
                 },
                 child: Text(
                   'ยกเลิก',
