@@ -8,6 +8,9 @@ class Product {
   final num pricePerDay;
   final num pricePerWeek;
   final num pricePerMonth;
+  final String description;
+  final String deposit;
+  final String location;
 
   Product({
     required this.owner,
@@ -17,6 +20,9 @@ class Product {
     required this.pricePerDay,
     required this.pricePerWeek,
     required this.pricePerMonth,
+    required this.description,
+    required this.deposit,
+    required this.location,
   });
 
   static Product fromSnapshot(DocumentSnapshot snapshot) {
@@ -28,6 +34,9 @@ class Product {
       pricePerDay: snapshot['pricePerDay'],
       pricePerWeek: snapshot['pricePerWeek'],
       pricePerMonth: snapshot['pricePerMonth'],
+      description: snapshot['description'],
+      deposit: snapshot['deposit'],
+      location: snapshot['location'],
     );
     return product;
   }

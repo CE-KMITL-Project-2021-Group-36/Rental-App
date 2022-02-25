@@ -26,29 +26,31 @@ class AddProductScreen extends StatefulWidget {
   }
 }
 
-final _formKey = GlobalKey<FormState>();
-var name = '';
-var category = '';
-var pricePerDay = 0.0;
-var pricePerWeek = 0.0;
-var pricePerMonth = 0.0;
-var imageUrl = '';
 
-bool checkedPricePerDay = false;
-bool checkedPricePerWeek = false;
-bool checkedPricePerMonth = false;
-bool checkedPickUp = false;
-bool checkedDelivery = false;
-bool checkedShipping = false;
-
-final FirebaseAuth auth = FirebaseAuth.instance;
-final User? user = auth.currentUser;
-final owner = user?.uid;
-
-final firebase_storage.FirebaseStorage storage =
-    firebase_storage.FirebaseStorage.instance;
 
 class _AddProductScreenState extends State<AddProductScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  firebase_storage.FirebaseStorage storage =
+      firebase_storage.FirebaseStorage.instance;
+
+  final owner = FirebaseAuth.instance.currentUser?.uid;
+  var name = '';
+  var category = '';
+  var pricePerDay = 0.0;
+  var pricePerWeek = 0.0;
+  var pricePerMonth = 0.0;
+  var imageUrl = '';
+  var description = '';
+  var location = '';
+  var isFeature = false;
+  var dateCreated = DateTime.now();
+  var deposit = '';
+
+  bool checkedPricePerDay = false;
+  bool checkedPricePerWeek = false;
+  bool checkedPricePerMonth = false;
+
   CollectionReference products =
       FirebaseFirestore.instance.collection('products');
 
@@ -72,12 +74,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
     try {
       final ref = firebase_storage.FirebaseStorage.instance.ref(destination);
-      //.child('file/');
       await ref.putFile(image!);
       await ref.getDownloadURL().then((loc) => setState(() => imageUrl = loc));
-      // final String _imageUrl = await ref.getDownloadURL().toString();
-      // setState(() => imageUrl = _imageUrl);
-      print(imageUrl);
+      //(imageUrl);
     } catch (e) {
       print('error occured');
     }
@@ -85,6 +84,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('price' + pricePerDay.toString());
     return Scaffold(
       appBar: AppBar(title: const Text("เพิ่มสินค้า")),
       body: Form(
@@ -93,32 +93,95 @@ class _AddProductScreenState extends State<AddProductScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             image != null
-                ? Image.file(
-                    image!,
-                    width: 300,
-                    height: 300,
-                    fit: BoxFit.cover,
+                ? InkWell(
+                    onTap: () => pickImage(),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              color: primaryColor[50],
+                              borderRadius: BorderRadius.circular(4)),
+                          height: 300,
+                          clipBehavior: Clip.antiAlias,
+                          child: Image.file(
+                            image!,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const Icon(Icons.add_photo_alternate,
+                            size: 56, color: primaryColor),
+                      ],
+                    ),
                   )
-                : SizedBox(),
-            TextButton.icon(
-              onPressed: () => pickImage(),
-              icon: const Icon(Icons.add_photo_alternate),
-              label: const Text('เพิ่มรูปภาพ',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-            ),
+                : InkWell(
+                    onTap: () => pickImage(),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              color: primaryColor[50],
+                              borderRadius: BorderRadius.circular(4)),
+                          height: 300,
+                        ),
+                        const Icon(Icons.add_photo_alternate,
+                            size: 56, color: primaryColor),
+                      ],
+                    ),
+                  ),
             const SizedBox(height: 16),
             const Text('ชื่อสินค้าที่ให้เช่า'),
             const SizedBox(height: 4),
-            buildTitle(),
-            const SizedBox(height: 16),
-            const Text('รายละเอียดสินค้า'),
-            const SizedBox(height: 4),
-            buildDetail(),
-            const SizedBox(height: 32),
+            TextFormField(
+              decoration: const InputDecoration(
+                hintText: 'ใส่ชื่อสินค้า',
+              ),
+              maxLength: 50,
+              onChanged: (value) {
+                name = value;
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'กรุณาใส่ชื่อสินค้า';
+                }
+                return null;
+              },
+            ),
             const SizedBox(height: 4),
             const Text('เลือกหมวดหมู่สินค้า'),
             const SizedBox(height: 4),
             buildCategory(),
+            const SizedBox(height: 32),
+            const SizedBox(height: 16),
+            const Text('ค่ามัดจำ'),
+            const SizedBox(height: 4),
+            TextFormField(
+              onChanged: (value) {
+                deposit = value;
+              },
+              maxLines: 3,
+              decoration: const InputDecoration(
+                hintText: 'ใส่รายละเอียดค่ามัดจำ',
+                alignLabelWithHint: true,
+              ),
+              maxLength: 200,
+            ),
+            const SizedBox(height: 32),
+            const SizedBox(height: 16),
+            const Text('รายละเอียดสินค้า'),
+            const SizedBox(height: 4),
+            TextFormField(
+              onChanged: (value) {
+                description = value;
+              },
+              maxLines: 3,
+              decoration: const InputDecoration(
+                hintText: 'ใส่รายละเอียดสินค้า',
+                alignLabelWithHint: true,
+              ),
+              maxLength: 200,
+            ),
             const SizedBox(height: 32),
             const Text('ราคาให้เช่า'),
             const SizedBox(height: 4),
@@ -128,13 +191,31 @@ class _AddProductScreenState extends State<AddProductScreen> {
               onChanged: (newValue) {
                 setState(() {
                   checkedPricePerDay = newValue!;
+                  if (!checkedPricePerDay) {
+                    pricePerDay = 0;
+                  }
                 });
               },
               controlAffinity: ListTileControlAffinity.leading,
               contentPadding: const EdgeInsets.all(0),
               dense: true,
             ),
-            buildPrice(checkedPricePerDay),
+            checkedPricePerDay
+                ? TextFormField(
+                    decoration: const InputDecoration(
+                      suffix: Text('บาท'),
+                      hintText: 'ใส่ราคาเช่าต่อวัน',
+                    ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    onChanged: (value) {
+                      pricePerDay = double.parse(value);
+                    },
+                    maxLength: 10,
+                    keyboardType: TextInputType.number,
+                  )
+                : const SizedBox(),
             CheckboxListTile(
               title:
                   const Text('ราคาต่อสัปดาห์', style: TextStyle(fontSize: 14)),
@@ -142,76 +223,83 @@ class _AddProductScreenState extends State<AddProductScreen> {
               onChanged: (newValue) {
                 setState(() {
                   checkedPricePerWeek = newValue!;
+                  if (!checkedPricePerWeek) {
+                    pricePerWeek = 0;
+                  }
                 });
               },
               controlAffinity: ListTileControlAffinity.leading,
               contentPadding: const EdgeInsets.all(0),
               dense: true,
             ),
-            buildPrice(checkedPricePerWeek),
+            checkedPricePerWeek
+                ? TextFormField(
+                    decoration: const InputDecoration(
+                      suffix: Text('บาท'),
+                      hintText: 'ใส่ราคาเช่าต่อสัปดาห์',
+                    ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    onChanged: (value) {
+                      pricePerWeek = double.parse(value);
+                    },
+                    maxLength: 10,
+                    keyboardType: TextInputType.number,
+                  )
+                : const SizedBox(),
             CheckboxListTile(
               title: const Text('ราคาต่อเดือน', style: TextStyle(fontSize: 14)),
               value: checkedPricePerMonth,
               onChanged: (newValue) {
                 setState(() {
                   checkedPricePerMonth = newValue!;
+                  if (!checkedPricePerMonth) {
+                    pricePerMonth = 0;
+                  }
                 });
               },
               controlAffinity: ListTileControlAffinity.leading,
               contentPadding: const EdgeInsets.all(0),
               dense: true,
             ),
-            buildPrice(checkedPricePerMonth),
+            checkedPricePerMonth
+                ? TextFormField(
+                    decoration: const InputDecoration(
+                      suffix: Text('บาท'),
+                      hintText: 'ใส่ราคาเช่าต่อวัน',
+                    ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    onChanged: (value) {
+                      pricePerMonth = double.parse(value);
+                    },
+                    maxLength: 10,
+                    keyboardType: TextInputType.number,
+                  )
+                : const SizedBox(),
             const SizedBox(height: 32),
             const Text('ที่อยู่ของสินค้าให้เช่า'),
             const SizedBox(height: 4),
-            buildAddress(),
-            const SizedBox(height: 32),
-            const Text('การส่งสินค้า'),
-            const SizedBox(height: 4),
-            CheckboxListTile(
-              title: const Text('นัดรับสินค้า', style: TextStyle(fontSize: 14)),
-              value: checkedPickUp,
-              onChanged: (newValue) {
-                setState(() {
-                  checkedPickUp = newValue!;
-                });
+            TextFormField(
+              onChanged: (value) {
+                location = value;
               },
-              controlAffinity: ListTileControlAffinity.leading,
-              contentPadding: const EdgeInsets.all(0),
-              dense: true,
+              decoration: const InputDecoration(
+                hintText: 'ใส่ที่อยู่ของสินค้า',
+              ),
             ),
-            CheckboxListTile(
-              title: const Text('ส่งสินค้าทางไปรษณีย์',
-                  style: TextStyle(fontSize: 14)),
-              value: checkedDelivery,
-              onChanged: (newValue) {
-                setState(() {
-                  checkedDelivery = newValue!;
-                });
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-              contentPadding: const EdgeInsets.all(0),
-              dense: true,
-            ),
-            CheckboxListTile(
-              title: const Text('ส่งสินค้าแบบด่วนในพื้นที่',
-                  style: TextStyle(fontSize: 14)),
-              value: checkedShipping,
-              onChanged: (newValue) {
-                setState(() {
-                  checkedShipping = newValue!;
-                });
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-              contentPadding: const EdgeInsets.all(0),
-              dense: true,
-            ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 64),
             TextButton(
               child: const Text('เพิ่มสินค้านี้'),
               onPressed: () async {
-                if (_formKey.currentState!.validate()) {
+                bool priceNotFilled = (pricePerDay == 0) &&
+                    (pricePerWeek == 0) &&
+                    (pricePerMonth == 0);
+                if (_formKey.currentState!.validate()
+                    //&& !priceNotFilled
+                    ) {
                   await uploadFile();
                   products
                       .add({
@@ -222,6 +310,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         'pricePerMonth': pricePerMonth,
                         'imageUrl': imageUrl,
                         'category': category,
+                        'deposit': deposit,
+                        'description': description,
+                        'location': location,
+                        'isFeature': isFeature,
+                        'dateCreated': DateTime.now(),
                       })
                       .then((value) => print('Product Added'))
                       .catchError(
@@ -245,162 +338,62 @@ class _AddProductScreenState extends State<AddProductScreen> {
       ),
     );
   }
-}
 
-Widget buildTitle() => TextFormField(
+  Widget buildCategory() {
+    final List<String> categories = [
+      'เสื้อผ้าผู้ชาย',
+      'เสื้อผ้าผู้หญิง',
+      "อุปกรณ์ถ่ายภาพ",
+      "ตั้งแคมป์",
+      "หนังสือ",
+      "อุปรณ์กีฬา",
+      "อุปกรณ์อิเล็กทรอนิกส์",
+      "อื่นๆ",
+    ];
+
+    return DropdownButtonFormField2(
+      dropdownElevation: 2,
+      dropdownMaxHeight: 260,
       decoration: const InputDecoration(
-        hintText: 'ใส่ชื่อสินค้า',
+        isDense: true,
+        contentPadding: EdgeInsets.zero,
       ),
-      maxLength: 50,
-      onChanged: (value) {
-        name = value;
-      },
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Plese enter some text';
-        }
-        return null;
-      },
-    );
-
-Widget buildAddress() => TextFormField(
-      decoration: const InputDecoration(
-        hintText: 'ใส่ที่อยู่ของสินค้า',
+      isExpanded: true,
+      hint: const Text(
+        'เลือกหมวดหมู่สินค้า',
+        style: TextStyle(fontSize: 14),
       ),
-    );
-
-Widget buildDetail() => TextFormField(
-      maxLines: 3,
-      decoration: const InputDecoration(
-        //labelText: 'รายละเอียดสินค้า',
-        hintText: 'ใส่รายละเอียดสินค้า',
-        alignLabelWithHint: true,
+      icon: const Icon(
+        Icons.arrow_drop_down,
+        color: Colors.black45,
       ),
-      maxLength: 200,
-    );
-
-Widget buildPrice(checkedValue) {
-  return checkedValue
-      ? TextFormField(
-          decoration: const InputDecoration(
-            suffix: Text('บาท'),
-            hintText: 'ใส่ราคาเช่าต่อวัน',
-          ),
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-          ],
-          onChanged: (value) {
-            pricePerDay = double.parse(value);
-          },
-          maxLength: 10,
-          keyboardType: TextInputType.number,
-        )
-      : const SizedBox();
-}
-
-Widget buildPricePerWeek(checkedValue) {
-  return checkedValue
-      ? TextFormField(
-          decoration: const InputDecoration(
-            suffix: Text('บาท'),
-            hintText: 'ใส่ราคาเช่าต่อสัปดาห์',
-          ),
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-          ],
-          onChanged: (value) {
-            pricePerWeek = double.parse(value);
-          },
-          maxLength: 10,
-          keyboardType: TextInputType.number,
-        )
-      : const SizedBox();
-}
-
-Widget buildPricePerMonth(checkedValue) {
-  return checkedValue
-      ? TextFormField(
-          decoration: const InputDecoration(
-            suffix: Text('บาท'),
-            hintText: 'ใส่ราคาเช่าต่อเดือน',
-          ),
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-          ],
-          onChanged: (value) {
-            pricePerMonth = double.parse(value);
-          },
-          maxLength: 10,
-          keyboardType: TextInputType.number,
-        )
-      : const SizedBox();
-}
-
-Widget buildCategory() {
-  final List<String> categories = [
-    'เสื้อผ้าผู้ชาย',
-    'เสื้อผ้าผู้หญิง',
-    "อุปกรณ์ถ่ายภาพ",
-    "ตั้งแคมป์",
-    "หนังสือ",
-    "อุปรณ์กีฬา",
-    "อุปกรณ์อิเล็กทรอนิกส์",
-    "อื่นๆ",
-  ];
-
-  String? selectedValue;
-
-  return DropdownButtonFormField2(
-    dropdownElevation: 2,
-    dropdownMaxHeight: 260,
-    decoration: const InputDecoration(
-      //Add isDense true and zero Padding.
-      //Add Horizontal padding using buttonPadding and Vertical padding by increasing buttonHeight instead of add Padding here so that The whole TextField Button become clickable, and also the dropdown menu open under The whole TextField Button.
-      isDense: true,
-      contentPadding: EdgeInsets.zero,
-      // border: OutlineInputBorder(
-      //   borderRadius: BorderRadius.circular(15),
-      // ),
-      //Add more decoration as you want here
-      //Add label If you want but add hint outside the decoration to be aligned in the button perfectly.
-    ),
-    isExpanded: true,
-    hint: const Text(
-      'เลือกหมวดหมู่สินค้า',
-      style: TextStyle(fontSize: 14),
-    ),
-    icon: const Icon(
-      Icons.arrow_drop_down,
-      color: Colors.black45,
-    ),
-    iconSize: 30,
-    buttonHeight: 60,
-    buttonPadding: const EdgeInsets.only(left: 20, right: 10),
-    dropdownDecoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(8),
-    ),
-    items: categories
-        .map((item) => DropdownMenuItem<String>(
-              value: item,
-              child: Text(
-                item,
-                style: const TextStyle(
-                  fontSize: 14,
+      iconSize: 30,
+      buttonHeight: 60,
+      buttonPadding: const EdgeInsets.only(left: 20, right: 10),
+      dropdownDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      items: categories
+          .map((item) => DropdownMenuItem<String>(
+                value: item,
+                child: Text(
+                  item,
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
                 ),
-              ),
-            ))
-        .toList(),
-    validator: (value) {
-      if (value == null) {
-        return 'Please select gender.';
-      }
-    },
-    onChanged: (value) {
-      category =
-          value.toString(); //Do something when changing the item if you want.
-    },
-    onSaved: (value) {
-      selectedValue = value.toString();
-    },
-  );
+              ))
+          .toList(),
+      validator: (value) {
+        if (value == null) {
+          return 'กรุณาเลือกหมวดหมู่';
+        }
+      },
+      onChanged: (value) {
+        category =
+            value.toString(); //Do something when changing the item if you want.
+      },
+      onSaved: (value) {},
+    );
+  }
 }
