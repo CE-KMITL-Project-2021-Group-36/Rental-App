@@ -1,6 +1,6 @@
-import 'package:rental_app/providers/authentication_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rental_app/providers/authentication_provider.dart';
 
 class AccountPage extends ConsumerWidget {
   const AccountPage({Key? key}) : super(key: key);
@@ -30,7 +30,11 @@ class AccountPage extends ConsumerWidget {
               child: Text(data.currentUser!.displayName ?? 'ชื่อ นามสกุล'),
             ),
             TextButton(
-              onPressed: () => _auth.signOut(),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacementNamed('/');
+                _auth.signOut();
+              },
               child: const Text(
                 'ออกจากระบบ',
                 style: TextStyle(

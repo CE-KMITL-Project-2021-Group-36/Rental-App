@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -70,11 +69,13 @@ class Authentication {
         password: password,
       );
       await _firestore.collection('users').add({
+        'userId': _auth.currentUser!.uid,
         'email': email,
         'idCardNumber': idCardNumber,
         'firstName': firstName,
         'lastName': lastName,
         'phoneNumber': phoneNumber,
+        'verified': false,
       });
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
