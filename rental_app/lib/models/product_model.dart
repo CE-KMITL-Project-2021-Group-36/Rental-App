@@ -1,18 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Product {
+  final String id;
   final String owner;
   final String name;
   final String imageUrl;
   final String category;
-  final num pricePerDay;
-  final num pricePerWeek;
-  final num pricePerMonth;
+  final double pricePerDay;
+  final double pricePerWeek;
+  final double pricePerMonth;
   final String description;
   final String deposit;
   final String location;
+  final Timestamp dateCreated;
+  final bool isFeature;
 
   Product({
+    required this.id,
     required this.owner,
     required this.name,
     required this.category,
@@ -23,20 +27,25 @@ class Product {
     required this.description,
     required this.deposit,
     required this.location,
+    required this.dateCreated,
+    required this.isFeature,
   });
 
   static Product fromSnapshot(DocumentSnapshot snapshot) {
     Product product = Product(
+      id: snapshot.id,
       owner: snapshot['owner'],
       name: snapshot['name'],
       category: snapshot['category'],
       imageUrl: snapshot['imageUrl'],
-      pricePerDay: snapshot['pricePerDay'],
-      pricePerWeek: snapshot['pricePerWeek'],
-      pricePerMonth: snapshot['pricePerMonth'],
+      pricePerDay: snapshot['pricePerDay'].toDouble(),
+      pricePerWeek: snapshot['pricePerWeek'].toDouble(),
+      pricePerMonth: snapshot['pricePerMonth'].toDouble(),
       description: snapshot['description'],
       deposit: snapshot['deposit'],
       location: snapshot['location'],
+      dateCreated: snapshot['dateCreated'],
+      isFeature: snapshot['isFeature'],
     );
     return product;
   }

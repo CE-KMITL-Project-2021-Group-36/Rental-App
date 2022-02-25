@@ -9,32 +9,32 @@ import 'package:image_picker/image_picker.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart';
+import 'package:rental_app/models/models.dart';
 
-class AddProductScreen extends StatefulWidget {
-  const AddProductScreen({Key? key}) : super(key: key);
+class EditProductScreen extends StatefulWidget {
+  const EditProductScreen({Key? key, required this.product}) : super(key: key);
+  final Product product;
 
   @override
-  _AddProductScreenState createState() => _AddProductScreenState();
+  _EditProductScreenState createState() => _EditProductScreenState();
 
-  static const String routeName = '/add_product';
+  static const String routeName = '/edit_product';
 
-  static Route route() {
+  static Route route({required Product product}) {
     return MaterialPageRoute(
       settings: const RouteSettings(name: routeName),
-      builder: (_) => const AddProductScreen(),
+      builder: (_) => EditProductScreen(product: product),
     );
   }
 }
 
-
-
-class _AddProductScreenState extends State<AddProductScreen> {
+class _EditProductScreenState extends State<EditProductScreen> {
   final _formKey = GlobalKey<FormState>();
 
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
 
-  final owner = FirebaseAuth.instance.currentUser?.uid;
+  //final owner = FirebaseAuth.instance.currentUser?.uid;
   var name = '';
   var category = '';
   var pricePerDay = 0.0;
@@ -44,7 +44,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   var description = '';
   var location = '';
   var isFeature = false;
-  var dateCreated = DateTime.now();
+  var dateCreated;
   var deposit = '';
 
   bool checkedPricePerDay = false;
@@ -55,6 +55,23 @@ class _AddProductScreenState extends State<AddProductScreen> {
       FirebaseFirestore.instance.collection('products');
 
   File? image;
+
+  initState() {
+    name = widget.product.name;
+    category = widget.product.category;
+    pricePerDay = widget.product.pricePerDay;
+    pricePerWeek = widget.product.pricePerWeek;
+    pricePerMonth = widget.product.pricePerMonth;
+    imageUrl = widget.product.imageUrl;
+    description = widget.product.description;
+    location = widget.product.location;
+    deposit = widget.product.deposit;
+    dateCreated = widget.product.dateCreated;
+    isFeature = widget.product.isFeature;
+    checkedPricePerDay = pricePerDay > 0;
+    checkedPricePerWeek = pricePerWeek > 0;
+    checkedPricePerMonth = pricePerMonth > 0;
+  }
 
   Future pickImage() async {
     try {
@@ -82,11 +99,67 @@ class _AddProductScreenState extends State<AddProductScreen> {
     }
   }
 
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: const Text("ยกเลิก"),
+      style: TextButton.styleFrom(
+          primary: errorColor,
+          textStyle:
+              const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    Widget continueButton = TextButton(
+      child: const Text("ใช่ ลบสินค้า"),
+      style: TextButton.styleFrom(
+          primary: Colors.white,
+          backgroundColor: errorColor,
+          textStyle:
+              const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      onPressed: () async {
+        await products.doc(widget.product.id).delete();
+        Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('ลบสินค้านี้แล้ว'),
+        ));
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: const Text("ลบสินค้า?"),
+      content: const Text("การลบนี้จะลบสินค้านี้โดยถาวร"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    print('price' + pricePerDay.toString());
     return Scaffold(
-      appBar: AppBar(title: const Text("เพิ่มสินค้า")),
+      appBar: AppBar(
+        title: const Text("แก้ไขสินค้า"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              showAlertDialog(context);
+            },
+          )
+        ],
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -124,6 +197,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
                               color: primaryColor[50],
                               borderRadius: BorderRadius.circular(4)),
                           height: 300,
+                          child: Image.network(
+                            widget.product.imageUrl,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                         const Icon(Icons.add_photo_alternate,
                             size: 56, color: primaryColor),
@@ -134,6 +211,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             const Text('ชื่อสินค้าที่ให้เช่า'),
             const SizedBox(height: 4),
             TextFormField(
+              initialValue: name,
               decoration: const InputDecoration(
                 hintText: 'ใส่ชื่อสินค้า',
               ),
@@ -157,6 +235,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             const Text('ค่ามัดจำ'),
             const SizedBox(height: 4),
             TextFormField(
+              initialValue: deposit,
               onChanged: (value) {
                 deposit = value;
               },
@@ -172,6 +251,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             const Text('รายละเอียดสินค้า'),
             const SizedBox(height: 4),
             TextFormField(
+              initialValue: description,
               onChanged: (value) {
                 description = value;
               },
@@ -202,6 +282,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
             ),
             checkedPricePerDay
                 ? TextFormField(
+                    initialValue:
+                        pricePerDay > 0 ? pricePerDay.toString() : null,
                     decoration: const InputDecoration(
                       suffix: Text('บาท'),
                       hintText: 'ใส่ราคาเช่าต่อวัน',
@@ -234,6 +316,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
             ),
             checkedPricePerWeek
                 ? TextFormField(
+                    initialValue:
+                        pricePerWeek > 0 ? pricePerWeek.toString() : null,
                     decoration: const InputDecoration(
                       suffix: Text('บาท'),
                       hintText: 'ใส่ราคาเช่าต่อสัปดาห์',
@@ -265,6 +349,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
             ),
             checkedPricePerMonth
                 ? TextFormField(
+                    initialValue:
+                        pricePerMonth > 0 ? pricePerMonth.toString() : null,
                     decoration: const InputDecoration(
                       suffix: Text('บาท'),
                       hintText: 'ใส่ราคาเช่าต่อเดือน',
@@ -283,6 +369,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             const Text('ที่อยู่ของสินค้าให้เช่า'),
             const SizedBox(height: 4),
             TextFormField(
+              initialValue: location,
               onChanged: (value) {
                 location = value;
               },
@@ -292,7 +379,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             ),
             const SizedBox(height: 64),
             TextButton(
-              child: const Text('เพิ่มสินค้านี้'),
+              child: const Text('แก้ไขสินค้านี้'),
               onPressed: () async {
                 bool priceNotFilled = (pricePerDay == 0) &&
                     (pricePerWeek == 0) &&
@@ -301,27 +388,20 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     //&& !priceNotFilled
                     ) {
                   await uploadFile();
-                  products
-                      .add({
-                        'owner': owner,
-                        'name': name,
-                        'pricePerDay': pricePerDay,
-                        'pricePerWeek': pricePerWeek,
-                        'pricePerMonth': pricePerMonth,
-                        'imageUrl': imageUrl,
-                        'category': category,
-                        'deposit': deposit,
-                        'description': description,
-                        'location': location,
-                        'isFeature': isFeature,
-                        'dateCreated': DateTime.now(),
-                      })
-                      .then((value) => print('Product Added'))
-                      .catchError(
-                          (error) => print('Failed to add product: $error'));
-                  Navigator.pop(context, '/user_store');
+                  products.doc(widget.product.id).update({
+                    'name': name,
+                    'pricePerDay': pricePerDay,
+                    'pricePerWeek': pricePerWeek,
+                    'pricePerMonth': pricePerMonth,
+                    'imageUrl': imageUrl,
+                    'category': category,
+                    'deposit': deposit,
+                    'description': description,
+                    'location': location,
+                  });
+                  Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('เพิ่มสินค้าแล้ว'),
+                    content: Text('อัปเดตสินค้าแล้ว'),
                   ));
                 }
               },
@@ -358,6 +438,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         isDense: true,
         contentPadding: EdgeInsets.zero,
       ),
+      value: categories[categories.indexOf(widget.product.category)],
       isExpanded: true,
       hint: const Text(
         'เลือกหมวดหมู่สินค้า',

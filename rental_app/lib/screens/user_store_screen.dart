@@ -6,7 +6,7 @@ import 'package:rental_app/models/models.dart';
 import 'package:rental_app/widgets/widget.dart';
 
 class UserStoreScreen extends StatefulWidget {
-  const UserStoreScreen({ Key? key }) : super(key: key);
+  const UserStoreScreen({Key? key}) : super(key: key);
 
   @override
   _UserStoreScreenState createState() => _UserStoreScreenState();
@@ -19,15 +19,11 @@ class UserStoreScreen extends StatefulWidget {
       builder: (_) => const UserStoreScreen(),
     );
   }
-  
 }
 
 final store_owner = FirebaseAuth.instance.currentUser?.uid;
 
 class _UserStoreScreenState extends State<UserStoreScreen> {
-
-  var itemCount = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,14 +31,47 @@ class _UserStoreScreenState extends State<UserStoreScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () {Navigator.pushNamed(context, '/add_product');},
+        onPressed: () {
+          Navigator.pushNamed(context, '/add_product');
+        },
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(
+            padding: EdgeInsets.all(16),
+            color: Colors.white,
+            //height: 240,
+            child: Row(children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(
+                    'https://www.ncsbcs.org/wp-content/uploads/2018/03/Camera-Selection.jpg'),
+              ),
+              SizedBox(
+                width: 16,
+              ),
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('Me Klong Store', style: TextStyle(fontSize: 22)),
+                Row(
+                  children: [
+                    Icon(Icons.location_on, color: Colors.red),
+                    Text(
+                      'บางนา, กรุงเทพมหานคร',
+                      style: TextStyle(color: Colors.grey[700]),
+                    )
+                  ],
+                )
+              ])
+            ]),
+          ),
+          Container(height: 1, color: outlineColor),
           Padding(
             padding: EdgeInsets.all(16.0),
-            child: Text('สินค้าทั้งหมด ($itemCount)', style: const TextStyle(color: primaryColor),),
+            child: Text(
+              'สินค้าทั้งหมด',
+              style: const TextStyle(color: primaryColor),
+            ),
           ),
           StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -59,10 +88,9 @@ class _UserStoreScreenState extends State<UserStoreScreen> {
                   );
                 }
                 final data = snapshot.requireData;
-                itemCount = data.docs.length;
+                var itemCount = data.docs.length;
                 return Expanded(
                     child: GridView.builder(
-                        
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(

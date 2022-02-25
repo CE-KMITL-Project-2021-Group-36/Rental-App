@@ -19,7 +19,7 @@ class AppRouter {
       case NotificationScreen.routeName:
         return NotificationScreen.route();
       case ProductScreen.routeName:
-        return ProductScreen.route();
+        return ProductScreen.route(product: settings.arguments as Product);
       case SearchScreen.routeName:
         return SearchScreen.route();
       case CatalogScreen.routeName:
@@ -28,6 +28,8 @@ class AppRouter {
         return AddProductScreen.route();
       case UserStoreScreen.routeName:
         return UserStoreScreen.route();
+      case EditProductScreen.routeName:
+        return EditProductScreen.route(product: settings.arguments as Product);
 
       default:
         return _errorRoute();

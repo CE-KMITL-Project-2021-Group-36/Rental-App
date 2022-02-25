@@ -7,3 +7,4 @@ export 'product_screen.dart';
 export 'catalog_screen.dart';
 export 'add_product_screen.dart';
 export 'user_store_screen.dart';
+export 'edit_product_screen.dart';

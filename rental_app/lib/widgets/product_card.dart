@@ -20,7 +20,11 @@ class ProductCard extends StatelessWidget {
       elevation: 0,
       child: InkWell(
         onTap: () {
-          Navigator.of(context).pushNamed('/product');
+          Navigator.pushNamed(
+            context,
+            '/product',
+            arguments: product,
+          );
         },
         child: SizedBox(
           width: 164,
@@ -58,8 +62,10 @@ class ProductCard extends StatelessWidget {
                           Icon(Icons.star, color: warningColor, size: 16),
                           Icon(Icons.star, color: warningColor, size: 16),
                           Icon(Icons.star, color: warningColor, size: 16),
-                          Text('(12)', style: TextStyle(
-                                fontSize: 12, color: Colors.grey),)
+                          Text(
+                            '(12)',
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          )
                         ]),
                       ),
                       //Price
@@ -67,7 +73,7 @@ class ProductCard extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.bottomLeft,
                           child: Text(
-                            '฿'+product.pricePerDay.toString()+'/วัน',
+                            displayPrice(),
                             style: const TextStyle(
                                 fontSize: 16, color: primaryColor),
                             maxLines: 1,
@@ -77,11 +83,21 @@ class ProductCard extends StatelessWidget {
                     ],
                   ),
                 ),
-              ),//Image.asset('assets/card-sample-image-2.jpg'),
+              ), //Image.asset('assets/card-sample-image-2.jpg'),
             ],
           ),
         ),
       ),
     );
+  }
+
+  String displayPrice() {
+    if (product.pricePerDay > 0) {
+      return '฿' + product.pricePerDay.toString() + '/วัน';
+    } else if (product.pricePerWeek > 0){
+      return '฿' + product.pricePerWeek.toString() + '/สัปดาห์';
+    } else {
+      return '฿' + product.pricePerMonth.toString() + '/เดือน';
+    }
   }
 }

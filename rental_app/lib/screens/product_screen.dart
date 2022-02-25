@@ -1,24 +1,33 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_nullsafety/carousel_nullsafety.dart';
 import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/models/models.dart';
 
 class ProductScreen extends StatefulWidget {
-  const ProductScreen({Key? key}) : super(key: key);
+  const ProductScreen({Key? key, required this.product}) : super(key: key);
+  final Product product;
 
   @override
   _ProductScreenState createState() => _ProductScreenState();
 
   static const String routeName = '/product';
 
-  static Route route() {
+  static Route route({required Product product}) {
     return MaterialPageRoute(
       settings: const RouteSettings(name: routeName),
-      builder: (_) => const ProductScreen(),
+      builder: (_) => ProductScreen(product: product),
     );
   }
 }
 
 class _ProductScreenState extends State<ProductScreen> {
+  bool isOwner = false;
+  
+  initState() {
+    isOwner = FirebaseAuth.instance.currentUser?.uid  == widget.product.owner; 
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,8 +81,8 @@ class _ProductScreenState extends State<ProductScreen> {
                       ],
                     ),
                     style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(primaryColor.withOpacity(0.2)),
+                        backgroundColor: MaterialStateProperty.all(
+                            primaryColor.withOpacity(0.2)),
                         textStyle: MaterialStateProperty.all(
                             const TextStyle(fontSize: 14))))),
             const SizedBox(width: 8),
@@ -100,20 +109,38 @@ class _ProductScreenState extends State<ProductScreen> {
                 height: MediaQuery.of(context).size.width,
                 child: Carousel(
                   boxFit: BoxFit.cover,
-                  images: const [
-                    NetworkImage(
-                        'https://www.ec-mall.com/wp-content/uploads/2018/03/eos-1500d_02-1-768x768.jpg'),
-                    NetworkImage(
-                        'https://www.ec-mall.com/wp-content/uploads/2018/03/Canon-EOS-1500D_2.jpg'),
-                    NetworkImage(
-                        'https://www.ec-mall.com/wp-content/uploads/2018/03/Canon-EOS-1500D_3.jpg'),
-                    NetworkImage(
-                        'https://www.ec-mall.com/wp-content/uploads/2018/03/Canon-EOS-1500D_4.jpg'),
+                  images: [
+                    NetworkImage(widget.product.imageUrl),
                   ],
                   dotSize: 8.0,
                   dotSpacing: 25.0,
                   dotBgColor: Colors.grey[800]!.withOpacity(0.25),
                 )),
+            isOwner ? Container(
+                //height: 60,
+                padding: const EdgeInsets.all(16),
+                color: primaryColor[50],
+                child: Row(
+                  children: [
+                    Expanded(child: Text('สินค้าของคุณ')),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/edit_product',
+                            arguments: widget.product,
+                          );
+                        },
+                        child: const Text('แก้ไข'),
+                        style: ButtonStyle(
+                            foregroundColor:
+                                MaterialStateProperty.all(Colors.white),
+                            backgroundColor:
+                                MaterialStateProperty.all(primaryColor),
+                            textStyle: MaterialStateProperty.all(
+                                const TextStyle(fontSize: 16))))
+                  ],
+                )): const SizedBox(),
             Container(
               color: Colors.white,
               width: double.infinity,
@@ -124,9 +151,10 @@ class _ProductScreenState extends State<ProductScreen> {
                 children: [
                   Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'กล้อง Canon EOS พร้อมเลนส์ ให้เช่าราคาถูก',
+                          //'กล้อง Canon EOS พร้อมเลนส์ ให้เช่าราคาถูก',
+                          widget.product.name,
                           style: TextStyle(
                             fontSize: 20,
                             //fontWeight: FontWeight.bold,
@@ -149,14 +177,10 @@ class _ProductScreenState extends State<ProductScreen> {
                     child: Row(children: [
                       Row(
                         children: [
-                          Icon(Icons.star,
-                              color: Colors.yellow[600], size: 24),
-                          Icon(Icons.star,
-                              color: Colors.yellow[600], size: 24),
-                          Icon(Icons.star,
-                              color: Colors.yellow[600], size: 24),
-                          Icon(Icons.star,
-                              color: Colors.yellow[600], size: 24),
+                          Icon(Icons.star, color: Colors.yellow[600], size: 24),
+                          Icon(Icons.star, color: Colors.yellow[600], size: 24),
+                          Icon(Icons.star, color: Colors.yellow[600], size: 24),
+                          Icon(Icons.star, color: Colors.yellow[600], size: 24),
                           Icon(Icons.star_half,
                               color: Colors.yellow[600], size: 24),
                         ],
@@ -172,13 +196,37 @@ class _ProductScreenState extends State<ProductScreen> {
                   const SizedBox(
                     height: 4,
                   ),
-                  const Text(
-                    '฿100 /ชม.\n฿700 /วัน\n฿4,500 /สัปดาห์',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: primaryColor,
-                    ),
-                  ),
+                  widget.product.pricePerDay != 0
+                      ? Text(
+                          '฿' + widget.product.pricePerDay.toString() + '/วัน',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: primaryColor,
+                          ),
+                        )
+                      : SizedBox(),
+                  widget.product.pricePerWeek != 0
+                      ? Text(
+                          '฿' +
+                              widget.product.pricePerWeek.toString() +
+                              '/สัปดาห์',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: primaryColor,
+                          ),
+                        )
+                      : SizedBox(),
+                  widget.product.pricePerMonth != 0
+                      ? Text(
+                          '฿' +
+                              widget.product.pricePerMonth.toString() +
+                              '/เดือน',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: primaryColor,
+                          ),
+                        )
+                      : SizedBox(),
                 ],
               ),
             ),
@@ -189,23 +237,18 @@ class _ProductScreenState extends State<ProductScreen> {
                 width: double.infinity,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
+                  children: [
+                    const Text(
                       'ค่ามัดจำ',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
-                      '''
-ราคาสินค้าจริง ฿50,000
-เอกสาร 1 ชิ้น: 90% ของราคาสินค้า - ฿45,000
-เอกสาร 2 ชิ้น: 70% ของราคาสินค้า - ฿35,000
-เอกสาร 3 ชิ้น: 50% ของราคาสินค้า - ฿25,000
-บัตรนักศึกษา: 30% ของราคาสินค้า - ฿15,000''',
-                      style: TextStyle(
+                      widget.product.deposit,
+                      style: const TextStyle(
                         fontSize: 14,
                       ),
                     ),
@@ -220,98 +263,14 @@ class _ProductScreenState extends State<ProductScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'การจัดส่ง/รับของ',
+                      'ที่อยู่สินค้า',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text(
-                          'รับสินค้าที่ร้าน',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          'ฟรี',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text(
-                          'นัดรับสินค้า',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          'ฟรี',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text(
-                          'ส่งด่วนในบริเวณ',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          'ตามระยะทาง',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text(
-                          'ส่งไปรษณีย์แบบธรรมดา',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          '฿40',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text(
-                          'ส่งไปรษณีย์แบบ EMS',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          '฿60',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
+                    Text(widget.product.location),
                   ],
                 )),
             Container(
@@ -321,7 +280,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 width: double.infinity,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
                       'รายละเอียด',
                       style: TextStyle(
@@ -331,12 +290,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      '''
-      กล้องรุ่น EOS 1500D + เลนส์ Kit (EF S18-55 IS II) กล้องสภาพดีมาก ใช้งานได้ปกติ
-      - เซ็นเซอร์ CMOS APS-C ความละเอียด 24.1 ล้านพิกเซล และชิปประมวลผลภาพ DIGIC 4+
-      - ระบบออโต้โฟกัส 9 จุด พร้อมออโต้โฟกัสแบบ cross-type 1 จุดตรงกลางภาพ
-      - ความไวแสงมาตรฐาน ISO 100 - 6400 (ขยายได้ถึง ISO 12800)
-      - รองรับ Wi-Fi / NFC''',
+                      widget.product.description,
                       style: TextStyle(
                         fontSize: 14,
                       ),
@@ -367,8 +321,8 @@ class _ProductScreenState extends State<ProductScreen> {
                                 Icon(Icons.storefront,
                                     color: Colors.black, size: 16),
                                 Text('RentKlong',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold))
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold))
                               ],
                             ),
                             Row(
@@ -393,7 +347,8 @@ class _ProductScreenState extends State<ProductScreen> {
                             padding: MaterialStateProperty.all(
                                 const EdgeInsets.symmetric(
                                     vertical: 8, horizontal: 16)),
-                            textStyle: MaterialStateProperty.all(const TextStyle(
+                            textStyle:
+                                MaterialStateProperty.all(const TextStyle(
                               fontSize: 14,
                             )))),
                   ]),
@@ -498,8 +453,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                       Text('มานี'),
                                       Text('06-09-2021 21:24',
                                           style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 12))
+                                              color: Colors.grey, fontSize: 12))
                                     ],
                                   )
                                 ]),
@@ -532,8 +486,8 @@ class _ProductScreenState extends State<ProductScreen> {
                                             'assets/images/review_image1.png'),
                                         fit: BoxFit.fill,
                                       ),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(8))),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(8))),
                                 ),
                                 Container(
                                   margin: const EdgeInsets.only(right: 4),
@@ -545,8 +499,8 @@ class _ProductScreenState extends State<ProductScreen> {
                                             'assets/images/review_image2.png'),
                                         fit: BoxFit.fill,
                                       ),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(8))),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(8))),
                                 ),
                                 Container(
                                   margin: const EdgeInsets.only(right: 4),
@@ -558,8 +512,8 @@ class _ProductScreenState extends State<ProductScreen> {
                                             'assets/images/review_image3.png'),
                                         fit: BoxFit.fill,
                                       ),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(8))),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(8))),
                                 ),
                               ]),
                             ),
