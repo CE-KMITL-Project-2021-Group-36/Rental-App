@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/screens/account_page.dart';
+import 'package:rental_app/screens/kyc_screen.dart';
 import 'package:rental_app/screens/screens.dart';
-
 
 class CustomNavBar extends StatefulWidget {
   const CustomNavBar({Key? key}) : super(key: key);
 
   @override
   _CustomNavBarState createState() => _CustomNavBarState();
-  
+
   static const String routeName = '/';
 
   static Route route() {
@@ -21,12 +21,12 @@ class CustomNavBar extends StatefulWidget {
 }
 
 class _CustomNavBarState extends State<CustomNavBar> {
-
   int _currentIndex = 0;
 
   //Test pages
   final pages = [
-    const HomeScreen(),
+    const KYC(),
+    // const HomeScreen(),
     const ChatScreen(),
     const Center(child: Text('รถเข็น')),
     const NotificationScreen(),
@@ -48,8 +48,8 @@ class _CustomNavBarState extends State<CustomNavBar> {
             _currentIndex = index;
           });
         },
-        items:  const <BottomNavigationBarItem>[
-           BottomNavigationBarItem(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home),
             label: 'หน้าแรก',
