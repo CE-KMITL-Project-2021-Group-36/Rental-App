@@ -24,7 +24,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    products = Product.products;
+    //products = Product.products;
   }
 
   @override
