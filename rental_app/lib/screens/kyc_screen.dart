@@ -13,6 +13,15 @@ class KYC extends StatefulWidget {
 
   @override
   State<KYC> createState() => _KYCState();
+
+  static const String routeName = '/kyc';
+
+  static Route route() {
+    return MaterialPageRoute(
+      settings: const RouteSettings(name: routeName),
+      builder: (_) => const KYC(),
+    );
+  }
 }
 
 enum PhotoType { front, back, selfie }

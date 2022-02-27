@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/providers/authentication_provider.dart';
 
 class ResetPasswordPage extends StatefulWidget {
@@ -61,7 +62,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   style: TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
+                    color: primaryColor,
                   ),
                 ),
               ),
@@ -90,7 +91,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 ),
                 style: TextButton.styleFrom(
                   primary: Colors.white,
-                  backgroundColor: Colors.deepPurple,
+                  backgroundColor: primaryColor,
                   padding: const EdgeInsets.symmetric(vertical: 15),
                 ),
               ),

@@ -30,6 +30,8 @@ class AppRouter {
         return UserStoreScreen.route();
       case EditProductScreen.routeName:
         return EditProductScreen.route(product: settings.arguments as Product);
+      case KYC.routeName:
+        return KYC.route();
 
       default:
         return _errorRoute();

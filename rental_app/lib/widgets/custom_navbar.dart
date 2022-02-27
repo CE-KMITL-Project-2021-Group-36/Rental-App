@@ -24,8 +24,8 @@ class _CustomNavBarState extends State<CustomNavBar> {
 
   //Test pages
   final pages = [
-    // const KYC(),
-    const HomeScreen(),
+    const KYC(),
+    // const HomeScreen(),
     const ChatScreen(),
     const Center(child: Text('รถเข็น')),
     const NotificationScreen(),
@@ -37,6 +37,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
     return Scaffold(
       body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: primaryColor,
         backgroundColor: surfaceColor,
         selectedFontSize: 12,
         unselectedFontSize: 12,

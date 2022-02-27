@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/providers/authentication_provider.dart';
 
 class AccountPage extends ConsumerWidget {
@@ -45,7 +46,7 @@ class AccountPage extends ConsumerWidget {
               ),
               style: TextButton.styleFrom(
                 primary: Colors.white,
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: primaryColor,
                 padding: const EdgeInsets.symmetric(vertical: 15),
               ),
             ),
@@ -55,6 +56,18 @@ class AccountPage extends ConsumerWidget {
               },
               child: const Text(
                 'ร้านของคุณ',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/kyc');
+              },
+              child: const Text(
+                'ยืนยันตัวตน KYC',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
