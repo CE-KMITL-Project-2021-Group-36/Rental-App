@@ -30,6 +30,8 @@ class AppRouter {
         return UserStoreScreen.route();
       case EditProductScreen.routeName:
         return EditProductScreen.route(product: settings.arguments as Product);
+      case ReviewScreen.routeName:
+        return ReviewScreen.route(product: settings.arguments as Product);
 
       default:
         return _errorRoute();

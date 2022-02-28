@@ -25,8 +25,8 @@ class _CustomNavBarState extends State<CustomNavBar> {
 
   //Test pages
   final pages = [
-    const KYC(),
-    // const HomeScreen(),
+    //const KYC(),
+    const HomeScreen(),
     const ChatScreen(),
     const Center(child: Text('รถเข็น')),
     const NotificationScreen(),

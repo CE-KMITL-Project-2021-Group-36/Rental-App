@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/widgets/widget.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -10,8 +12,11 @@ class ProductCard extends StatelessWidget {
     required this.product,
   }) : super(key: key);
 
+  
+
   @override
   Widget build(BuildContext context) {
+    final hasData = FirebaseFirestore.instance.collection("products").doc(product.id).collection("reviews").snapshots().length != 0;
     return Card(
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
@@ -54,20 +59,43 @@ class ProductCard extends StatelessWidget {
                         textAlign: TextAlign.left,
                       ),
                       //Star
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(children: const [
-                          Icon(Icons.star, color: warningColor, size: 16),
-                          Icon(Icons.star, color: warningColor, size: 16),
-                          Icon(Icons.star, color: warningColor, size: 16),
-                          Icon(Icons.star, color: warningColor, size: 16),
-                          Icon(Icons.star, color: warningColor, size: 16),
-                          Text(
-                            '(12)',
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
-                          )
-                        ]),
-                      ),
+                      
+                      StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection("products")
+                              .doc(product.id)
+                              .collection("reviews")
+                              .orderBy('dateCreated', descending: true)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return const Text('Something went wrong');
+                            }
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            final data = snapshot.requireData;
+                            var productRating = data.docs
+                                    .map((m) => m['rating']!)
+                                    .reduce((a, b) => a + b) /
+                                data.docs.length;
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: Row(
+                                children: [
+                                  StarRating(rating: productRating),
+                                  Text(
+                                    '(' + data.docs.length.toString() + ')',
+                                    style: const TextStyle(
+                                        fontSize: 12, color: Colors.grey),
+                                  )
+                                ],
+                              ),
+                            );
+                          }),
                       //Price
                       Expanded(
                         child: Align(
@@ -94,7 +122,7 @@ class ProductCard extends StatelessWidget {
   String displayPrice() {
     if (product.pricePerDay > 0) {
       return '฿' + product.pricePerDay.toString() + '/วัน';
-    } else if (product.pricePerWeek > 0){
+    } else if (product.pricePerWeek > 0) {
       return '฿' + product.pricePerWeek.toString() + '/สัปดาห์';
     } else {
       return '฿' + product.pricePerMonth.toString() + '/เดือน';

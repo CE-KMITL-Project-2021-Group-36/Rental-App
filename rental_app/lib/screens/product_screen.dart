@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_nullsafety/carousel_nullsafety.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/widgets/widget.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({Key? key, required this.product}) : super(key: key);
@@ -23,11 +25,11 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   bool isOwner = false;
-  
+
   initState() {
-    isOwner = FirebaseAuth.instance.currentUser?.uid  == widget.product.owner; 
+    isOwner = FirebaseAuth.instance.currentUser?.uid == widget.product.owner;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,436 +103,351 @@ class _ProductScreenState extends State<ProductScreen> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-                width: double.infinity,
-                height: MediaQuery.of(context).size.width,
-                child: Carousel(
-                  boxFit: BoxFit.cover,
-                  images: [
-                    NetworkImage(widget.product.imageUrl),
-                  ],
-                  dotSize: 8.0,
-                  dotSpacing: 25.0,
-                  dotBgColor: Colors.grey[800]!.withOpacity(0.25),
-                )),
-            isOwner ? Container(
-                //height: 60,
-                padding: const EdgeInsets.all(16),
-                color: primaryColor[50],
-                child: Row(
-                  children: [
-                    Expanded(child: Text('สินค้าของคุณ')),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/edit_product',
-                            arguments: widget.product,
-                          );
-                        },
-                        child: const Text('แก้ไข'),
-                        style: ButtonStyle(
-                            foregroundColor:
-                                MaterialStateProperty.all(Colors.white),
-                            backgroundColor:
-                                MaterialStateProperty.all(primaryColor),
-                            textStyle: MaterialStateProperty.all(
-                                const TextStyle(fontSize: 16))))
-                  ],
-                )): const SizedBox(),
-            Container(
-              color: Colors.white,
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection("products")
+              .doc(widget.product.id)
+              .collection("reviews")
+              .orderBy('dateCreated', descending: true)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('Something went wrong');
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            final data = snapshot.requireData;
+            final productRating =
+                data.docs.map((m) => m['rating']!).reduce((a, b) => a + b) /
+                    data.docs.length;
+            return SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          //'กล้อง Canon EOS พร้อมเลนส์ ให้เช่าราคาถูก',
-                          widget.product.name,
-                          style: TextStyle(
-                            fontSize: 20,
-                            //fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                  SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.width,
+                      child: Carousel(
+                        boxFit: BoxFit.cover,
+                        images: [
+                          NetworkImage(widget.product.imageUrl),
+                        ],
+                        dotSize: 8.0,
+                        dotSpacing: 25.0,
+                        dotBgColor: Colors.grey[800]!.withOpacity(0.25),
+                      )),
+                  isOwner
+                      ? Container(
+                          //height: 60,
+                          padding: const EdgeInsets.all(16),
+                          color: primaryColor[50],
+                          child: Row(
+                            children: [
+                              Expanded(child: Text('สินค้าของคุณ')),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/edit_product',
+                                      arguments: widget.product,
+                                    );
+                                  },
+                                  child: const Text('แก้ไข'),
+                                  style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.white),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              primaryColor),
+                                      textStyle: MaterialStateProperty.all(
+                                          const TextStyle(fontSize: 16))))
+                            ],
+                          ))
+                      : const SizedBox(),
+                  Container(
+                    color: Colors.white,
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                //'กล้อง Canon EOS พร้อมเลนส์ ให้เช่าราคาถูก',
+                                widget.product.name,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  //fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.favorite_outline,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {},
+                            ),
+                          ],
                         ),
-                      ),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.favorite_outline,
-                          color: Colors.red,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(children: [
+                            StarRating(rating: productRating),
+                            Text(productRating.toString()),
+                            // const VerticalDivider(
+                            //   color: Colors.grey,
+                            // ),
+                            //const Text('เช่าแล้ว 33 ครั้ง'),
+                          ]),
                         ),
-                        onPressed: () {},
-                      ),
-                    ],
+                        const Text('ราคาเช่า'),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        widget.product.pricePerDay != 0
+                            ? Text(
+                                '฿' +
+                                    widget.product.pricePerDay.toString() +
+                                    '/วัน',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: primaryColor,
+                                ),
+                              )
+                            : SizedBox(),
+                        widget.product.pricePerWeek != 0
+                            ? Text(
+                                '฿' +
+                                    widget.product.pricePerWeek.toString() +
+                                    '/สัปดาห์',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: primaryColor,
+                                ),
+                              )
+                            : SizedBox(),
+                        widget.product.pricePerMonth != 0
+                            ? Text(
+                                '฿' +
+                                    widget.product.pricePerMonth.toString() +
+                                    '/เดือน',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: primaryColor,
+                                ),
+                              )
+                            : SizedBox(),
+                      ],
+                    ),
                   ),
                   Container(
-                    height: 32,
-                    child: Row(children: [
-                      Row(
-                        children: [
-                          Icon(Icons.star, color: Colors.yellow[600], size: 24),
-                          Icon(Icons.star, color: Colors.yellow[600], size: 24),
-                          Icon(Icons.star, color: Colors.yellow[600], size: 24),
-                          Icon(Icons.star, color: Colors.yellow[600], size: 24),
-                          Icon(Icons.star_half,
-                              color: Colors.yellow[600], size: 24),
-                        ],
-                      ),
-                      const Text('4.9'),
-                      const VerticalDivider(
-                        color: Colors.grey,
-                      ),
-                      const Text('เช่าแล้ว 33 ครั้ง'),
-                    ]),
-                  ),
-                  const Text('ราคาเช่า'),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  widget.product.pricePerDay != 0
-                      ? Text(
-                          '฿' + widget.product.pricePerDay.toString() + '/วัน',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: primaryColor,
-                          ),
-                        )
-                      : SizedBox(),
-                  widget.product.pricePerWeek != 0
-                      ? Text(
-                          '฿' +
-                              widget.product.pricePerWeek.toString() +
-                              '/สัปดาห์',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: primaryColor,
-                          ),
-                        )
-                      : SizedBox(),
-                  widget.product.pricePerMonth != 0
-                      ? Text(
-                          '฿' +
-                              widget.product.pricePerMonth.toString() +
-                              '/เดือน',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: primaryColor,
-                          ),
-                        )
-                      : SizedBox(),
-                ],
-              ),
-            ),
-            Container(
-                color: Colors.white,
-                padding: const EdgeInsets.all(16),
-                margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'ค่ามัดจำ',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      widget.product.deposit,
-                      style: const TextStyle(
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                )),
-            Container(
-                color: Colors.white,
-                padding: const EdgeInsets.all(16),
-                margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'ที่อยู่สินค้า',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(widget.product.location),
-                  ],
-                )),
-            Container(
-                color: Colors.white,
-                padding: const EdgeInsets.all(16),
-                margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'รายละเอียด',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      widget.product.description,
-                      style: TextStyle(
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                )),
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
-              margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(children: [
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundImage:
-                          AssetImage('assets/images/shop_profile.png'),
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: const [
-                                Icon(Icons.storefront,
-                                    color: Colors.black, size: 16),
-                                Text('RentKlong',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold))
-                              ],
-                            ),
-                            Row(
-                              children: const [
-                                Icon(Icons.location_on,
-                                    color: Colors.red, size: 16),
-                                Text('จตุจักร, กรุงเทพ')
-                              ],
-                            ),
-                          ]),
-                    ),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'ดูร้านค้า',
-                        ),
-                        style: ButtonStyle(
-                            side: MaterialStateProperty.all(
-                                BorderSide(width: 1, color: Colors.indigo)),
-                            foregroundColor:
-                                MaterialStateProperty.all(Colors.indigo),
-                            padding: MaterialStateProperty.all(
-                                const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 16)),
-                            textStyle:
-                                MaterialStateProperty.all(const TextStyle(
-                              fontSize: 14,
-                            )))),
-                  ]),
-                  Text('10 รายการสินค้า'),
-                  Text('64 รายการสินค้า'),
-                ],
-              ),
-            ),
-            Container(
-                color: Colors.white,
-                margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    Container(
+                      color: Colors.white,
                       padding: const EdgeInsets.all(16),
-                      child: Row(
+                      margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                      width: double.infinity,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          const Text(
+                            'ค่ามัดจำ',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            widget.product.deposit,
+                            style: const TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      )),
+                  Container(
+                      color: Colors.white,
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                      width: double.infinity,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'ที่อยู่สินค้า',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(widget.product.location),
+                        ],
+                      )),
+                  Container(
+                      color: Colors.white,
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                      width: double.infinity,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'รายละเอียด',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            widget.product.description,
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      )),
+                  Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundImage:
+                                AssetImage('assets/images/shop_profile.png'),
+                          ),
+                          SizedBox(width: 8),
                           Expanded(
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'คะแนนสินค้า',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  Row(
+                                    children: const [
+                                      Icon(Icons.storefront,
+                                          color: Colors.black, size: 16),
+                                      Text('RentKlong',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold))
+                                    ],
                                   ),
-                                  Container(
-                                    height: 32,
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.star,
-                                            color: Colors.yellow[600],
-                                            size: 16),
-                                        Icon(Icons.star,
-                                            color: Colors.yellow[600],
-                                            size: 16),
-                                        Icon(Icons.star,
-                                            color: Colors.yellow[600],
-                                            size: 16),
-                                        Icon(Icons.star,
-                                            color: Colors.yellow[600],
-                                            size: 16),
-                                        Icon(Icons.star_half,
-                                            color: Colors.yellow[600],
-                                            size: 16),
-                                        Row(
-                                          children: const [
-                                            Text(
-                                              '4.5/5',
-                                              style: TextStyle(
-                                                color: Colors.indigo,
-                                              ),
-                                            ),
-                                            Text('(6 รีวิว)'),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                  Row(
+                                    children: const [
+                                      Icon(Icons.location_on,
+                                          color: Colors.red, size: 16),
+                                      Text('จตุจักร, กรุงเทพ')
+                                    ],
                                   ),
                                 ]),
                           ),
                           TextButton(
-                            onPressed: () {},
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: const <Widget>[
-                                Flexible(child: Text('ดูทั้งหมด')),
-                                Icon(
-                                  Icons.chevron_right,
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+                              onPressed: () {},
+                              child: const Text(
+                                'ดูร้านค้า',
+                              ),
+                              style: ButtonStyle(
+                                  side: MaterialStateProperty.all(BorderSide(
+                                      width: 1, color: Colors.indigo)),
+                                  foregroundColor:
+                                      MaterialStateProperty.all(Colors.indigo),
+                                  padding: MaterialStateProperty.all(
+                                      const EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 16)),
+                                  textStyle:
+                                      MaterialStateProperty.all(const TextStyle(
+                                    fontSize: 14,
+                                  )))),
+                        ]),
+                        Text('10 รายการสินค้า'),
+                        Text('64 รายการสินค้า'),
+                      ],
                     ),
-                    Divider(
-                      height: 0,
-                    ),
-                    Container(
+                  ),
+                  Column(
+                    children: [
+                      Container(
                         padding: const EdgeInsets.all(16),
+                        color: Colors.white,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            const Text(
+                              'คะแนนสินค้า',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
                             Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 16,
-                                    backgroundImage: AssetImage(
-                                        'assets/images/manee_profile.png'),
-                                  ),
-                                  SizedBox(width: 4),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: const [
-                                      Text('มานี'),
-                                      Text('06-09-2021 21:24',
-                                          style: TextStyle(
-                                              color: Colors.grey, fontSize: 12))
-                                    ],
-                                  )
-                                ]),
-                            const SizedBox(height: 4),
-                            Row(children: [
-                              Icon(Icons.star,
-                                  color: Colors.yellow[600], size: 16),
-                              Icon(Icons.star,
-                                  color: Colors.yellow[600], size: 16),
-                              Icon(Icons.star,
-                                  color: Colors.yellow[600], size: 16),
-                              Icon(Icons.star,
-                                  color: Colors.yellow[600], size: 16),
-                              Icon(Icons.star,
-                                  color: Colors.yellow[600], size: 16),
-                            ]),
-                            const SizedBox(height: 4),
-                            Text('ตอบกลับไวมากค่ะ ได้ของครบ สภาพดีมากก'),
-                            const SizedBox(height: 4),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(children: [
-                                Container(
-                                  margin: const EdgeInsets.only(right: 4),
-                                  width: 88,
-                                  height: 88,
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/review_image1.png'),
-                                        fit: BoxFit.fill,
-                                      ),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8))),
+                              children: [
+                                StarRating(rating: productRating),
+                                Text(
+                                  productRating.toString() + '/5',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: primaryColor),
                                 ),
-                                Container(
-                                  margin: const EdgeInsets.only(right: 4),
-                                  width: 88,
-                                  height: 88,
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/review_image2.png'),
-                                        fit: BoxFit.fill,
-                                      ),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8))),
+                                Text(
+                                  ' (' +
+                                      data.docs.length.toString() +
+                                      ' รีวิว)',
+                                  style: const TextStyle(color: Colors.grey),
                                 ),
-                                Container(
-                                  margin: const EdgeInsets.only(right: 4),
-                                  width: 88,
-                                  height: 88,
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/review_image3.png'),
-                                        fit: BoxFit.fill,
-                                      ),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8))),
-                                ),
-                              ]),
+                                //data.docs.length
+                              ],
                             ),
                           ],
-                        )),
-                    const Divider(
-                      height: 0,
-                    ),
-                    Container(
-                        width: double.infinity,
-                        child: TextButton(
-                            onPressed: () {}, child: Text('ดูทั้งหมด'))),
-                  ],
-                )),
-          ],
-        ),
-      ),
+                        ),
+                      ),
+                      ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: data.docs.length.clamp(0, 3),
+                        itemBuilder: (context, index) {
+                          return ReviewCard(
+                            review: Review.fromSnapshot(data.docs[index]),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  Container(
+                      color: Colors.white,
+                      margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                      width: double.infinity,
+                      child: Column(
+                        children: [
+                          Container(
+                              width: double.infinity,
+                              child: TextButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/review',
+                                      arguments: widget.product,
+                                    );
+                                  },
+                                  child: Text('ดูทั้งหมด'))),
+                        ],
+                      )),
+                ],
+              ),
+            );
+          }),
     );
   }
 }
