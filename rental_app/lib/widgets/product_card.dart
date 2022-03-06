@@ -16,7 +16,6 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasData = FirebaseFirestore.instance.collection("products").doc(product.id).collection("reviews").snapshots().length != 0;
     return Card(
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
@@ -59,15 +58,16 @@ class ProductCard extends StatelessWidget {
                         textAlign: TextAlign.left,
                       ),
                       //Star
-                      
                       StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance
                               .collection("products")
                               .doc(product.id)
                               .collection("reviews")
-                              .orderBy('dateCreated', descending: true)
                               .snapshots(),
                           builder: (context, snapshot) {
+                            if(snapshot.requireData.docs.isEmpty){
+                              return const StarRating(rating: -1);
+                            }
                             if (snapshot.hasError) {
                               return const Text('Something went wrong');
                             }

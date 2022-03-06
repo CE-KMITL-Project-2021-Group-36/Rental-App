@@ -100,6 +100,6 @@ class StarRating extends StatelessWidget {
         ],
       );
     }
-    return const Text('error data');
+    return const Text('');
   }
 }
