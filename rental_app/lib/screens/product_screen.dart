@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_nullsafety/carousel_nullsafety.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/widgets/widget.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({Key? key, required this.product}) : super(key: key);
@@ -23,88 +25,106 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   bool isOwner = false;
-  
+
   initState() {
-    isOwner = FirebaseAuth.instance.currentUser?.uid  == widget.product.owner; 
+    isOwner = FirebaseAuth.instance.currentUser?.uid == widget.product.owner;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.shopping_cart,
+        appBar: AppBar(
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(
+                Icons.shopping_cart,
+              ),
+              onPressed: () {},
             ),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.more_vert,
+            IconButton(
+              icon: const Icon(
+                Icons.more_vert,
+              ),
+              onPressed: () {},
             ),
-            onPressed: () {},
-          ),
-        ],
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      bottomNavigationBar: Container(
-        height: 80,
-        color: Colors.white,
-        padding: const EdgeInsets.all(8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
+          ],
+          backgroundColor: Colors.white,
+          elevation: 0,
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.create),
+          onPressed: () {
+            Navigator.pushNamed(context, '/add_review',
+                arguments: widget.product);
+          },
+        ),
+        bottomNavigationBar: Container(
+          height: 80,
+          color: Colors.white,
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
                 flex: 2,
                 child: TextButton(
-                    onPressed: () {},
-                    child: Column(
-                      children: const [
-                        Icon(Icons.chat_bubble),
-                        Text('ส่งข้อความ'),
-                      ],
+                  onPressed: () {},
+                  child: Column(
+                    children: const [
+                      Icon(Icons.chat_bubble),
+                      Text('ส่งข้อความ'),
+                    ],
+                  ),
+                  style: ButtonStyle(
+                    textStyle: MaterialStateProperty.all(
+                      const TextStyle(fontSize: 14),
                     ),
-                    style: ButtonStyle(
-                        textStyle: MaterialStateProperty.all(
-                            const TextStyle(fontSize: 14))))),
-            const SizedBox(width: 8),
-            Expanded(
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
                 flex: 2,
                 child: TextButton(
-                    onPressed: () {},
-                    child: Column(
-                      children: const [
-                        Icon(Icons.shopping_cart),
-                        Text('ใส่รถเข็น'),
-                      ],
+                  onPressed: () {},
+                  child: Column(
+                    children: const [
+                      Icon(Icons.shopping_cart),
+                      Text('ใส่รถเข็น'),
+                    ],
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        primaryColor.withOpacity(0.2)),
+                    textStyle: MaterialStateProperty.all(
+                      const TextStyle(fontSize: 14),
                     ),
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            primaryColor.withOpacity(0.2)),
-                        textStyle: MaterialStateProperty.all(
-                            const TextStyle(fontSize: 14))))),
-            const SizedBox(width: 8),
-            Expanded(
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
                 flex: 3,
                 child: TextButton(
-                    onPressed: () {},
-                    child: const Text('ส่งคำขอเช่า'),
-                    style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                        backgroundColor:
-                            MaterialStateProperty.all(primaryColor),
-                        textStyle: MaterialStateProperty.all(
-                            const TextStyle(fontSize: 14))))),
-          ],
+                  onPressed: () {},
+                  child: const Text('ส่งคำขอเช่า'),
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all(Colors.white),
+                    backgroundColor: MaterialStateProperty.all(primaryColor),
+                    textStyle: MaterialStateProperty.all(
+                      const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
                 width: double.infinity,
                 height: MediaQuery.of(context).size.width,
                 child: Carousel(
@@ -115,122 +135,163 @@ class _ProductScreenState extends State<ProductScreen> {
                   dotSize: 8.0,
                   dotSpacing: 25.0,
                   dotBgColor: Colors.grey[800]!.withOpacity(0.25),
-                )),
-            isOwner ? Container(
-                //height: 60,
-                padding: const EdgeInsets.all(16),
-                color: primaryColor[50],
-                child: Row(
-                  children: [
-                    Expanded(child: Text('สินค้าของคุณ')),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/edit_product',
-                            arguments: widget.product,
-                          );
-                        },
-                        child: const Text('แก้ไข'),
-                        style: ButtonStyle(
-                            foregroundColor:
-                                MaterialStateProperty.all(Colors.white),
-                            backgroundColor:
-                                MaterialStateProperty.all(primaryColor),
-                            textStyle: MaterialStateProperty.all(
-                                const TextStyle(fontSize: 16))))
-                  ],
-                )): const SizedBox(),
-            Container(
-              color: Colors.white,
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          //'กล้อง Canon EOS พร้อมเลนส์ ให้เช่าราคาถูก',
-                          widget.product.name,
-                          style: TextStyle(
-                            fontSize: 20,
-                            //fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.favorite_outline,
-                          color: Colors.red,
-                        ),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                  Container(
-                    height: 32,
-                    child: Row(children: [
-                      Row(
+                ),
+              ),
+              isOwner
+                  ? Container(
+                      //height: 60,
+                      padding: const EdgeInsets.all(16),
+                      color: primaryColor[50],
+                      child: Row(
                         children: [
-                          Icon(Icons.star, color: Colors.yellow[600], size: 24),
-                          Icon(Icons.star, color: Colors.yellow[600], size: 24),
-                          Icon(Icons.star, color: Colors.yellow[600], size: 24),
-                          Icon(Icons.star, color: Colors.yellow[600], size: 24),
-                          Icon(Icons.star_half,
-                              color: Colors.yellow[600], size: 24),
+                          const Expanded(child: Text('สินค้าของคุณ')),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/edit_product',
+                                arguments: widget.product,
+                              );
+                            },
+                            child: const Text('แก้ไข'),
+                            style: ButtonStyle(
+                              foregroundColor:
+                                  MaterialStateProperty.all(Colors.white),
+                              backgroundColor:
+                                  MaterialStateProperty.all(primaryColor),
+                              textStyle: MaterialStateProperty.all(
+                                const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          )
                         ],
                       ),
-                      const Text('4.9'),
-                      const VerticalDivider(
-                        color: Colors.grey,
-                      ),
-                      const Text('เช่าแล้ว 33 ครั้ง'),
-                    ]),
-                  ),
-                  const Text('ราคาเช่า'),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  widget.product.pricePerDay != 0
-                      ? Text(
-                          '฿' + widget.product.pricePerDay.toString() + '/วัน',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: primaryColor,
+                    )
+                  : const SizedBox(),
+              Container(
+                color: Colors.white,
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            widget.product.name,
+                            style: const TextStyle(
+                              fontSize: 20,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        )
-                      : SizedBox(),
-                  widget.product.pricePerWeek != 0
-                      ? Text(
-                          '฿' +
-                              widget.product.pricePerWeek.toString() +
-                              '/สัปดาห์',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: primaryColor,
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.favorite_outline,
+                            color: Colors.red,
                           ),
-                        )
-                      : SizedBox(),
-                  widget.product.pricePerMonth != 0
-                      ? Text(
-                          '฿' +
-                              widget.product.pricePerMonth.toString() +
-                              '/เดือน',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: primaryColor,
-                          ),
-                        )
-                      : SizedBox(),
-                ],
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection("products")
+                            .doc(widget.product.id)
+                            .collection("reviews")
+                            .orderBy('dateCreated', descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return const Text('Something went wrong');
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          if (snapshot.hasData) {
+                            final data = snapshot.requireData;
+                            double sum = 0;
+                            data.docs.forEach((m) {
+                              sum = sum + m['rating']!;
+                            });
+                            double avg = sum / data.docs.length;
+                            bool isHasReview = sum != 0;
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Row(
+                                children: [
+                                  StarRating(rating: avg),
+                                  isHasReview
+                                      ? Text(
+                                          avg.toStringAsFixed(1),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: primaryColor),
+                                        )
+                                      : const Text(
+                                          'ยังไม่มีรีวิว',
+                                          style: TextStyle(
+                                              //fontWeight: FontWeight.bold,
+                                              color: Colors.grey),
+                                        ),
+                                  // Text(
+                                  //   ' (' + data.docs.length.toString() + ' รีวิว)',
+                                  //   style: const TextStyle(color: Colors.grey),
+                                  // ),
+                                ],
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        }),
+                    const Text('ราคาเช่า'),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    widget.product.pricePerDay != 0
+                        ? Text(
+                            '฿' +
+                                widget.product.pricePerDay.toString() +
+                                '/วัน',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: primaryColor,
+                            ),
+                          )
+                        : const SizedBox(),
+                    widget.product.pricePerWeek != 0
+                        ? Text(
+                            '฿' +
+                                widget.product.pricePerWeek.toString() +
+                                '/สัปดาห์',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: primaryColor,
+                            ),
+                          )
+                        : const SizedBox(),
+                    widget.product.pricePerMonth != 0
+                        ? Text(
+                            '฿' +
+                                widget.product.pricePerMonth.toString() +
+                                '/เดือน',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: primaryColor,
+                            ),
+                          )
+                        : const SizedBox(),
+                  ],
+                ),
               ),
-            ),
-            Container(
+              Container(
                 color: Colors.white,
                 padding: const EdgeInsets.all(16),
                 margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
@@ -253,8 +314,9 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                     ),
                   ],
-                )),
-            Container(
+                ),
+              ),
+              Container(
                 color: Colors.white,
                 padding: const EdgeInsets.all(16),
                 margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
@@ -269,11 +331,36 @@ class _ProductScreenState extends State<ProductScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(widget.product.location),
                   ],
-                )),
-            Container(
+                ),
+              ),
+              Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'รายละเอียด',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.product.description,
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  )),
+              Container(
                 color: Colors.white,
                 padding: const EdgeInsets.all(16),
                 margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
@@ -281,256 +368,180 @@ class _ProductScreenState extends State<ProductScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'รายละเอียด',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      widget.product.description,
-                      style: TextStyle(
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                )),
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
-              margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(children: [
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundImage:
-                          AssetImage('assets/images/shop_profile.png'),
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: const [
-                                Icon(Icons.storefront,
-                                    color: Colors.black, size: 16),
-                                Text('RentKlong',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold))
-                              ],
-                            ),
-                            Row(
-                              children: const [
-                                Icon(Icons.location_on,
-                                    color: Colors.red, size: 16),
-                                Text('จตุจักร, กรุงเทพ')
-                              ],
-                            ),
-                          ]),
-                    ),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'ดูร้านค้า',
+                    Row(
+                      children: [
+                        const CircleAvatar(
+                          radius: 20,
+                          backgroundImage:
+                              AssetImage('assets/images/shop_profile.png'),
                         ),
-                        style: ButtonStyle(
-                            side: MaterialStateProperty.all(
-                                BorderSide(width: 1, color: Colors.indigo)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: const [
+                                  Icon(Icons.storefront,
+                                      color: Colors.black, size: 16),
+                                  Text('RentKlong',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold))
+                                ],
+                              ),
+                              Row(
+                                children: const [
+                                  Icon(Icons.location_on,
+                                      color: Colors.red, size: 16),
+                                  Text('จตุจักร, กรุงเทพ')
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text(
+                            'ดูร้านค้า',
+                          ),
+                          style: ButtonStyle(
+                            side: MaterialStateProperty.all(const BorderSide(
+                                width: 1, color: Colors.indigo)),
                             foregroundColor:
                                 MaterialStateProperty.all(Colors.indigo),
                             padding: MaterialStateProperty.all(
                                 const EdgeInsets.symmetric(
                                     vertical: 8, horizontal: 16)),
-                            textStyle:
-                                MaterialStateProperty.all(const TextStyle(
-                              fontSize: 14,
-                            )))),
-                  ]),
-                  Text('10 รายการสินค้า'),
-                  Text('64 รายการสินค้า'),
-                ],
+                            textStyle: MaterialStateProperty.all(
+                              const TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Text('10 รายการสินค้า'),
+                    const Text('64 รายการสินค้า'),
+                  ],
+                ),
               ),
-            ),
-            Container(
-                color: Colors.white,
-                margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'คะแนนสินค้า',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 32,
-                                    child: Row(
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection("products")
+                    .doc(widget.product.id)
+                    .collection("reviews")
+                    .orderBy('dateCreated', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Text('Something went wrong');
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (snapshot.hasData) {
+                    final data = snapshot.requireData;
+                    double sum = 0;
+                    data.docs.forEach((m) {
+                      sum = sum + m['rating']!;
+                    });
+                    double avg = sum / data.docs.length;
+                    bool isHasReview = sum != 0;
+                    return Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          color: Colors.white,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'คะแนนสินค้า',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              isHasReview
+                                  ? Row(
                                       children: [
-                                        Icon(Icons.star,
-                                            color: Colors.yellow[600],
-                                            size: 16),
-                                        Icon(Icons.star,
-                                            color: Colors.yellow[600],
-                                            size: 16),
-                                        Icon(Icons.star,
-                                            color: Colors.yellow[600],
-                                            size: 16),
-                                        Icon(Icons.star,
-                                            color: Colors.yellow[600],
-                                            size: 16),
-                                        Icon(Icons.star_half,
-                                            color: Colors.yellow[600],
-                                            size: 16),
-                                        Row(
-                                          children: const [
-                                            Text(
-                                              '4.5/5',
-                                              style: TextStyle(
-                                                color: Colors.indigo,
-                                              ),
-                                            ),
-                                            Text('(6 รีวิว)'),
-                                          ],
+                                        StarRating(rating: avg),
+                                        Text(
+                                          avg.toStringAsFixed(1) + '/5',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: primaryColor),
+                                        ),
+                                        Text(
+                                          ' (' +
+                                              data.docs.length.toString() +
+                                              ' รีวิว)',
+                                          style: const TextStyle(
+                                              color: Colors.grey),
+                                        ),
+                                        //data.docs.length
+                                      ],
+                                    )
+                                  : Row(
+                                      children: const [
+                                        Text(
+                                          'ยังไม่มีรีวิว',
+                                          style: TextStyle(
+                                              //fontWeight: FontWeight.bold,
+                                              color: Colors.grey),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ]),
+                            ],
                           ),
-                          TextButton(
-                            onPressed: () {},
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: const <Widget>[
-                                Flexible(child: Text('ดูทั้งหมด')),
-                                Icon(
-                                  Icons.chevron_right,
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Divider(
-                      height: 0,
-                    ),
-                    Container(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 16,
-                                    backgroundImage: AssetImage(
-                                        'assets/images/manee_profile.png'),
-                                  ),
-                                  SizedBox(width: 4),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: const [
-                                      Text('มานี'),
-                                      Text('06-09-2021 21:24',
-                                          style: TextStyle(
-                                              color: Colors.grey, fontSize: 12))
-                                    ],
-                                  )
-                                ]),
-                            const SizedBox(height: 4),
-                            Row(children: [
-                              Icon(Icons.star,
-                                  color: Colors.yellow[600], size: 16),
-                              Icon(Icons.star,
-                                  color: Colors.yellow[600], size: 16),
-                              Icon(Icons.star,
-                                  color: Colors.yellow[600], size: 16),
-                              Icon(Icons.star,
-                                  color: Colors.yellow[600], size: 16),
-                              Icon(Icons.star,
-                                  color: Colors.yellow[600], size: 16),
-                            ]),
-                            const SizedBox(height: 4),
-                            Text('ตอบกลับไวมากค่ะ ได้ของครบ สภาพดีมากก'),
-                            const SizedBox(height: 4),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(children: [
-                                Container(
-                                  margin: const EdgeInsets.only(right: 4),
-                                  width: 88,
-                                  height: 88,
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/review_image1.png'),
-                                        fit: BoxFit.fill,
+                        ),
+                        ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: data.docs.length.clamp(0, 3),
+                          itemBuilder: (context, index) {
+                            return ReviewCard(
+                              review: Review.fromSnapshot(data.docs[index]),
+                            );
+                          },
+                        ),
+                        isHasReview
+                            ? Container(
+                                color: Colors.white,
+                                margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                                width: double.infinity,
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: TextButton(
+                                        onPressed: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            '/review',
+                                            arguments: widget.product,
+                                          );
+                                        },
+                                        child: const Text('ดูทั้งหมด'),
                                       ),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8))),
+                                    ),
+                                  ],
                                 ),
-                                Container(
-                                  margin: const EdgeInsets.only(right: 4),
-                                  width: 88,
-                                  height: 88,
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/review_image2.png'),
-                                        fit: BoxFit.fill,
-                                      ),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8))),
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(right: 4),
-                                  width: 88,
-                                  height: 88,
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/review_image3.png'),
-                                        fit: BoxFit.fill,
-                                      ),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8))),
-                                ),
-                              ]),
-                            ),
-                          ],
-                        )),
-                    const Divider(
-                      height: 0,
-                    ),
-                    Container(
-                        width: double.infinity,
-                        child: TextButton(
-                            onPressed: () {}, child: Text('ดูทั้งหมด'))),
-                  ],
-                )),
-          ],
-        ),
-      ),
-    );
+                              )
+                            : const SizedBox.shrink(),
+                        const SizedBox(height: 8),
+                      ],
+                    );
+                  }
+                  return const StarRating(rating: -1);
+                },
+              ),
+            ],
+          ),
+        ));
   }
 }

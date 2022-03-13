@@ -56,7 +56,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   File? image;
 
-  initState() {
+  @override
+  void initState() {
+    super.initState();
     name = widget.product.name;
     category = widget.product.category;
     pricePerDay = widget.product.pricePerDay;
@@ -75,7 +77,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   Future pickImage() async {
     try {
-      final image = await ImagePicker.pickImage(source: ImageSource.gallery);
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
       if (image == null) return;
       final imageTemporary = File(image.path);
       setState(() => this.image = imageTemporary);
@@ -120,7 +122,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
               const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       onPressed: () async {
         await products.doc(widget.product.id).delete();
-        Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('ลบสินค้านี้แล้ว'),
         ));

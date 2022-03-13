@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/widgets/widget.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -54,20 +56,59 @@ class ProductCard extends StatelessWidget {
                         textAlign: TextAlign.left,
                       ),
                       //Star
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(children: const [
-                          Icon(Icons.star, color: warningColor, size: 16),
-                          Icon(Icons.star, color: warningColor, size: 16),
-                          Icon(Icons.star, color: warningColor, size: 16),
-                          Icon(Icons.star, color: warningColor, size: 16),
-                          Icon(Icons.star, color: warningColor, size: 16),
-                          Text(
-                            '(12)',
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
-                          )
-                        ]),
-                      ),
+                      StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection("products")
+                              .doc(product.id)
+                              .collection("reviews")
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            // if (!snapshot.hasData) {
+
+                            // }
+                            if (snapshot.hasError) {
+                              return const Text('Something went wrong');
+                            }
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            final data = snapshot.requireData;
+                            if (snapshot.hasData) {
+                              double sum = 0;
+                              data.docs.forEach((m) {
+                                sum = sum + m['rating']!;
+                              });
+                              double avg = sum / data.docs.length;
+                              // var productRating = data.docs
+                              //         .map((m) => m['rating']!)
+                              //         .reduce((a, b) => a + b) /
+                              //     data.docs.length;
+
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Row(
+                                  children: [
+                                    StarRating(rating: avg),
+                                    data.docs.isNotEmpty
+                                        ? Text(
+                                            '(' +
+                                                data.docs.length.toString() +
+                                                ')',
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey),
+                                          )
+                                        : const SizedBox.shrink(),
+                                  ],
+                                ),
+                              );
+                            }
+                            return const StarRating(rating: -1);
+                          }),
                       //Price
                       Expanded(
                         child: Align(
@@ -94,7 +135,7 @@ class ProductCard extends StatelessWidget {
   String displayPrice() {
     if (product.pricePerDay > 0) {
       return '฿' + product.pricePerDay.toString() + '/วัน';
-    } else if (product.pricePerWeek > 0){
+    } else if (product.pricePerWeek > 0) {
       return '฿' + product.pricePerWeek.toString() + '/สัปดาห์';
     } else {
       return '฿' + product.pricePerMonth.toString() + '/เดือน';
