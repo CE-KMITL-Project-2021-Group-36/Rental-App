@@ -45,6 +45,15 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
       initialDateRange: dateRange,
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
+      builder: (context, child) => Theme(
+        child: child!,
+        data: ThemeData().copyWith(
+          colorScheme: const ColorScheme.light(
+            primary: primaryColor,
+            onPrimary: Colors.white,
+          ),
+        ),
+      ),
     );
     if (newDateRange == null) return null;
     setState(() {
