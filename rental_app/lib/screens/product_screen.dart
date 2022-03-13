@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:carousel_nullsafety/carousel_nullsafety.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/widgets/choice_chip.dart';
+import 'package:rental_app/widgets/product_slide_panel.dart';
 import 'package:rental_app/widgets/widget.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -28,6 +30,16 @@ class _ProductScreenState extends State<ProductScreen> {
 
   initState() {
     isOwner = FirebaseAuth.instance.currentUser?.uid == widget.product.owner;
+    //print(_selectedChoice);
+  }
+
+  void _slidePanel() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return ProductSlidePanel(product: widget.product,);
+      },
+    );
   }
 
   @override
@@ -107,7 +119,10 @@ class _ProductScreenState extends State<ProductScreen> {
               Expanded(
                 flex: 3,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    print('open panel');
+                    _slidePanel();
+                  },
                   child: const Text('ส่งคำขอเช่า'),
                   style: ButtonStyle(
                     foregroundColor: MaterialStateProperty.all(Colors.white),
