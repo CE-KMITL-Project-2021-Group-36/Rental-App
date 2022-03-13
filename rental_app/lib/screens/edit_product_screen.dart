@@ -56,7 +56,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   File? image;
 
-  initState() {
+  @override
+  void initState() {
+    super.initState();
     name = widget.product.name;
     category = widget.product.category;
     pricePerDay = widget.product.pricePerDay;
@@ -120,7 +122,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
               const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       onPressed: () async {
         await products.doc(widget.product.id).delete();
-        Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('ลบสินค้านี้แล้ว'),
         ));

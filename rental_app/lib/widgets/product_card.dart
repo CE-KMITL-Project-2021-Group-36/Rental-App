@@ -12,8 +12,6 @@ class ProductCard extends StatelessWidget {
     required this.product,
   }) : super(key: key);
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -65,9 +63,9 @@ class ProductCard extends StatelessWidget {
                               .collection("reviews")
                               .snapshots(),
                           builder: (context, snapshot) {
-                            if(snapshot.requireData.docs.isEmpty){
-                              return const StarRating(rating: -1);
-                            }
+                            // if (!snapshot.hasData) {
+
+                            // }
                             if (snapshot.hasError) {
                               return const Text('Something went wrong');
                             }
@@ -78,23 +76,38 @@ class ProductCard extends StatelessWidget {
                               );
                             }
                             final data = snapshot.requireData;
-                            var productRating = data.docs
-                                    .map((m) => m['rating']!)
-                                    .reduce((a, b) => a + b) /
-                                data.docs.length;
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Row(
-                                children: [
-                                  StarRating(rating: productRating),
-                                  Text(
-                                    '(' + data.docs.length.toString() + ')',
-                                    style: const TextStyle(
-                                        fontSize: 12, color: Colors.grey),
-                                  )
-                                ],
-                              ),
-                            );
+                            if (snapshot.hasData) {
+                              double sum = 0;
+                              data.docs.forEach((m) {
+                                sum = sum + m['rating']!;
+                              });
+                              double avg = sum / data.docs.length;
+                              // var productRating = data.docs
+                              //         .map((m) => m['rating']!)
+                              //         .reduce((a, b) => a + b) /
+                              //     data.docs.length;
+
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Row(
+                                  children: [
+                                    StarRating(rating: avg),
+                                    data.docs.isNotEmpty
+                                        ? Text(
+                                            '(' +
+                                                data.docs.length.toString() +
+                                                ')',
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey),
+                                          )
+                                        : const SizedBox.shrink(),
+                                  ],
+                                ),
+                              );
+                            }
+                            return const StarRating(rating: -1);
                           }),
                       //Price
                       Expanded(

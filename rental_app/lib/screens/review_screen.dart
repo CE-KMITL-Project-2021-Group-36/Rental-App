@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
@@ -23,14 +24,26 @@ class ReviewScreen extends StatefulWidget {
 }
 
 class _ReviewScreenState extends State<ReviewScreen> {
+  CollectionReference products =
+      FirebaseFirestore.instance.collection("products");
+
+  final userId = FirebaseAuth.instance.currentUser?.uid;
+
+  //QuerySnapshot eventsQuery = products.doc(product.id).collection("reviews").where('userId', isEqualTo: 'Yew').isExists();
   @override
   Widget build(BuildContext context) {
-    print(widget.product.id);
     return Scaffold(
-      appBar: AppBar(title: Text('รีวิว')),
+      appBar: AppBar(title: const Text('รีวิว')),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.create),
+        onPressed: () {
+          Navigator.pushNamed(context, '/add_review',
+              arguments: widget.product);
+        },
+      ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection("products")
+        stream: products
             .doc(widget.product.id)
             .collection("reviews")
             .orderBy('dateCreated', descending: true)
@@ -44,55 +57,64 @@ class _ReviewScreenState extends State<ReviewScreen> {
               child: CircularProgressIndicator(),
             );
           }
-          final data = snapshot.requireData;
-          var productRating =
-              data.docs.map((m) => m['rating']!).reduce((a, b) => a + b) /
-                  data.docs.length;
-          return Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                color: Colors.white,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'คะแนนสินค้า',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
+          if (snapshot.hasData) {
+            final data = snapshot.requireData;
+            double sum = 0;
+            data.docs.forEach((m) {
+              sum = sum + m['rating']!;
+            });
+            double avg = sum / data.docs.length;
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    color: Colors.white,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        StarRating(rating: productRating),
-                        Text(
-                          productRating.toString() + '/5',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, color: primaryColor),
+                        const Text(
+                          'คะแนนสินค้า',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        Text(
-                          ' (' + data.docs.length.toString() + ' รีวิว)',
-                          style: const TextStyle(color: Colors.grey),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            StarRating(rating: avg),
+                            Text(
+                              avg.toStringAsFixed(1) + '/5',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: primaryColor),
+                            ),
+                            Text(
+                              ' (' + data.docs.length.toString() + ' รีวิว)',
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                            //data.docs.length
+                          ],
                         ),
-                        //data.docs.length
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: data.docs.length,
+                    itemBuilder: (context, index) {
+                      return ReviewCard(
+                        review: Review.fromSnapshot(data.docs[index]),
+                      );
+                    },
+                  ),
+                ],
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: data.docs.length,
-                itemBuilder: (context, index) {
-                  return ReviewCard(
-                    review: Review.fromSnapshot(data.docs[index]),
-                  );
-                },
-              ),
-            ],
-          );
+            );
+          }
+          return const SizedBox.shrink();
         },
       ),
     );

@@ -8,7 +8,7 @@ class StarRating extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var iconSize = 20.0;
-    var iconColor = warningColor;
+    var iconColor = Colors.orange;
     if (rating == 5) {
       return Row(
         children: [
@@ -100,6 +100,6 @@ class StarRating extends StatelessWidget {
         ],
       );
     }
-    return const Text('');
+    return const SizedBox.shrink();
   }
 }

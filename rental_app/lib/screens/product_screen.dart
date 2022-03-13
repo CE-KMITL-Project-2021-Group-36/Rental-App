@@ -51,6 +51,14 @@ class _ProductScreenState extends State<ProductScreen> {
           backgroundColor: Colors.white,
           elevation: 0,
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.create),
+          onPressed: () {
+            Navigator.pushNamed(context, '/add_review',
+                arguments: widget.product);
+          },
+        ),
         bottomNavigationBar: Container(
           height: 80,
           color: Colors.white,
@@ -197,9 +205,6 @@ class _ProductScreenState extends State<ProductScreen> {
                             .orderBy('dateCreated', descending: true)
                             .snapshots(),
                         builder: (context, snapshot) {
-                          if (snapshot.requireData.docs.isEmpty) {
-                            return const StarRating(rating: -1);
-                          }
                           if (snapshot.hasError) {
                             return const Text('Something went wrong');
                           }
@@ -209,18 +214,42 @@ class _ProductScreenState extends State<ProductScreen> {
                               child: CircularProgressIndicator(),
                             );
                           }
-                          final data = snapshot.requireData;
-                          final productRating = data.docs
-                                  .map((m) => m['rating']!)
-                                  .reduce((a, b) => a + b) /
-                              data.docs.length;
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Row(children: [
-                              StarRating(rating: productRating),
-                              Text(productRating.toString()),
-                            ]),
-                          );
+                          if (snapshot.hasData) {
+                            final data = snapshot.requireData;
+                            double sum = 0;
+                            data.docs.forEach((m) {
+                              sum = sum + m['rating']!;
+                            });
+                            double avg = sum / data.docs.length;
+                            bool isHasReview = sum != 0;
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Row(
+                                children: [
+                                  StarRating(rating: avg),
+                                  isHasReview
+                                      ? Text(
+                                          avg.toStringAsFixed(1),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: primaryColor),
+                                        )
+                                      : const Text(
+                                          'ยังไม่มีรีวิว',
+                                          style: TextStyle(
+                                              //fontWeight: FontWeight.bold,
+                                              color: Colors.grey),
+                                        ),
+                                  // Text(
+                                  //   ' (' + data.docs.length.toString() + ' รีวิว)',
+                                  //   style: const TextStyle(color: Colors.grey),
+                                  // ),
+                                ],
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
                         }),
                     const Text('ราคาเช่า'),
                     const SizedBox(
@@ -405,9 +434,6 @@ class _ProductScreenState extends State<ProductScreen> {
                     .orderBy('dateCreated', descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
-                  if (snapshot.requireData.docs.isEmpty) {
-                    return const StarRating(rating: -1);
-                  }
                   if (snapshot.hasError) {
                     return const Text('Something went wrong');
                   }
@@ -416,82 +442,102 @@ class _ProductScreenState extends State<ProductScreen> {
                       child: CircularProgressIndicator(),
                     );
                   }
-                  final data = snapshot.requireData;
-                  final productRating = data.docs
-                          .map((m) => m['rating']!)
-                          .reduce((a, b) => a + b) /
-                      data.docs.length;
-                  return Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        color: Colors.white,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'คะแนนสินค้า',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                StarRating(rating: productRating),
-                                Text(
-                                  productRating.toString() + '/5',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: primaryColor),
+                  if (snapshot.hasData) {
+                    final data = snapshot.requireData;
+                    double sum = 0;
+                    data.docs.forEach((m) {
+                      sum = sum + m['rating']!;
+                    });
+                    double avg = sum / data.docs.length;
+                    bool isHasReview = sum != 0;
+                    return Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          color: Colors.white,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'คะแนนสินค้า',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                Text(
-                                  ' (' +
-                                      data.docs.length.toString() +
-                                      ' รีวิว)',
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                                //data.docs.length
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: data.docs.length.clamp(0, 3),
-                        itemBuilder: (context, index) {
-                          return ReviewCard(
-                            review: Review.fromSnapshot(data.docs[index]),
-                          );
-                        },
-                      ),
-                      Container(
-                        color: Colors.white,
-                        margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                        width: double.infinity,
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              width: double.infinity,
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    '/review',
-                                    arguments: widget.product,
-                                  );
-                                },
-                                child: const Text('ดูทั้งหมด'),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 4),
+                              isHasReview
+                                  ? Row(
+                                      children: [
+                                        StarRating(rating: avg),
+                                        Text(
+                                          avg.toStringAsFixed(1) + '/5',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: primaryColor),
+                                        ),
+                                        Text(
+                                          ' (' +
+                                              data.docs.length.toString() +
+                                              ' รีวิว)',
+                                          style: const TextStyle(
+                                              color: Colors.grey),
+                                        ),
+                                        //data.docs.length
+                                      ],
+                                    )
+                                  : Row(
+                                      children: const [
+                                        Text(
+                                          'ยังไม่มีรีวิว',
+                                          style: TextStyle(
+                                              //fontWeight: FontWeight.bold,
+                                              color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  );
+                        ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: data.docs.length.clamp(0, 3),
+                          itemBuilder: (context, index) {
+                            return ReviewCard(
+                              review: Review.fromSnapshot(data.docs[index]),
+                            );
+                          },
+                        ),
+                        isHasReview
+                            ? Container(
+                                color: Colors.white,
+                                margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                                width: double.infinity,
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: TextButton(
+                                        onPressed: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            '/review',
+                                            arguments: widget.product,
+                                          );
+                                        },
+                                        child: const Text('ดูทั้งหมด'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                        const SizedBox(height: 8),
+                      ],
+                    );
+                  }
+                  return const StarRating(rating: -1);
                 },
               ),
             ],
