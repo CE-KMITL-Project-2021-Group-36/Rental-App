@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/screens/rent_request_screen.dart';
 import 'package:rental_app/widgets/choice_chip.dart';
 
 class ProductSlidePanel extends StatefulWidget {
@@ -19,6 +20,7 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
   DateTime start = DateTime.now();
   DateTime end = DateTime.now();
   Duration duration = const Duration(days: 0);
+  double price = 0;
 
   @override
   void initState() {
@@ -58,7 +60,6 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
     if (newDateRange == null) return null;
     setState(() {
       dateRange = newDateRange;
-      print(dateRange);
     });
   }
 
@@ -92,8 +93,8 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
           title: const Text('ค่ามัดจำ'),
           content: SingleChildScrollView(
             child: ListBody(
-              children: const <Widget>[
-                Text('นักศึกษาลดเหลือ 1,500 บาท \nบุคคลทั่วไป 2,500 บาท'),
+              children: <Widget>[
+                Text(widget.product.deposit.replaceAll('\\n', '\n')),
               ],
             ),
           ),
@@ -115,6 +116,7 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
     start = dateRange.start;
     end = dateRange.end;
     duration = dateRange.duration;
+    price = _rentalPrice(duration.inDays + 1);
     return Container(
       color: const Color(0xFF737373),
       child: Container(
@@ -284,7 +286,7 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    '฿' + _rentalPrice(duration.inDays + 1).toStringAsFixed(1),
+                    '฿' + price.toStringAsFixed(0),
                     style: const TextStyle(
                         color: primaryColor,
                         fontSize: 28,
@@ -318,7 +320,13 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
                 children: [
                   Expanded(
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RentRequestScreen(product: widget.product, dateRange: dateRange, price: price)),
+                        );
+                      },
                       child: const Text('ส่งคำขอเช่า'),
                       style: TextButton.styleFrom(
                         primary: Colors.white,
