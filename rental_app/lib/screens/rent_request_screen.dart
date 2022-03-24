@@ -41,8 +41,38 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
   final picker = ImagePicker();
 
   chooseImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) => BottomSheet(
+        onClosing: () {},
+        builder: (context) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera),
+              title: const Text('กล้องถ่ายรูป'),
+              onTap: () async {
+                Navigator.of(context).pop();
+                pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo),
+              title: const Text('เลือกจากคลัง'),
+              onTap: () async {
+                Navigator.of(context).pop();
+                pickImage(ImageSource.gallery);
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future pickImage(ImageSource source) async {
+    XFile? pickedFile = await picker.pickImage(source: source);
     setState(() {
       _image.add(File(pickedFile!.path));
     });
@@ -65,7 +95,6 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
 
   Future uploadFile() async {
     int i = 1;
-
     for (var img in _image) {
       setState(() {
         val = i / _image.length;
@@ -195,7 +224,7 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                         )
                       ],
                     ),
-                    const Divider(height: 32),
+                    const Divider(thickness: 0.6, height: 32),
                     const Text(
                       'เงื่อนไขค่ามัดจำ',
                       style: TextStyle(
@@ -217,13 +246,6 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                 'เอกสารแนบเพิ่มเติม',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'บัตรนักศึกษา, บิลค่าน้ำ/ค่าไฟ'.replaceAll('\\n', '\n'),
-                style: TextStyle(
-                  color: Colors.grey[600],
                 ),
               ),
               const SizedBox(height: 16),
