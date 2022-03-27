@@ -14,7 +14,7 @@ const outlineColor = Color(0xffE5E5E5);
 const MaterialColor bluePurple = MaterialColor(
     0xff5343c3,
     <int, Color>{
-      50: Color(0xffa9a1e1),
+      50: Color(0xffdcd7fc),
       100: Color(0xff988edb),
       200: Color(0xff877bd5),
       300: Color(0xff7569cf),
