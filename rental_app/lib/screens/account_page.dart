@@ -59,6 +59,16 @@ class AccountPage extends ConsumerWidget {
                 ),
               ),
             ),
+            TextButton(
+              onPressed: () {Navigator.pushNamed(context, '/contract_management');},
+              child: const Text(
+                'สัญญาเช่า',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
             // Container(
             //   padding: const EdgeInsets.only(top: 48.0),
             //   margin: const EdgeInsets.symmetric(horizontal: 16),

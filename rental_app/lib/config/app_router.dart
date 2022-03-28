@@ -34,6 +34,8 @@ class AppRouter {
         return ReviewScreen.route(product: settings.arguments as Product);
       case AddReviewScreen.routeName:
         return AddReviewScreen.route(product: settings.arguments as Product);
+      case ContractManagementScreen.routeName:
+        return ContractManagementScreen.route();
 
       default:
         return _errorRoute();
