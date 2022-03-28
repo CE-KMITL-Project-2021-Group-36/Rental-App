@@ -50,6 +50,7 @@ ThemeData theme() {
     textTheme: textTheme(),
   );
 }
+
 TextTheme textTheme() {
   return const TextTheme(
     headline1: TextStyle(fontSize: 96),

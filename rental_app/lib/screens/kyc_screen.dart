@@ -13,14 +13,23 @@ class KYC extends StatefulWidget {
 
   @override
   State<KYC> createState() => _KYCState();
+
+  static const String routeName = '/kyc';
+
+  static Route route() {
+    return MaterialPageRoute(
+      settings: const RouteSettings(name: routeName),
+      builder: (_) => const KYC(),
+    );
+  }
 }
 
-enum PhotoType { front, back, selfie }
+enum PhotoType { front, selfie }
 
 class _KYCState extends State<KYC> {
   bool picked = false;
   String? userId, firstName, lastName;
-  XFile? _frontPhoto, _backPhoto, _selfiePhoto;
+  XFile? _frontPhoto, _selfiePhoto;
   final ImagePicker _picker = ImagePicker();
 
   Future _selectPhoto(PhotoType photoType) async {
@@ -59,48 +68,37 @@ class _KYCState extends State<KYC> {
         case PhotoType.front:
           _frontPhoto = photo;
           break;
-        case PhotoType.back:
-          _backPhoto = photo;
-          break;
         case PhotoType.selfie:
           _selfiePhoto = photo;
           break;
       }
-      if (_frontPhoto != null && _backPhoto != null && _selfiePhoto != null) {
+      if (_frontPhoto != null && _selfiePhoto != null) {
         picked = true;
       }
     });
   }
 
-  Future _getUserData() async {
-    userId = FirebaseAuth.instance.currentUser!.uid;
-    DocumentSnapshot snapshot =
-        await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    firstName = snapshot.get('firstName');
-    lastName = snapshot.get('lastName');
-  }
-
   Future _uploadPhotosAndCreateKYC() async {
-    _getUserData();
+    final userId = FirebaseAuth.instance.currentUser!.uid;
     final frontPhotoRef =
         FirebaseStorage.instance.ref().child('kyc/$userId/front');
     final frontUpload = await frontPhotoRef.putFile(File(_frontPhoto!.path));
     String frontURL = await frontUpload.ref.getDownloadURL();
-    final backPhotoRef =
-        FirebaseStorage.instance.ref().child('kyc/$userId/back');
-    final backUpload = await backPhotoRef.putFile(File(_backPhoto!.path));
-    String backURL = await backUpload.ref.getDownloadURL();
     final selfiePhotoRef =
         FirebaseStorage.instance.ref().child('kyc/$userId/selfie');
     final selfieUpload = await selfiePhotoRef.putFile(File(_selfiePhoto!.path));
     String selfieURL = await selfieUpload.ref.getDownloadURL();
 
-    await FirebaseFirestore.instance.collection('kyc').add({
-      'userId': userId,
-      'frontPhoto': frontURL,
-      'backPhoto': backURL,
-      'selfiePhoto': selfieURL,
-    });
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    await users.doc(userId).update(
+      {
+        'kycStatus': 'รอตรวจสอบ',
+        'frontPhoto': frontURL,
+        'selfiePhoto': selfieURL,
+        'kycCreated': DateTime.now(),
+      },
+    );
   }
 
   @override
@@ -141,29 +139,6 @@ class _KYCState extends State<KYC> {
                           const SizedBox(height: 10),
                           Text(
                             'รูปถ่ายหน้าบัตรประชาชน',
-                            style: textTheme().subtitle2,
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            child: _backPhoto == null
-                                ? IconButton(
-                                    onPressed: () =>
-                                        _selectPhoto(PhotoType.back),
-                                    icon: const Icon(Icons.photo_camera),
-                                    iconSize: 50,
-                                  )
-                                : InkWell(
-                                    child: Image.file(File(_backPhoto!.path)),
-                                    onTap: () => _selectPhoto(PhotoType.back),
-                                  ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'รูปถ่ายหลังบัตรประชาชน',
                             style: textTheme().subtitle2,
                           ),
                         ],

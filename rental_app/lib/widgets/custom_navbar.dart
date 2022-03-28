@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
-import 'package:rental_app/screens/account_page.dart';
-import 'package:rental_app/screens/kyc_screen.dart';
+import 'package:rental_app/screens/account_screen.dart';
 import 'package:rental_app/screens/screens.dart';
 
 class CustomNavBar extends StatefulWidget {
@@ -25,7 +24,6 @@ class _CustomNavBarState extends State<CustomNavBar> {
 
   //Test pages
   final pages = [
-    //const KYC(),
     const HomeScreen(),
     const ChatScreen(),
     const Center(child: Text('รถเข็น')),
@@ -38,6 +36,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
     return Scaffold(
       body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: primaryColor,
         backgroundColor: surfaceColor,
         selectedFontSize: 12,
         unselectedFontSize: 12,

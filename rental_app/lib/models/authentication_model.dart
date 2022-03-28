@@ -64,19 +64,25 @@ class Authentication {
     BuildContext context,
   ) async {
     try {
-      await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      await _firestore.collection('users').add({
-        'userId': _auth.currentUser!.uid,
-        'email': email,
-        'idCardNumber': idCardNumber,
-        'firstName': firstName,
-        'lastName': lastName,
-        'phoneNumber': phoneNumber,
-        'verified': false,
-      });
+      await _auth
+          .createUserWithEmailAndPassword(
+            email: email,
+            password: password,
+          )
+          .then((value) => {
+                _firestore.collection('users').doc(value.user!.uid).set({
+                  // 'userId': _auth.currentUser!.uid,
+                  'email': email,
+                  'idCardNumber': idCardNumber,
+                  'firstName': firstName,
+                  'lastName': lastName,
+                  'phoneNumber': phoneNumber,
+                  'kycVerified': false,
+                  'kycStatus': 'ยังไม่ยืนยันตัวตน',
+                  'role': 'User',
+                  'hasShop': false,
+                }),
+              });
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'email-already-in-use':

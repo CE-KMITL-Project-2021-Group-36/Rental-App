@@ -1,14 +1,13 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:rental_app/config/palette.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart';
+import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
 
 class EditProductScreen extends StatefulWidget {
@@ -55,6 +54,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       FirebaseFirestore.instance.collection('products');
 
   File? image;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -77,7 +77,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   Future pickImage() async {
     try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       if (image == null) return;
       final imageTemporary = File(image.path);
       setState(() => this.image = imageTemporary);

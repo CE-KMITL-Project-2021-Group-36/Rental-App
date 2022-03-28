@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/providers/authentication_provider.dart';
-import 'package:rental_app/screens/verify_email_page.dart';
+import 'package:rental_app/screens/verify_email_screen.dart';
 
 class RegisterWithEmailPage extends StatefulWidget {
   const RegisterWithEmailPage({Key? key}) : super(key: key);

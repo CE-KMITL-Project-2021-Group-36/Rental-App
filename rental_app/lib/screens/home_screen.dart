@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
-import 'package:rental_app/screens/add_product_screen.dart';
 import 'package:rental_app/widgets/widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -28,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
         floatingActionButton: FloatingActionButton(
           // isExtended: true,
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
           //backgroundColor: Colors.green,
           onPressed: () {
             Navigator.pushNamed(context, '/add_product');
