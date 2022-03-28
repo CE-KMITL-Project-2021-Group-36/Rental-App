@@ -56,7 +56,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
   File? image;
   final ImagePicker _picker = ImagePicker();
 
-  initState() {
+  @override
+  void initState() {
+    super.initState();
     name = widget.product.name;
     category = widget.product.category;
     pricePerDay = widget.product.pricePerDay;

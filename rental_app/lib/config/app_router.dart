@@ -32,6 +32,10 @@ class AppRouter {
         return EditProductScreen.route(product: settings.arguments as Product);
       case KYC.routeName:
         return KYC.route();
+      case ReviewScreen.routeName:
+        return ReviewScreen.route(product: settings.arguments as Product);
+      case AddReviewScreen.routeName:
+        return AddReviewScreen.route(product: settings.arguments as Product);
 
       default:
         return _errorRoute();
