@@ -37,7 +37,7 @@ dependencies:
   firebase_storage: ^10.2.9
   google_sign_in: ^5.2.4
   flutter_riverpod: ^1.0.3
-  font_awesome_flutter: ^10.0.0
+  font_awesome_flutter: ^10.1.0
   image_picker: ^0.8.4+11
   image_cropper: ^1.5.0
   dropdown_button2: ^1.2.2

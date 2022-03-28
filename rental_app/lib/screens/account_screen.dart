@@ -230,7 +230,7 @@ class AccountPage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(10),
                     child: Container(
                       width: double.infinity,
-                      height: 120,
+                      height: 100,
                       decoration: BoxDecoration(
                           color: primaryLightColor,
                           borderRadius: BorderRadius.circular(10)),
@@ -358,7 +358,12 @@ class AccountPage extends ConsumerWidget {
                                 ),
                               ],
                             ),
-                            const Icon(Icons.chevron_right),
+                            Row(
+                              children: [
+                                Text('ยืนยันตัวตนแล้ว'),
+                                Icon(Icons.chevron_right),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -441,7 +446,7 @@ class AccountPage extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 5,
+                    height: 20,
                   ),
                   InkWell(
                     onTap: () {},
@@ -449,7 +454,10 @@ class AccountPage extends ConsumerWidget {
                       width: double.infinity,
                       height: 45,
                       decoration: BoxDecoration(
-                          color: Colors.redAccent.shade100,
+                          border: Border.all(
+                            color: Colors.redAccent,
+                            width: 2,
+                          ),
                           borderRadius: BorderRadius.circular(10)),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -465,7 +473,9 @@ class AccountPage extends ConsumerWidget {
                             ),
                             Text(
                               'ออกจากระบบ',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
