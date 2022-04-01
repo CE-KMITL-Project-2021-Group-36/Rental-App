@@ -115,7 +115,7 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
     await contractRef.add({
       'productId': widget.product.id,
       'renterId': FirebaseAuth.instance.currentUser?.uid,
-      'retalPrice': widget.price,
+      'rentalPrice': widget.price,
       'deposit': 0,
       'startDate': widget.dateRange.start,
       'endDate': widget.dateRange.end,
