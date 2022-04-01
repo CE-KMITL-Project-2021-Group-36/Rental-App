@@ -9,105 +9,114 @@ import 'package:rental_app/screens/upload_evidence_screen.dart';
 class ContractCard extends StatelessWidget {
   const ContractCard({
     Key? key,
-    //required this.contract,
-    required this.type,
+    required this.contract,
   }) : super(key: key);
-  //final Contract contract;
-  final String type;
+  final Contract contract;
 
   @override
   Widget build(BuildContext context) {
-    DateTime startDate = DateTime.now();
-    DateTime endDate = DateTime.now();
+    DateTime startDate = contract.startDate.toDate();
+    DateTime endDate = contract.endDate.toDate();
     String formattedStartDate = DateFormat('dd-MM-yyyy').format(startDate);
     String formattedEndDate = DateFormat('dd-MM-yyyy').format(endDate);
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: surfaceColor,
-        border: Border.all(
-          color: outlineColor,
-        ),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(8),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: SizedBox.fromSize(
-                  child: Image.network(
-                    'https://www.zoomcamera.net/wp-content/uploads/2020/07/Canon-EOS-R5-Mirrorless-Digital-Camera-with-24-105mm-f4L-Lens-1.jpg',
-                    fit: BoxFit.cover,
-                    height: 100.0,
-                    width: 100.0,
+    return FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance
+            .collection("products")
+            .doc(contract.productId)
+            .get(),
+        builder: (context, snapshot) {
+          final product = snapshot.data;
+          return product != null
+              ? Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: surfaceColor,
+                    border: Border.all(
+                      color: outlineColor,
+                    ),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(8),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(
-                width: 16,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Canon EOS R5 Mirrorless Digital Camera with 24-105mm f4L Lens',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      'เช่าวันที่ $formattedStartDate ถึง $formattedEndDate',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'ค่าเช่าไม่รวมมัดจำ',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: SizedBox.fromSize(
+                              child: Image.network(
+                                product['imageUrl'],
+                                fit: BoxFit.cover,
+                                height: 100.0,
+                                width: 100.0,
+                              ),
+                            ),
                           ),
-                        ),
-                        Text(
-                          '฿' + 300.toStringAsFixed(0),
-                          style: const TextStyle(
-                            fontSize: 24,
-                            color: primaryColor,
-                            fontWeight: FontWeight.bold,
+                          const SizedBox(
+                            width: 16,
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-          const Divider(thickness: 0.6, height: 32),
-          _buildAction(type, context),
-        ],
-      ),
-    );
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product['name'],
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.left,
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                Text(
+                                  'เช่าวันที่ $formattedStartDate ถึง $formattedEndDate',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'ค่าเช่าไม่รวมมัดจำ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      '฿' + contract.rentalPrice.toStringAsFixed(0),
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      const Divider(thickness: 0.6, height: 32),
+                      _buildAction(contract.status, context),
+                    ],
+                  ),
+                )
+              : const Text('Error No Product');
+        });
   }
 
   Widget _buildAction(String type, context) {
