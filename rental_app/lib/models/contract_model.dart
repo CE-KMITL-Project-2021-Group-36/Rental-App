@@ -27,10 +27,10 @@ class Contract {
       renterId: snapshot['renterId'],
       startDate: snapshot['startDate'],
       endDate: snapshot['endDate'],
-      deposit: snapshot['deposit'],
-      rentalPrice: snapshot['rentalPrice'],
+      deposit: snapshot['deposit'].toDouble(),
+      rentalPrice: snapshot['rentalPrice'].toDouble(),
       status: snapshot['status'],
-      imageUrls: snapshot['imageUrls'],
+      imageUrls: List.from(snapshot['imageUrls']),
     );
     return contract;
   }
