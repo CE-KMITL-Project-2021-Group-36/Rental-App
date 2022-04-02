@@ -4,3 +4,4 @@ export 'category_card.dart';
 export 'review_card.dart';
 export 'star_rating.dart';
 export 'set_rating.dart';
+export 'image_view.dart';

@@ -6,12 +6,18 @@ import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/view_contract_screen.dart';
 import 'package:rental_app/screens/upload_evidence_screen.dart';
 
+import 'owner_contract_addition.dart';
+import 'renter_contract_addition.dart';
+
 class ContractCard extends StatelessWidget {
   const ContractCard({
     Key? key,
     required this.contract,
+    required this.userType,
   }) : super(key: key);
+
   final Contract contract;
+  final String userType;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +31,14 @@ class ContractCard extends StatelessWidget {
             .doc(contract.productId)
             .get(),
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Text('Something went wrong');
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
           final product = snapshot.data;
           return product != null
               ? Container(
@@ -96,7 +110,9 @@ class ContractCard extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      '฿' + contract.rentalPrice.toStringAsFixed(0),
+                                      '฿' +
+                                          contract.rentalPrice
+                                              .toStringAsFixed(0),
                                       style: const TextStyle(
                                         fontSize: 24,
                                         color: primaryColor,
@@ -111,210 +127,13 @@ class ContractCard extends StatelessWidget {
                         ],
                       ),
                       const Divider(thickness: 0.6, height: 32),
-                      _buildAction(contract.status, context),
+                      userType == 'renter'
+                          ? renterContractAddition(context, contract, userType)
+                          : ownerContractAddition(context, contract, userType),
                     ],
                   ),
                 )
-              : const Text('Error No Product');
+              : const SizedBox.shrink();
         });
-  }
-
-  Widget _buildAction(String type, context) {
-    switch (type) {
-      case 'รอการอนุมัติ':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'ผู้ให้เช่ากำลังทำการตรวจสอบข้อมูลและเอกสารโปรดรอการแจ้งเตือนจากระบบ',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ),
-            TextButton(
-              child: const Text('ดูคำขอเช่า'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ViewContractScreen()),
-                );
-              },
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            )
-          ],
-        );
-      case 'ที่ต้องชำระ':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'ชำระเงินภายใน 24 ชั่วโมงหากไม่ดำเนินการ สัญญาจะถูกยกเลิกอัตโนมัติ',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ),
-            TextButton(
-              child: const Text('ชำระเงินตอนนี้'),
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            )
-          ],
-        );
-      case 'ที่ต้องได้รับ':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'กรุณากดปุ่มเพื่ออัปโหลดวิดีโอการเปิดกล่องพัสดุและทำการตรวจสอบสินค้าอย่างละเอียดเพื่อเป็นหลักฐาน',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ),
-            TextButton(
-              child: const Text('หลักฐานเปิดกล่องพัสดุ'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const UploadEvidenceScreen()),
-                );
-              },
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            )
-          ],
-        );
-      case 'ที่ต้องส่งคืน':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'กรุณาส่งคืนสินค้าภายใน 12:00 น. 15 ม.ค. 64',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ),
-            TextButton(
-              child: const Text('หลักฐานเปิดกล่องพัสดุ'),
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            )
-          ],
-        );
-      case 'ยืนยันจบสัญญา':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'ข้าพเจ้ายืนยันว่าสินค้าและการเช่าเป็นไปตามสัญญา และไม่มีปัญหา',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ),
-            TextButton(
-              child: const Text('ยืนยันจบสัญญา'),
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            )
-          ],
-        );
-      case 'สำเร็จ':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'โปรดให้คะแนนการเช่าครั้งนี้',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ),
-            TextButton(
-              child: const Text('ให้คะแนน'),
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            )
-          ],
-        );
-      case 'ยกเลิกแล้ว':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'ยกเลิกแล้ว',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ),
-          ],
-        );
-      case 'ข้อพิพาท':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'หากมีข้อสงสัย โปรดติดต่อผู้ดูแลระบบ',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ),
-            TextButton(
-              child: const Text('ดำเนินการต่อ'),
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            )
-          ],
-        );
-
-      default:
-        return const SizedBox.shrink();
-    }
   }
 }

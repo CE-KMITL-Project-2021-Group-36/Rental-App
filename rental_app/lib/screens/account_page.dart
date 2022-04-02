@@ -60,9 +60,19 @@ class AccountPage extends ConsumerWidget {
               ),
             ),
             TextButton(
-              onPressed: () {Navigator.pushNamed(context, '/contract_management');},
+              onPressed: () {Navigator.pushNamed(context, '/contract_management', arguments: 'renter',);},
               child: const Text(
-                'สัญญาเช่า',
+                'สัญญาผู้เช่า',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {Navigator.pushNamed(context, '/contract_management', arguments: 'owner',);},
+              child: const Text(
+                'สัญญาผู้ให้เช่า',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

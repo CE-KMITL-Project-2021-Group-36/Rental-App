@@ -30,8 +30,6 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
       firebase_storage.FirebaseStorage.instance;
   CollectionReference contractRef =
       FirebaseFirestore.instance.collection('contracts');
-  CollectionReference imgRef =
-      FirebaseFirestore.instance.collection('imageURLs');
 
   bool uploading = false;
   double val = 0;
@@ -41,7 +39,6 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
   final picker = ImagePicker();
 
   chooseImage() async {
-    
     await showModalBottomSheet(
       context: context,
       builder: (context) => BottomSheet(
@@ -115,11 +112,13 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
     await contractRef.add({
       'productId': widget.product.id,
       'renterId': FirebaseAuth.instance.currentUser?.uid,
+      'ownerId' : widget.product.owner,
       'rentalPrice': widget.price,
       'deposit': 0,
       'startDate': widget.dateRange.start,
       'endDate': widget.dateRange.end,
-      'status': 'waiting',
+      'renterStatus': 'รอการอนุมัติ',
+      'ownerStatus': 'รอการอนุมัติ',
       'imageUrls': FieldValue.arrayUnion(_imageUrl),
     });
   }

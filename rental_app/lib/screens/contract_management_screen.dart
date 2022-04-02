@@ -4,37 +4,49 @@ import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/widgets/contract_card.dart';
-import 'package:rental_app/widgets/widget.dart';
 
 class ContractManagementScreen extends StatefulWidget {
-  const ContractManagementScreen({Key? key}) : super(key: key);
+  const ContractManagementScreen({Key? key, required this.userType}) : super(key: key);
 
   @override
   State<ContractManagementScreen> createState() =>
       _ContractManagementScreenState();
 
+  final String userType;
+
   static const String routeName = '/contract_management';
 
-  static Route route() {
+  static Route route({required String userType}) {
     return MaterialPageRoute(
       settings: const RouteSettings(name: routeName),
-      builder: (_) => const ContractManagementScreen(),
+      builder: (_) => ContractManagementScreen(userType: userType),
     );
   }
 }
 
 class _ContractManagementScreenState extends State<ContractManagementScreen> {
-  List statusList = [
+  List renterStatusList = [
     'รอการอนุมัติ',
-    'ที่ต้องได้รับ',
     'ที่ต้องชำระ',
-    'กำลังใช้',
+    'ที่ต้องได้รับ',
     'ที่ต้องส่งคืน',
     'ยืนยันจบสัญญา',
     'สำเร็จ',
     'ยกเลิกแล้ว',
     'ข้อพิพาท'
   ];
+  
+  List ownerStatusList = [
+    'รอการอนุมัติ',
+    'รอการชำระ',
+    'ที่ต้องจัดส่ง',
+    'ที่ต้องได้รับ',
+    'ยืนยันจบสัญญา',
+    'สำเร็จ',
+    'ยกเลิกแล้ว',
+    'ข้อพิพาท'
+  ];
+
   CollectionReference contracts =
       FirebaseFirestore.instance.collection("contracts");
 
@@ -50,15 +62,37 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
         itemBuilder: (BuildContext context, int index) {
           return ContractCard(
             contract: Contract.fromSnapshot(data.docs[index]),
+            userType: widget.userType,
           );
         });
   }
 
-  Widget _buildStreamContractList(status) {
+  Widget _buildRenterContract(status) {
     return StreamBuilder<QuerySnapshot>(
         stream: contracts
-            .where('status', isEqualTo: status)
+            .where('renterStatus', isEqualTo: status)
             .where('renterId',
+                isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Text('Somthing went wrong');
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          final data = snapshot.requireData;
+          return _buildContractList(data);
+        });
+  }
+
+    Widget _buildOwnerContract(status) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: contracts
+            .where('ownerStatus', isEqualTo: status)
+            .where('ownerId',
                 isEqualTo: FirebaseAuth.instance.currentUser?.uid)
             .snapshots(),
         builder: (context, snapshot) {
@@ -77,20 +111,20 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: statusList.length,
+    return widget.userType == 'renter' ? 
+    DefaultTabController(
+      length: renterStatusList.length,
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
-            "สัญญาเช่า",
+            "สัญญาของผู้เช่า",
           ),
           bottom: TabBar(
               isScrollable: true,
               labelColor: primaryColor,
               unselectedLabelColor: Colors.grey,
-              //indicatorColor: Colors.white,
               tabs: [
-                for (var status in statusList)
+                for (var status in renterStatusList)
                   Tab(
                     child: Text(status),
                   ),
@@ -98,7 +132,31 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
         ),
         body: TabBarView(
           children: <Widget>[
-            for (var status in statusList) _buildStreamContractList(status),
+            for (var status in renterStatusList) _buildRenterContract(status),
+          ],
+        ),
+      ),
+    ):DefaultTabController(
+      length: ownerStatusList.length,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "สัญญาของผู้ให้เช่า",
+          ),
+          bottom: TabBar(
+              isScrollable: true,
+              labelColor: primaryColor,
+              unselectedLabelColor: Colors.grey,
+              tabs: [
+                for (var status in ownerStatusList)
+                  Tab(
+                    child: Text(status),
+                  ),
+              ]),
+        ),
+        body: TabBarView(
+          children: <Widget>[
+            for (var status in ownerStatusList) _buildOwnerContract(status),
           ],
         ),
       ),
