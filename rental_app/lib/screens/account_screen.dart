@@ -14,13 +14,6 @@ class AccountPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userId = FirebaseAuth.instance.currentUser!.uid;
     CollectionReference users = FirebaseFirestore.instance.collection('users');
-    users.doc(userId).get().then((snapshot) {
-      if (snapshot.exists) {
-        print('Document exists on the database');
-        print(snapshot['firstName']);
-        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-      }
-    });
 
     final _auth = ref.watch(authenticationProvider);
 
@@ -38,6 +31,12 @@ class AccountPage extends ConsumerWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             Map<String, dynamic> data =
                 snapshot.data!.data() as Map<String, dynamic>;
+            final String displayName =
+                    '${data['firstName']} ${data['lastName']}',
+                kycStatus = data['kyc']['status'];
+
+            final String? wallet = data['wallet']?['balance'];
+            final bool kycVerified = data['kyc']['verified'];
             return Scaffold(
               body: SafeArea(
                 child: Column(
@@ -91,8 +90,8 @@ class AccountPage extends ConsumerWidget {
                           top: 80,
                           left: 95,
                           child: Text(
-                            '${data['firstName']} ${data['lastName']}',
-                            style: TextStyle(
+                            displayName,
+                            style: const TextStyle(
                               color: primaryLightColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -104,13 +103,15 @@ class AccountPage extends ConsumerWidget {
                           left: 95,
                           child: TextButton(
                             onPressed: () {},
-                            child: const Text(
-                              'ยืนยันตัวตนแล้ว',
-                              style: TextStyle(fontSize: 12),
+                            child: Text(
+                              kycStatus,
+                              style: const TextStyle(fontSize: 12),
                             ),
                             style: TextButton.styleFrom(
-                              primary: textColor,
-                              backgroundColor: secondaryColor,
+                              primary:
+                                  kycVerified ? textColor : primaryLightColor,
+                              backgroundColor:
+                                  kycVerified ? secondaryColor : errorColor,
                               padding: const EdgeInsets.fromLTRB(
                                   10.0, 3.0, 10.0, 3.0),
                               minimumSize: Size.zero,
@@ -303,12 +304,12 @@ class AccountPage extends ConsumerWidget {
                                       ),
                                     ),
                                   ),
-                                  const Positioned(
+                                  Positioned(
                                     bottom: 10,
                                     right: 10,
                                     child: Text(
-                                      '฿50,000.00',
-                                      style: TextStyle(
+                                      wallet != null ? '฿ $wallet' : '฿ 0',
+                                      style: const TextStyle(
                                         fontSize: 36,
                                         fontWeight: FontWeight.w600,
                                         color: primaryColor,
@@ -397,7 +398,7 @@ class AccountPage extends ConsumerWidget {
                                     ),
                                     Row(
                                       children: [
-                                        Text('ยืนยันตัวตนแล้ว'),
+                                        Text(kycStatus),
                                         Icon(Icons.chevron_right),
                                       ],
                                     ),
@@ -493,6 +494,7 @@ class AccountPage extends ConsumerWidget {
                           ),
                           InkWell(
                             onTap: () {
+                              Navigator.of(context).pushReplacementNamed('/');
                               _auth.signOut();
                             },
                             child: Container(
