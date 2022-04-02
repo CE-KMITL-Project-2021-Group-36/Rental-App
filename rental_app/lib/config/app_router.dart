@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/screens.dart';
+import 'package:rental_app/screens/wallet.dart';
+import 'package:rental_app/screens/wallet_init_passcode_screen.dart';
 import 'package:rental_app/widgets/widget.dart';
 
 class AppRouter {
@@ -36,6 +38,10 @@ class AppRouter {
         return ReviewScreen.route(product: settings.arguments as Product);
       case AddReviewScreen.routeName:
         return AddReviewScreen.route(product: settings.arguments as Product);
+      case Wallet.routeName:
+        return Wallet.route();
+      case WalletInitPasscode.routeName:
+        return WalletInitPasscode.route();
 
       default:
         return _errorRoute();
