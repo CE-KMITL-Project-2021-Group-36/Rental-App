@@ -28,8 +28,7 @@ class _WalletInitPasscodeState extends State<WalletInitPasscode> {
       confirmScreenText = 'ยืนยันรหัสผ่าน\nWallet';
   String displayText = initScreenText;
   final userId = FirebaseAuth.instance.currentUser!.uid;
-  final CollectionReference users =
-      FirebaseFirestore.instance.collection('users');
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   @override
   Widget build(BuildContext context) {

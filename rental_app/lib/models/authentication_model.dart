@@ -77,10 +77,10 @@ class Authentication {
                   'firstName': firstName,
                   'lastName': lastName,
                   'phoneNumber': phoneNumber,
-                  'kycVerified': false,
-                  'kycStatus': 'ยังไม่ยืนยันตัวตน',
+                  'kyc.verified': false,
+                  'kyc.status': 'ยังไม่ยืนยันตัวตน',
                   'role': 'User',
-                  'hasShop': false,
+                  'shop.hasShop': false,
                 }),
               });
     } on FirebaseAuthException catch (e) {

@@ -93,10 +93,10 @@ class _KYCState extends State<KYC> {
 
     await users.doc(userId).update(
       {
-        'kycStatus': 'รอตรวจสอบ',
-        'frontPhoto': frontURL,
-        'selfiePhoto': selfieURL,
-        'kycCreated': DateTime.now(),
+        'kyc.status': 'รอตรวจสอบ',
+        'kyc.frontPhoto': frontURL,
+        'kyc.selfiePhoto': selfieURL,
+        'kyc.created': FieldValue.serverTimestamp(),
       },
     );
   }
