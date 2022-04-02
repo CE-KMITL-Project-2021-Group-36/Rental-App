@@ -113,19 +113,19 @@ class _WalletInitPasscodeState extends State<WalletInitPasscode> {
                 showCursor: true,
                 validator: (s) {
                   if (onConfirmScreen) {
-                    return s == passcode ? null : 'รหัสผ่านไม่ตรงกัน';
+                    if (s == passcode) {
+                      users.doc(userId).update({
+                        "wallet.passcode": passcode,
+                      });
+                      Navigator.pushReplacementNamed(context, '/wallet');
+                      return null;
+                    } else {
+                      return 'รหัสผ่านไม่ตรงกัน';
+                    }
                   }
                   return null;
                 },
                 pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
-                onCompleted: (_) {
-                  if (onConfirmScreen) {
-                    users.doc(userId).update({
-                      "wallet.passcode": passcode,
-                    });
-                    Navigator.pushReplacementNamed(context, '/wallet');
-                  }
-                },
               ),
             ],
           ),

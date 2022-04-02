@@ -21,11 +21,11 @@ class AccountPage extends ConsumerWidget {
         future: users.doc(userId).get(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Text("Something went wrong");
+            return const Text("Something went wrong");
           }
 
           if (snapshot.hasData && !snapshot.data!.exists) {
-            return Text("Document does not exist");
+            return const Text("Document does not exist");
           }
 
           if (snapshot.connectionState == ConnectionState.done) {
@@ -35,7 +35,7 @@ class AccountPage extends ConsumerWidget {
                     '${data['firstName']} ${data['lastName']}',
                 kycStatus = data['kyc']['status'];
 
-            final String? wallet = data['wallet']?['balance'];
+            final double? balance = data['wallet']?['balance'];
             final bool kycVerified = data['kyc']['verified'];
             return Scaffold(
               body: SafeArea(
@@ -308,7 +308,7 @@ class AccountPage extends ConsumerWidget {
                                     bottom: 10,
                                     right: 10,
                                     child: Text(
-                                      wallet != null ? '฿ $wallet' : '฿ 0',
+                                      balance != null ? '฿ $balance' : '฿ 0.00',
                                       style: const TextStyle(
                                         fontSize: 36,
                                         fontWeight: FontWeight.w600,
@@ -399,7 +399,7 @@ class AccountPage extends ConsumerWidget {
                                     Row(
                                       children: [
                                         Text(kycStatus),
-                                        Icon(Icons.chevron_right),
+                                        const Icon(Icons.chevron_right),
                                       ],
                                     ),
                                   ],
@@ -623,7 +623,7 @@ class AccountPage extends ConsumerWidget {
             );
           }
 
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         });
