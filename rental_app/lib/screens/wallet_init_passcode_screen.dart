@@ -120,7 +120,10 @@ class _WalletInitPasscodeState extends State<WalletInitPasscode> {
                       Navigator.pushReplacementNamed(context, '/wallet');
                       return null;
                     } else {
-                      return 'รหัสผ่านไม่ตรงกัน';
+                      Future.delayed(const Duration(milliseconds: 700), () {
+                        pinController.clear();
+                      });
+                      return 'รหัสผ่านไม่ตรงกัน กรุณาลองอีกครั้ง';
                     }
                   }
                   return null;

@@ -36,6 +36,7 @@ class AccountPage extends ConsumerWidget {
                 kycStatus = data['kyc']['status'];
 
             final double? balance = data['wallet']?['balance'];
+            final String? walletPasscode = data['wallet']?['passcode'];
             final bool kycVerified = data['kyc']['verified'];
             return Scaffold(
               body: SafeArea(
@@ -258,7 +259,10 @@ class AccountPage extends ConsumerWidget {
                             height: 20,
                           ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.pushNamed(
+                                  context, '/wallet_input_passcode');
+                            },
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
                               width: double.infinity,
@@ -297,7 +301,7 @@ class AccountPage extends ConsumerWidget {
                                       child: Row(
                                         children: const [
                                           Text(
-                                            'เพิ่มเติม',
+                                            'ดูรายละเอียด',
                                           ),
                                           Icon(Icons.chevron_right)
                                         ],

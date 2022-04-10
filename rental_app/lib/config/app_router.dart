@@ -3,6 +3,7 @@ import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/screens.dart';
 import 'package:rental_app/screens/wallet.dart';
 import 'package:rental_app/screens/wallet_init_passcode_screen.dart';
+import 'package:rental_app/screens/wallet_input_passcode_screen.dart';
 import 'package:rental_app/widgets/widget.dart';
 
 class AppRouter {
@@ -42,6 +43,8 @@ class AppRouter {
         return Wallet.route();
       case WalletInitPasscode.routeName:
         return WalletInitPasscode.route();
+      case WalletInputPasscode.routeName:
+        return WalletInputPasscode.route();
 
       default:
         return _errorRoute();
