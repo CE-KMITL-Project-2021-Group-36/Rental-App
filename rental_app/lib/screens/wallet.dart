@@ -158,30 +158,33 @@ class _WalletState extends State<Wallet> {
                           ),
                           Expanded(
                             flex: 1,
-                            child: Container(
-                              height: 75,
-                              decoration: BoxDecoration(
-                                  color: primaryColor,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Icon(
-                                    Icons.add,
-                                    size: 40,
-                                    color: surfaceColor,
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text(
-                                    'เติมเงิน',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        color: surfaceColor,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                ],
+                            child: InkWell(
+                              onTap: () {},
+                              child: Ink(
+                                height: 75,
+                                decoration: BoxDecoration(
+                                    color: primaryColor,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.add,
+                                      size: 40,
+                                      color: surfaceColor,
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Text(
+                                      'เติมเงิน',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: surfaceColor,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

@@ -36,7 +36,6 @@ class AccountPage extends ConsumerWidget {
                 kycStatus = data['kyc']['status'];
 
             final double? balance = data['wallet']?['balance'];
-            final String? walletPasscode = data['wallet']?['passcode'];
             final bool kycVerified = data['kyc']['verified'];
             return Scaffold(
               body: SafeArea(
@@ -180,76 +179,92 @@ class AccountPage extends ConsumerWidget {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      Column(
-                                        children: const [
-                                          Icon(FontAwesomeIcons
-                                              .clipboardQuestion),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            'รอการอนุมัติ',
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.bold),
-                                          )
-                                        ],
+                                      InkWell(
+                                        onTap: () {},
+                                        child: Column(
+                                          children: const [
+                                            Icon(FontAwesomeIcons
+                                                .clipboardQuestion),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              'รอการอนุมัติ',
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                      Column(
-                                        children: const [
-                                          Icon(FontAwesomeIcons.wallet),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            'ที่ต้องชำระ',
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.bold),
-                                          )
-                                        ],
+                                      InkWell(
+                                        onTap: () {},
+                                        child: Column(
+                                          children: const [
+                                            Icon(FontAwesomeIcons.wallet),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              'ที่ต้องชำระ',
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                      Column(
-                                        children: const [
-                                          Icon(FontAwesomeIcons.truck),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            'ที่ต้องได้รับ',
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.bold),
-                                          )
-                                        ],
+                                      InkWell(
+                                        onTap: () {},
+                                        child: Column(
+                                          children: const [
+                                            Icon(FontAwesomeIcons.truck),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              'ที่ต้องได้รับ',
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                      Column(
-                                        children: const [
-                                          Icon(FontAwesomeIcons.box),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            'ที่ต้องส่งคืน',
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.bold),
-                                          )
-                                        ],
+                                      InkWell(
+                                        onTap: () {},
+                                        child: Column(
+                                          children: const [
+                                            Icon(FontAwesomeIcons.box),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              'ที่ต้องส่งคืน',
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                      Column(
-                                        children: const [
-                                          Icon(FontAwesomeIcons.clipboardCheck),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            'ยืนยันจบสัญญา',
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.bold),
-                                          )
-                                        ],
+                                      InkWell(
+                                        onTap: () {},
+                                        child: Column(
+                                          children: const [
+                                            Icon(FontAwesomeIcons
+                                                .clipboardCheck),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              'ยืนยันจบสัญญา',
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -266,7 +281,7 @@ class AccountPage extends ConsumerWidget {
                                   context, '/wallet_input_passcode');
                             },
                             borderRadius: BorderRadius.circular(10),
-                            child: Container(
+                            child: Ink(
                               width: double.infinity,
                               height: 100,
                               decoration: BoxDecoration(
@@ -332,7 +347,7 @@ class AccountPage extends ConsumerWidget {
                           InkWell(
                             onTap: () {},
                             borderRadius: BorderRadius.circular(10),
-                            child: Container(
+                            child: Ink(
                               width: double.infinity,
                               height: 45,
                               decoration: BoxDecoration(
@@ -375,7 +390,7 @@ class AccountPage extends ConsumerWidget {
                               Navigator.pushNamed(context, '/kyc');
                             },
                             borderRadius: BorderRadius.circular(10),
-                            child: Container(
+                            child: Ink(
                               width: double.infinity,
                               height: 45,
                               decoration: BoxDecoration(
@@ -421,7 +436,7 @@ class AccountPage extends ConsumerWidget {
                           InkWell(
                             onTap: () {},
                             borderRadius: BorderRadius.circular(10),
-                            child: Container(
+                            child: Ink(
                               width: double.infinity,
                               height: 45,
                               decoration: BoxDecoration(
@@ -462,7 +477,7 @@ class AccountPage extends ConsumerWidget {
                           InkWell(
                             onTap: () {},
                             borderRadius: BorderRadius.circular(10),
-                            child: Container(
+                            child: Ink(
                               width: double.infinity,
                               height: 45,
                               decoration: BoxDecoration(
@@ -505,7 +520,7 @@ class AccountPage extends ConsumerWidget {
                               Navigator.of(context).pushReplacementNamed('/');
                               _auth.signOut();
                             },
-                            child: Container(
+                            child: Ink(
                               width: double.infinity,
                               height: 45,
                               decoration: BoxDecoration(
@@ -543,90 +558,6 @@ class AccountPage extends ConsumerWidget {
                     ),
                   ],
                 ),
-                // child: ListView(
-                //   padding: const EdgeInsets.all(20),
-                //   children: [
-                //     SizedBox(
-                //       height: 200,
-                //       child: Image.network(
-                //         data.currentUser!.photoURL ??
-                //             'https://cdn-icons-png.flaticon.com/512/147/147144.png',
-                //       ),
-                //     ),
-                //     SizedBox(
-                //       height: 50,
-                //       child: Text(data.currentUser!.email ?? 'เข้าสู่ระบบแล้ว'),
-                //     ),
-                //     SizedBox(
-                //       height: 50,
-                //       child: Text(data.currentUser!.displayName ?? 'ชื่อ นามสกุล'),
-                //     ),
-                //
-                //     TextButton(
-                //       onPressed: () {
-                //         // Navigator.of(context).pop();
-                //         Navigator.of(context).pushReplacementNamed('/');
-                //         _auth.signOut();
-                //       },
-                //       child: const Text(
-                //         'ออกจากระบบ',
-                //         style: TextStyle(
-                //           fontSize: 18,
-                //           fontWeight: FontWeight.bold,
-                //         ),
-                //       ),
-                //       style: TextButton.styleFrom(
-                //         primary: Colors.white,
-                //         backgroundColor: primaryColor,
-                //         padding: const EdgeInsets.symmetric(vertical: 15),
-                //       ),
-                //     ),
-                //     TextButton(
-                //       onPressed: () {
-                //         Navigator.pushNamed(context, '/user_store');
-                //       },
-                //       child: const Text(
-                //         'ร้านของคุณ',
-                //         style: TextStyle(
-                //           fontSize: 18,
-                //           fontWeight: FontWeight.bold,
-                //         ),
-                //       ),
-                //     ),
-                //     TextButton(
-                //       onPressed: () {
-                //         Navigator.pushNamed(context, '/kyc');
-                //       },
-                //       child: const Text(
-                //         'ยืนยันตัวตน KYC',
-                //         style: TextStyle(
-                //           fontSize: 18,
-                //           fontWeight: FontWeight.bold,
-                //         ),
-                //       ),
-                //     ),
-                //     // Container(
-                //     //   padding: const EdgeInsets.only(top: 48.0),
-                //     //   margin: const EdgeInsets.symmetric(horizontal: 16),
-                //     //   width: double.infinity,
-                //     //   child: MaterialButton(
-                //     //     onPressed: () => _auth.signOut(),
-                //     //     child: const Text(
-                //     //       'Log Out',
-                //     //       style: TextStyle(fontWeight: FontWeight.w600),
-                //     //     ),
-                //     //     textColor: Colors.blue.shade700,
-                //     //     textTheme: ButtonTextTheme.primary,
-                //     //     minWidth: 100,
-                //     //     padding: const EdgeInsets.all(18),
-                //     //     shape: RoundedRectangleBorder(
-                //     //       borderRadius: BorderRadius.circular(25),
-                //     //       side: BorderSide(color: Colors.blue.shade700),
-                //     //     ),
-                //     //   ),
-                //     // ),
-                //   ],
-                // ),
               ),
             );
           }
