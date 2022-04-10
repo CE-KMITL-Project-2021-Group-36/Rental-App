@@ -181,8 +181,14 @@ class _KYCState extends State<KYC> {
                   children: [
                     Expanded(
                       child: TextButton(
-                        onPressed:
-                            picked ? () => _uploadPhotosAndCreateKYC() : null,
+                        onPressed: picked
+                            ? () {
+                                _uploadPhotosAndCreateKYC();
+                                // show success pop-up dialog
+                                // then press 'รับทราบ' and navigate to home screen
+                                Navigator.of(context).pushReplacementNamed('/');
+                              }
+                            : null,
                         child: Text(
                           'ดำเนินการต่อ',
                           style: textTheme().button,
@@ -200,7 +206,7 @@ class _KYCState extends State<KYC> {
                 const SizedBox(height: 10),
                 TextButton(
                   onPressed: () {
-                    debugPrint(_frontPhoto!.path.toString());
+                    Navigator.of(context).pushReplacementNamed('/');
                   },
                   child: Text(
                     'ดำเนินการภายหลัง',
