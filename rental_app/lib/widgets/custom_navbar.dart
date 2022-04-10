@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/screens/account_screen.dart';
 import 'package:rental_app/screens/screens.dart';
-import 'package:rental_app/screens/wallet_input_passcode_screen.dart';
 
 class CustomNavBar extends StatefulWidget {
   const CustomNavBar({Key? key}) : super(key: key);
@@ -25,8 +24,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
 
   //Test pages
   final pages = [
-    const WalletInputPasscode(),
-    // const HomeScreen(),
+    const HomeScreen(),
     const ChatScreen(),
     const Center(child: Text('รถเข็น')),
     const NotificationScreen(),

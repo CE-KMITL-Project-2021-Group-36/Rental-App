@@ -21,11 +21,11 @@ class AccountPage extends ConsumerWidget {
         future: users.doc(userId).get(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Text("Something went wrong");
+            return const Text("ข้อมูลผิดพลาด");
           }
 
           if (snapshot.hasData && !snapshot.data!.exists) {
-            return const Text("Document does not exist");
+            return const Text("ไม่พบข้อมูล");
           }
 
           if (snapshot.connectionState == ConnectionState.done) {
@@ -51,7 +51,9 @@ class AccountPage extends ConsumerWidget {
                         Positioned(
                           top: 20,
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/user_store');
+                            },
                             child: Row(
                               children: [
                                 Text(
@@ -369,7 +371,9 @@ class AccountPage extends ConsumerWidget {
                             height: 5,
                           ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.pushNamed(context, '/kyc');
+                            },
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
                               width: double.infinity,

@@ -85,6 +85,9 @@ class Authentication {
                   'shop': {
                     'hasShop': false,
                   },
+                  'wallet': {
+                    'balance': 0.00,
+                  }
                 }),
               });
     } on FirebaseAuthException catch (e) {
