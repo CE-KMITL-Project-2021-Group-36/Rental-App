@@ -33,10 +33,12 @@ class _WalletState extends State<Wallet> {
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: BackButton(),
         ),
+        centerTitle: false,
+        title: const Text('Wallet'),
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: FutureBuilder<DocumentSnapshot>(
               future: users.doc(userId).get(),
               builder: (context, snapshot) {
@@ -94,27 +96,6 @@ class _WalletState extends State<Wallet> {
                                 ),
                               ),
                             ),
-                            Positioned(
-                              child: Row(
-                                children: const [
-                                  Icon(
-                                    FontAwesomeIcons.wallet,
-                                    size: 20,
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    'ยอดเงินคงเหลือ',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                              top: 10,
-                              left: 10,
-                            ),
                           ],
                         ),
                       ),
@@ -159,7 +140,9 @@ class _WalletState extends State<Wallet> {
                           Expanded(
                             flex: 1,
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pushNamed(context, '/wallet_top_up');
+                              },
                               child: Ink(
                                 height: 75,
                                 decoration: BoxDecoration(

@@ -33,16 +33,17 @@ dependencies:
   carousel_nullsafety: ^0.1.1
   firebase_core: ^1.14.0
   cloud_firestore: ^3.1.11
-  firebase_auth: ^3.3.12
-  firebase_storage: ^10.2.10
+  firebase_auth: ^3.3.13
+  firebase_storage: ^10.2.11
   google_sign_in: ^5.2.4
   flutter_riverpod: ^1.0.3
   font_awesome_flutter: ^10.1.0
-  image_picker: ^0.8.4+11
+  image_picker: ^0.8.5
   image_cropper: ^1.5.1
-  dropdown_button2: ^1.2.3
+  dropdown_button2: ^1.4.0
   intl: ^0.17.0
-  pinput: ^2.2.5
+  pinput: ^2.2.7
+  keyboard_dismisser: ^2.0.1
 
 dev_dependencies:
   flutter_test:

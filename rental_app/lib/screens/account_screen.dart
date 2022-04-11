@@ -313,16 +313,13 @@ class AccountPage extends ConsumerWidget {
                                   Positioned(
                                     top: 10,
                                     right: 10,
-                                    child: InkWell(
-                                      onTap: () {},
-                                      child: Row(
-                                        children: const [
-                                          Text(
-                                            'ดูรายละเอียด',
-                                          ),
-                                          Icon(Icons.chevron_right)
-                                        ],
-                                      ),
+                                    child: Row(
+                                      children: const [
+                                        Text(
+                                          'ดูรายละเอียด',
+                                        ),
+                                        Icon(Icons.chevron_right)
+                                      ],
                                     ),
                                   ),
                                   Positioned(
