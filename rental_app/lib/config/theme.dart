@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:rental_app/config/palette.dart';
+
+String currencyFormat(double n) {
+  final formatter = NumberFormat("#,###.##");
+  //n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 2);
+  return formatter.format(n);
+}
 
 ThemeData theme() {
   return ThemeData(
@@ -50,6 +57,7 @@ ThemeData theme() {
     textTheme: textTheme(),
   );
 }
+
 TextTheme textTheme() {
   return const TextTheme(
     headline1: TextStyle(fontSize: 96),
