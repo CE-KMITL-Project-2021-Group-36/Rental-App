@@ -1,209 +1,297 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/upload_evidence_screen.dart';
 import 'package:rental_app/screens/view_contract_screen.dart';
+import 'package:rental_app/screens/view_dispute_screen.dart';
 
-renterContractAddition(context, Contract contract, userType){
+renterContractAddition(context, Contract contract, Product product, userType) {
   String type = contract.renterStatus;
   switch (type) {
-      case 'รอการอนุมัติ':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'ผู้ให้เช่ากำลังทำการตรวจสอบข้อมูลและเอกสารโปรดรอการแจ้งเตือนจากระบบ',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+    case 'รอการอนุมัติ':
+      return Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'ค่าเช่าไม่รวมมัดจำ',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            TextButton(
-              child: const Text('ดูคำขอเช่า'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ViewContractScreen(
-                      contract: contract,
-                      userType: userType,
+              Text(
+                '฿' + currencyFormat(contract.rentalPrice),
+                style: const TextStyle(
+                  fontSize: 24,
+                  color: primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 16,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'ผู้ให้เช่ากำลังทำการตรวจสอบข้อมูลและเอกสารโปรดรอการแจ้งเตือนจากระบบ',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+              ),
+              TextButton(
+                child: const Text('ดูคำขอเช่า', style: TextStyle(fontSize: 14)),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ViewContractScreen(
+                        contract: contract,
+                        userType: userType,
+                      ),
                     ),
+                  );
+                },
+                style: TextButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  primary: Colors.white,
+                  backgroundColor: primaryColor,
+                ),
+              )
+            ],
+          ),
+        ],
+      );
+    case 'ที่ต้องชำระ':
+      return Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('ค่าเช่า'),
+              Text('฿' + currencyFormat(contract.rentalPrice))
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('ค่ามัดจำ'),
+              Text(
+                '฿' + currencyFormat(contract.deposit),
+              )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'ยอดรวมทั้งหมด',
+                style: TextStyle(
+                  color: primaryColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                '฿' + currencyFormat(contract.rentalPrice + contract.deposit),
+                style: const TextStyle(
+                  color: primaryColor,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'ชำระเงินภายใน 24 ชั่วโมงหากไม่ดำเนินการ สัญญาจะถูกยกเลิกอัตโนมัติ',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+              ),
+              TextButton(
+                child: const Text('ชำระเงินตอนนี้'),
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  primary: Colors.white,
+                  backgroundColor: primaryColor,
+                  textStyle: const TextStyle(
+                    fontSize: 14,
                   ),
-                );
-              },
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
                 ),
-              ),
-            )
-          ],
-        );
-      case 'ที่ต้องชำระ':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'ชำระเงินภายใน 24 ชั่วโมงหากไม่ดำเนินการ สัญญาจะถูกยกเลิกอัตโนมัติ',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              )
+            ],
+          ),
+        ],
+      );
+    case 'ที่ต้องได้รับ':
+      return Row(
+        children: [
+          Expanded(
+            child: Text(
+              'อัปโหลดวิดีโอการเปิดกล่องพัสดุและทำการตรวจสอบสินค้าเพื่อเป็นหลักฐาน',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+          ),
+          TextButton(
+            child: const Text('ดูสัญญาเช่า'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UploadEvidenceScreen(
+                          contract: contract,
+                        )),
+              );
+            },
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              primary: Colors.white,
+              backgroundColor: primaryColor,
+              textStyle: const TextStyle(
+                fontSize: 14,
               ),
             ),
-            TextButton(
-              child: const Text('ชำระเงินตอนนี้'),
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            )
-          ],
-        );
-      case 'ที่ต้องได้รับ':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'กรุณากดปุ่มเพื่ออัปโหลดวิดีโอการเปิดกล่องพัสดุและทำการตรวจสอบสินค้าอย่างละเอียดเพื่อเป็นหลักฐาน',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+          )
+        ],
+      );
+    case 'ที่ต้องส่งคืน':
+      return Row(
+        children: [
+          Expanded(
+            child: Text(
+              'กรุณาส่งคืนสินค้าภายใน 12:00 น. 15 ม.ค. 64',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+          ),
+          TextButton(
+            child: const Text('ดูสัญญาเช่า'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UploadEvidenceScreen(
+                          contract: contract,
+                        )),
+              );
+            },
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              primary: Colors.white,
+              backgroundColor: primaryColor,
+              textStyle: const TextStyle(
+                fontSize: 14,
               ),
             ),
-            TextButton(
-              child: const Text('หลักฐานเปิดกล่องพัสดุ'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => UploadEvidenceScreen(contract: contract,)),
-                );
-              },
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            )
-          ],
-        );
-      case 'ที่ต้องส่งคืน':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'กรุณาส่งคืนสินค้าภายใน 12:00 น. 15 ม.ค. 64',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+          )
+        ],
+      );
+    case 'ยืนยันจบสัญญา':
+      return Row(
+        children: [
+          Expanded(
+            child: Text(
+              'ข้าพเจ้ายืนยันว่าสินค้าและการเช่าเป็นไปตามสัญญา และไม่มีปัญหา',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+          ),
+          TextButton(
+            child: const Text('ยืนยันจบสัญญา'),
+            onPressed: () {},
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              primary: Colors.white,
+              backgroundColor: primaryColor,
+              textStyle: const TextStyle(
+                fontSize: 14,
               ),
             ),
-            TextButton(
-              child: const Text('หลักฐานเปิดกล่องพัสดุ'),
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            )
-          ],
-        );
-      case 'ยืนยันจบสัญญา':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'ข้าพเจ้ายืนยันว่าสินค้าและการเช่าเป็นไปตามสัญญา และไม่มีปัญหา',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+          )
+        ],
+      );
+    case 'สำเร็จ':
+      return Row(
+        children: [
+          Expanded(
+            child: Text(
+              'โปรดให้คะแนนการเช่าครั้งนี้',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+          ),
+          TextButton(
+            child: const Text('ให้คะแนน'),
+            onPressed: () {
+              Navigator.pushNamed(context, '/add_review', arguments: product);
+            },
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              primary: Colors.white,
+              backgroundColor: primaryColor,
+              textStyle: const TextStyle(
+                fontSize: 14,
               ),
             ),
-            TextButton(
-              child: const Text('ยืนยันจบสัญญา'),
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
+          )
+        ],
+      );
+    case 'ยกเลิกแล้ว':
+      return Row(
+        children: [
+          Expanded(
+            child: Text(
+              'ยกเลิกแล้ว',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+          ),
+        ],
+      );
+    case 'ข้อพิพาท':
+      return Row(
+        children: [
+          Expanded(
+            child: Text(
+              'หากมีข้อสงสัย โปรดติดต่อผู้ดูแลระบบ',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+          ),
+          TextButton(
+            child: const Text('ดูข้อพิพาท'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ViewDisputeScreen(
+                    contract: contract,
+                  ),
                 ),
-              ),
-            )
-          ],
-        );
-      case 'สำเร็จ':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'โปรดให้คะแนนการเช่าครั้งนี้',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              );
+            },
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              primary: Colors.white,
+              backgroundColor: primaryColor,
+              textStyle: const TextStyle(
+                fontSize: 14,
               ),
             ),
-            TextButton(
-              child: const Text('ให้คะแนน'),
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            )
-          ],
-        );
-      case 'ยกเลิกแล้ว':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'ยกเลิกแล้ว',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ),
-          ],
-        );
-      case 'ข้อพิพาท':
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                'หากมีข้อสงสัย โปรดติดต่อผู้ดูแลระบบ',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ),
-            TextButton(
-              child: const Text('ดำเนินการต่อ'),
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                primary: Colors.white,
-                backgroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            )
-          ],
-        );
+          )
+        ],
+      );
 
-      default:
-        return const SizedBox.shrink();
-    }
+    default:
+      return const SizedBox.shrink();
+  }
 }
+
+class Firestore {}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/rent_request_screen.dart';
 import 'package:rental_app/widgets/choice_chip.dart';
@@ -172,8 +173,7 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
                       widget.product.pricePerDay != 0
                           ? Text(
                               '฿' +
-                                  widget.product.pricePerDay
-                                      .toStringAsFixed(2) +
+                                  currencyFormat(widget.product.pricePerDay) +
                                   ' /วัน',
                               style: const TextStyle(
                                   color: primaryColor, fontSize: 16),
@@ -182,8 +182,7 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
                       widget.product.pricePerWeek != 0
                           ? Text(
                               '฿' +
-                                  widget.product.pricePerWeek
-                                      .toStringAsFixed(2) +
+                                  currencyFormat(widget.product.pricePerWeek) +
                                   ' /สัปดาห์',
                               style: const TextStyle(
                                   color: primaryColor, fontSize: 16),
@@ -192,8 +191,7 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
                       widget.product.pricePerMonth != 0
                           ? Text(
                               '฿' +
-                                  widget.product.pricePerMonth
-                                      .toStringAsFixed(2) +
+                                  currencyFormat(widget.product.pricePerMonth) +
                                   ' /เดือน',
                               style: const TextStyle(
                                   color: primaryColor, fontSize: 16),
@@ -286,7 +284,7 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    '฿' + price.toStringAsFixed(0),
+                    '฿' + currencyFormat(price),
                     style: const TextStyle(
                         color: primaryColor,
                         fontSize: 28,

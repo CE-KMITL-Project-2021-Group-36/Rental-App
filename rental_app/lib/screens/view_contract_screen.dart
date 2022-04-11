@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/widgets/widget.dart';
 
@@ -17,6 +18,8 @@ class ViewContractScreen extends StatefulWidget {
 }
 
 class _ViewContractScreenState extends State<ViewContractScreen> {
+  CollectionReference contracts =
+      FirebaseFirestore.instance.collection("contracts");
   @override
   Widget build(BuildContext context) {
     DateTime startDate = widget.contract.startDate.toDate();
@@ -26,16 +29,77 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
 
     double inputDeposit = 0;
 
+    showAlertDialog(BuildContext context) {
+      // set up the buttons
+      Widget cancelButton = TextButton(
+        child: const Text(
+          "ไม่ยกเลิก",
+          style: TextStyle(
+            decoration: TextDecoration.underline,
+          ),
+        ),
+        style: TextButton.styleFrom(
+          //primary: errorColor,
+          textStyle: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      );
+      Widget continueButton = TextButton(
+        child: const Text("ยกเลิกคำขอเช่า"),
+        style: TextButton.styleFrom(
+          primary: Colors.white,
+          backgroundColor: primaryColor,
+          textStyle: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+        onPressed: () async {
+          final ref = contracts.doc(widget.contract.id);
+          await ref.update({
+            'renterStatus': 'ยกเลิกแล้ว',
+            'ownerStatus': 'ยกเลิกแล้ว',
+          });
+          int count = 0;
+          Navigator.of(context).popUntil((_) => count++ >= 2);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('ยกเลิกคำขอเช่าแล้ว'),
+          ));
+        },
+      );
+
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+        title: const Text("คุณต้องการยกเลิกคำขอเช่านี้?"),
+        //content: const Text("คุณต้องการยกเลิกคำขอเช่านี้"),
+        actions: [
+          cancelButton,
+          continueButton,
+        ],
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('คำขอเช่า'),
       ),
       backgroundColor: Colors.white,
-      body: FutureBuilder<DocumentSnapshot>(
-          future: FirebaseFirestore.instance
+      body: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
               .collection("products")
               .doc(widget.contract.productId)
-              .get(),
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return const Text('Something went wrong');
@@ -173,8 +237,7 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                               ),
                                               Text(
                                                 '฿' +
-                                                    widget.contract.rentalPrice
-                                                        .toStringAsFixed(0),
+                                                    currencyFormat(widget.contract.rentalPrice),
                                                 style: const TextStyle(
                                                   fontSize: 24,
                                                   color: primaryColor,
@@ -280,11 +343,12 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                       children: [
                                         Expanded(
                                           child: TextButton(
-                                            onPressed: () async {},
+                                            onPressed: () {
+                                              showAlertDialog(context);
+                                            },
                                             child: const Text('ยกเลิกคำขอเช่า'),
                                             style: TextButton.styleFrom(
                                               primary: primaryColor,
-                                              //backgroundColor: primaryColor,
                                               padding:
                                                   const EdgeInsets.symmetric(
                                                       vertical: 12),
@@ -337,125 +401,136 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                   ],
                                 )
                               : Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Divider(thickness: 0.6, height: 32),
-                                      const Text(
-                                        'ระบุค่าเช่า',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Divider(thickness: 0.6, height: 32),
+                                    const Text(
+                                      'ระบุค่าเช่า',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      const SizedBox(height: 8),
-                                      TextFormField(
-                                        onChanged: (text) {
-                                          if (text.isNotEmpty) {
-                                            inputDeposit = double.parse(text);
-                                            //setState((){});
-                                          }
-                                        },
-                                        decoration: const InputDecoration(
-                                          hintText: 'ใส่จำนวนค่ามัดจำ',
-                                          suffix: Text('บาท'),
-                                          alignLabelWithHint: true,
-                                        ),
-                                        keyboardType: TextInputType.number,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    TextFormField(
+                                      onChanged: (text) {
+                                        if (text.isNotEmpty) {
+                                          inputDeposit = double.parse(text);
+                                          //setState(() {});
+                                        }
+                                      },
+                                      decoration: const InputDecoration(
+                                        hintText: 'ใส่จำนวนค่ามัดจำ',
+                                        suffix: Text('บาท'),
+                                        alignLabelWithHint: true,
                                       ),
-                                      const SizedBox(height: 16),
-                                      const Text(
-                                        'จัดการคำขอเช่า',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    const Text(
+                                      'จัดการคำขอเช่า',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text('ค่าเช่า'),
-                                          Text('฿' +
-                                              widget.contract.rentalPrice
-                                                  .toString())
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text('ค่ามัดจำ'),
-                                          Text(
-                                            '฿' + inputDeposit.toString(),
-                                          )
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text(
-                                            'ยอดรวมทั้งหมด',
-                                            style: TextStyle(
-                                              color: primaryColor,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text('ค่าเช่า'),
+                                        Text('฿' +
+                                            currencyFormat(widget.contract.rentalPrice)
+                                                )
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text('ค่ามัดจำ'),
+                                        Text(
+                                          '฿' + currencyFormat(inputDeposit),
+                                        )
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          'ยอดรวมทั้งหมด',
+                                          style: TextStyle(
+                                            color: primaryColor,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                          Text(
-                                            '฿' +
-                                                (widget.contract.rentalPrice +
-                                                        inputDeposit)
-                                                    .toString(),
-                                            style: const TextStyle(
-                                              color: primaryColor,
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Row(children: <Widget>[
-                                        TextButton(
-                                          onPressed: () {},
-                                          child: const SizedBox(
-                                            width: 140,
-                                            child: Center(child: Text("ปฎิเสธ")),
+                                        ),
+                                        Text(
+                                          '฿' +
+                                              currencyFormat(widget.contract.rentalPrice +
+                                                      inputDeposit),
+                                          style: const TextStyle(
+                                            color: primaryColor,
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
                                           ),
+                                        )
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Row(children: <Widget>[
+                                      TextButton(
+                                        onPressed: () {},
+                                        child: const SizedBox(
+                                          width: 140,
+                                          child: Center(child: Text("ปฎิเสธ")),
+                                        ),
+                                        style: TextButton.styleFrom(
+                                          primary: primaryColor,
+                                          //backgroundColor: primaryColor,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            side: const BorderSide(
+                                                color: primaryColor, width: 1),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: TextButton(
+                                          onPressed: () {
+                                            contracts
+                                                .doc(widget.contract.id)
+                                                .update({
+                                                  'renterStatus': 'ที่ต้องชำระ',
+                                                  'ownerStatus': 'รอการชำระ',
+                                                  'deposit': inputDeposit,
+                                                })
+                                                .then((value) =>
+                                                    print('Contract Update'))
+                                                .catchError((error) => print(
+                                                    'Failed to update contract: $error'));
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text("อนุมัติ"),
                                           style: TextButton.styleFrom(
-                                            primary: primaryColor,
-                                            //backgroundColor: primaryColor,
+                                            primary: Colors.white,
+                                            backgroundColor: primaryColor,
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 12),
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(8.0),
-                                              side: const BorderSide(
-                                                  color: primaryColor, width: 1),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: TextButton(
-                                            onPressed: () {},
-                                            child: const Text("อนุมัติ"),
-                                            style: TextButton.styleFrom(
-                                              primary: Colors.white,
-                                              backgroundColor: primaryColor,
-                                              padding: const EdgeInsets.symmetric(
-                                                  vertical: 12),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ])
-                                    ],
-                                  
-                              ),
+                                      ),
+                                    ])
+                                  ],
+                                ),
                           const SizedBox(
                             height: 8,
                           ),

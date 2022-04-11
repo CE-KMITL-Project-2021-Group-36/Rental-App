@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/upload_evidence_screen.dart';
 import 'package:rental_app/screens/view_contract_screen.dart';
 
-ownerContractAddition(context, Contract contract, userType) {
+ownerContractAddition(context, Contract contract, product, userType) {
   switch (contract.ownerStatus) {
     case 'รอการอนุมัติ':
       return Row(
@@ -40,26 +41,57 @@ ownerContractAddition(context, Contract contract, userType) {
         ],
       );
     case 'รอการชำระ':
-      return Row(
+      return Column(
         children: [
-          Expanded(
-            child: Text(
-              'ชำระเงินภายใน 24 ชั่วโมงหากไม่ดำเนินการ สัญญาจะถูกยกเลิกอัตโนมัติ',
-              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('ค่าเช่า'),
+              Text('฿' + currencyFormat(contract.rentalPrice))
+            ],
           ),
-          TextButton(
-            child: const Text('ชำระเงินตอนนี้'),
-            onPressed: () {},
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              primary: Colors.white,
-              backgroundColor: primaryColor,
-              textStyle: const TextStyle(
-                fontSize: 14,
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('ค่ามัดจำ'),
+              Text(
+                '฿' + currencyFormat(contract.deposit),
+              )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'ยอดรวมทั้งหมด',
+                style: TextStyle(
+                  color: primaryColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          )
+              Text(
+                '฿' + currencyFormat(contract.rentalPrice + contract.deposit),
+                style: const TextStyle(
+                  color: primaryColor,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'รอผู้เช่าชำระเงินภายใน 24 ชั่วโมงหากไม่ดำเนินการ สัญญาจะถูกยกเลิกอัตโนมัติ',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+              ),
+            ],
+          ),
         ],
       );
     case 'ที่ต้องจัดส่ง':

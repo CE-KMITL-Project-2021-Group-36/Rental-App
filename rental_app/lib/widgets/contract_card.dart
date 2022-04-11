@@ -19,17 +19,20 @@ class ContractCard extends StatelessWidget {
   final Contract contract;
   final String userType;
 
+  
+
   @override
   Widget build(BuildContext context) {
     DateTime startDate = contract.startDate.toDate();
     DateTime endDate = contract.endDate.toDate();
     String formattedStartDate = DateFormat('dd-MM-yyyy').format(startDate);
     String formattedEndDate = DateFormat('dd-MM-yyyy').format(endDate);
-    return FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance
+    final duration = endDate.difference(startDate).inDays + 1;
+    return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
             .collection("products")
             .doc(contract.productId)
-            .get(),
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text('Something went wrong');
@@ -98,28 +101,11 @@ class ContractCard extends StatelessWidget {
                                 const SizedBox(
                                   height: 8,
                                 ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'ค่าเช่าไม่รวมมัดจำ',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      '฿' +
-                                          contract.rentalPrice
-                                              .toStringAsFixed(0),
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        color: primaryColor,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
+                                Text(
+                                  'ระยะเวลา $duration วัน',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                  ),
                                 ),
                               ],
                             ),
@@ -128,8 +114,8 @@ class ContractCard extends StatelessWidget {
                       ),
                       const Divider(thickness: 0.6, height: 32),
                       userType == 'renter'
-                          ? renterContractAddition(context, contract, userType)
-                          : ownerContractAddition(context, contract, userType),
+                          ? renterContractAddition(context, contract, Product.fromSnapshot(product), userType)
+                          : ownerContractAddition(context, contract, Product.fromSnapshot(product), userType),
                     ],
                   ),
                 )

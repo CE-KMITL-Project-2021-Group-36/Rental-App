@@ -40,8 +40,8 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
 
   _setDataInit() async {
     final snapshot =
-        await products.doc(widget.product.id).collection("reviews").get();
-    if (snapshot.size != 0) {
+        await products.doc(widget.product.id).collection("reviews").doc(_userId).get();
+    if (snapshot.exists) {
       await products
           .doc(widget.product.id)
           .collection("reviews")
@@ -49,8 +49,8 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
           .get()
           .then((doc) {
         setState(() {
-          _rating = doc.data()!['rating'] ?? 1;
-          _text = doc.data()!['text'] ?? '';
+          _rating = doc.data()!['rating'];
+          _text = doc.data()!['text'];
         });
       });
     }

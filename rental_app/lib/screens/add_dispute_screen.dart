@@ -18,8 +18,10 @@ class AddDisputeScreen extends StatefulWidget {
 }
 
 class _AddDisputeScreenState extends State<AddDisputeScreen> {
-  CollectionReference disputeRef =
+  CollectionReference disputes =
       FirebaseFirestore.instance.collection('disputes');
+  CollectionReference contracts =
+      FirebaseFirestore.instance.collection("contracts");
 
   late String _title = '';
   late String _detail = '';
@@ -104,13 +106,18 @@ class _AddDisputeScreenState extends State<AddDisputeScreen> {
   }
 
   createDispute() async {
+    final contractRef = contracts.doc(widget.contract.id);
     await uploadFile();
-    await disputeRef.add({
+    await disputes.doc(widget.contract.id).set({
       'contractId': widget.contract.id,
       'title': _title,
       'detail': _detail,
       'imageUrls': FieldValue.arrayUnion(_imageUrl),
       'dateCreated': DateTime.now(),
+    });
+    await contractRef.update({
+      'renterStatus': 'ข้อพิพาท',
+      'ownerStatus': 'ข้อพิพาท',
     });
   }
 
@@ -144,7 +151,7 @@ class _AddDisputeScreenState extends State<AddDisputeScreen> {
               const SizedBox(height: 4),
               TextFormField(
                 onChanged: (value) {
-                  _detail = value;
+                  _title = value;
                 },
                 maxLines: 1,
                 decoration: const InputDecoration(
@@ -181,58 +188,58 @@ class _AddDisputeScreenState extends State<AddDisputeScreen> {
                     color: primaryColor),
               ),
               const SizedBox(height: 16),
-               GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: _image.length + 1,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3),
-                  itemBuilder: (context, index) {
-                    return index == 0
-                        ? InkWell(
-                            splashColor: primaryColor,
-                            onTap: (() => !uploading ? chooseImage() : null),
-                            child: Ink(
+              GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: _image.length + 1,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3),
+                itemBuilder: (context, index) {
+                  return index == 0
+                      ? InkWell(
+                          splashColor: primaryColor,
+                          onTap: (() => !uploading ? chooseImage() : null),
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              color: primaryColor[50],
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(8)),
+                            ),
+                            child: const Icon(Icons.add_rounded,
+                                color: primaryColor, size: 60),
+                          ),
+                        )
+                      : Stack(
+                          alignment: Alignment.topRight,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
-                                color: primaryColor[50],
+                                image: DecorationImage(
+                                  image: FileImage(_image[index - 1]),
+                                  fit: BoxFit.cover,
+                                ),
                                 borderRadius:
                                     const BorderRadius.all(Radius.circular(8)),
                               ),
-                              child: const Icon(Icons.add_rounded,
-                                  color: primaryColor, size: 60),
                             ),
-                          )
-                        : Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: FileImage(_image[index - 1]),
-                                    fit: BoxFit.cover,
-                                  ),
-                                  borderRadius:
-                                      const BorderRadius.all(Radius.circular(8)),
-                                ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.remove_circle,
+                                color: errorColor,
                               ),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.remove_circle,
-                                  color: errorColor,
-                                ),
-                                tooltip: 'ลบรูปนี้',
-                                onPressed: () {
-                                  setState(() {
-                                    _image.removeAt(index - 1);
-                                  });
-                                },
-                              ),
-                            ],
-                          );
-                  },
-                ),
-                const SizedBox(height: 32),
+                              tooltip: 'ลบรูปนี้',
+                              onPressed: () {
+                                setState(() {
+                                  _image.removeAt(index - 1);
+                                });
+                              },
+                            ),
+                          ],
+                        );
+                },
+              ),
+              const SizedBox(height: 32),
               TextButton(
                 child: const Text('เปิดข้อพิพาท'),
                 onPressed: () async {
@@ -246,8 +253,8 @@ class _AddDisputeScreenState extends State<AddDisputeScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   primary: Colors.white,
                   backgroundColor: primaryColor,
-                  textStyle:
-                      const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  textStyle: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               )
             ],

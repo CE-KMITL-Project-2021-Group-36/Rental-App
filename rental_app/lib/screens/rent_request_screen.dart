@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart' as path;
@@ -209,7 +210,7 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                                     ),
                                   ),
                                   Text(
-                                    '฿' + price.toStringAsFixed(0),
+                                    '฿' + currencyFormat(price),
                                     style: const TextStyle(
                                       fontSize: 24,
                                       color: primaryColor,
