@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/screens/confirm_deposit.dart';
 import 'package:rental_app/widgets/widget.dart';
 
 class ViewContractScreen extends StatefulWidget {
@@ -237,7 +238,8 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                               ),
                                               Text(
                                                 '฿' +
-                                                    currencyFormat(widget.contract.rentalPrice),
+                                                    currencyFormat(widget
+                                                        .contract.rentalPrice),
                                                 style: const TextStyle(
                                                   fontSize: 24,
                                                   color: primaryColor,
@@ -426,58 +428,6 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                       keyboardType: TextInputType.number,
                                     ),
                                     const SizedBox(height: 16),
-                                    const Text(
-                                      'จัดการคำขอเช่า',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text('ค่าเช่า'),
-                                        Text('฿' +
-                                            currencyFormat(widget.contract.rentalPrice)
-                                                )
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text('ค่ามัดจำ'),
-                                        Text(
-                                          '฿' + currencyFormat(inputDeposit),
-                                        )
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'ยอดรวมทั้งหมด',
-                                          style: TextStyle(
-                                            color: primaryColor,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          '฿' +
-                                              currencyFormat(widget.contract.rentalPrice +
-                                                      inputDeposit),
-                                          style: const TextStyle(
-                                            color: primaryColor,
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
                                     Row(children: <Widget>[
                                       TextButton(
                                         onPressed: () {},
@@ -502,18 +452,15 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                       Expanded(
                                         child: TextButton(
                                           onPressed: () {
-                                            contracts
-                                                .doc(widget.contract.id)
-                                                .update({
-                                                  'renterStatus': 'ที่ต้องชำระ',
-                                                  'ownerStatus': 'รอการชำระ',
-                                                  'deposit': inputDeposit,
-                                                })
-                                                .then((value) =>
-                                                    print('Contract Update'))
-                                                .catchError((error) => print(
-                                                    'Failed to update contract: $error'));
-                                            Navigator.pop(context);
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ConfirmDeposit(
+                                                  contract: widget.contract, deposit: inputDeposit,
+                                                ),
+                                              ),
+                                            );
                                           },
                                           child: const Text("อนุมัติ"),
                                           style: TextButton.styleFrom(
