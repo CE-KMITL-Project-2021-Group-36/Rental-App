@@ -776,7 +776,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                isUploaded1
+                isUploaded2
                     ? const SizedBox.shrink()
                     : SizedBox(
                         width: 160,
