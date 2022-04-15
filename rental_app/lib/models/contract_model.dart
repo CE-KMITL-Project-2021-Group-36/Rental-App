@@ -11,7 +11,11 @@ class Contract {
   final double rentalPrice;
   final String renterStatus;
   final String ownerStatus;
-  final List<String> imageUrls;
+  final List<String> renterAttachments;
+  final String renterPickupVideo;
+  final String renterReturnVideo;
+  final String ownerDeliveryVideo;
+  final String ownerPickupVideo;
 
   const Contract({
     required this.id,
@@ -24,7 +28,11 @@ class Contract {
     required this.rentalPrice,
     required this.renterStatus,
     required this.ownerStatus,
-    required this.imageUrls,
+    required this.renterAttachments, 
+    required this.renterPickupVideo,
+    required this.renterReturnVideo,
+    required this.ownerDeliveryVideo,
+    required this.ownerPickupVideo,
   });
 
   static Contract fromSnapshot(DocumentSnapshot snapshot) {
@@ -39,7 +47,11 @@ class Contract {
       rentalPrice: snapshot['rentalPrice'].toDouble(),
       renterStatus: snapshot['renterStatus'],
       ownerStatus: snapshot['ownerStatus'],
-      imageUrls: List.from(snapshot['imageUrls']),
+      renterAttachments: List.from(snapshot['renterAttachments']),
+      renterPickupVideo: snapshot['renterPickupVideo'],
+      renterReturnVideo: snapshot['renterReturnVideo'],
+      ownerDeliveryVideo: snapshot['ownerDeliveryVideo'],
+      ownerPickupVideo: snapshot['ownerPickupVideo'],
     );
     return contract;
   }

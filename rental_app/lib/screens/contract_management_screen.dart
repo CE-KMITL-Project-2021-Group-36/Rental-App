@@ -40,7 +40,7 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
     'รอการอนุมัติ',
     'รอการชำระ',
     'ที่ต้องจัดส่ง',
-    'ที่ต้องได้รับ',
+    'ที่ต้องได้คืน',
     'ยืนยันจบสัญญา',
     'สำเร็จ',
     'ยกเลิกแล้ว',

@@ -120,7 +120,11 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
       'endDate': widget.dateRange.end,
       'renterStatus': 'รอการอนุมัติ',
       'ownerStatus': 'รอการอนุมัติ',
-      'imageUrls': FieldValue.arrayUnion(_imageUrl),
+      'renterAttachments': FieldValue.arrayUnion(_imageUrl),
+      'renterPickupVideo': '',
+      'renterReturnVideo': '',
+      'ownerDeliveryVideo': '',
+      'ownerPickupVideo': '',
     });
   }
 

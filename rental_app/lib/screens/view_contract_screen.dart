@@ -278,26 +278,40 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: widget.contract.imageUrls.length,
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3),
-                              itemBuilder: (context, index) {
-                                return Ink.image(
-                                  image: NetworkImage(
-                                      widget.contract.imageUrls[index]),
-                                  fit: BoxFit.cover,
-                                  child: InkWell(
-                                    onTap: () {
-                                      //Go to ImageView
-                                    },
-                                  ),
-                                );
-                              }),
-                          const SizedBox(height: 16),
+                          widget.contract.renterAttachments.isNotEmpty
+                              ? GridView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount:
+                                      widget.contract.renterAttachments.length,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3),
+                                  itemBuilder: (context, index) {
+                                    return Row(
+                                      children: [
+                                        Ink.image(
+                                          image: NetworkImage(widget.contract
+                                              .renterAttachments[index]),
+                                          fit: BoxFit.cover,
+                                          child: InkWell(
+                                            onTap: () {
+                                              //Go to ImageView
+                                            },
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 4,
+                                        ),
+                                      ],
+                                    );
+                                  })
+                              : const Text(
+                                  'ไม่มีเอกสารแนบ',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.grey),
+                                ),
+                          const SizedBox(height: 32),
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
@@ -417,7 +431,6 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                       onChanged: (text) {
                                         if (text.isNotEmpty) {
                                           inputDeposit = double.parse(text);
-                                          //setState(() {});
                                         }
                                       },
                                       decoration: const InputDecoration(
@@ -427,13 +440,15 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                       ),
                                       keyboardType: TextInputType.number,
                                     ),
-                                    const SizedBox(height: 16),
+                                    const SizedBox(height: 32),
                                     Row(children: <Widget>[
                                       TextButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          showAlertDialog(context);
+                                        },
                                         child: const SizedBox(
                                           width: 140,
-                                          child: Center(child: Text("ปฎิเสธ")),
+                                          child: Center(child: Text("ยกเลิก")),
                                         ),
                                         style: TextButton.styleFrom(
                                           primary: primaryColor,
@@ -457,7 +472,8 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     ConfirmDeposit(
-                                                  contract: widget.contract, deposit: inputDeposit,
+                                                  contract: widget.contract,
+                                                  deposit: inputDeposit,
                                                 ),
                                               ),
                                             );

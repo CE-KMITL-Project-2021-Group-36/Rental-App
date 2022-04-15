@@ -27,8 +27,10 @@ class UploadEvidenceScreen extends StatefulWidget {
 
 class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
   final userId = FirebaseAuth.instance.currentUser?.uid;
-  File? pickupVideo;
-  File? returnVideo;
+  File? file1;
+  File? file2;
+  String file1Url = '';
+  String file2Url = '';
   bool isUploaded1 = false;
   bool isUploaded2 = false;
 
@@ -39,66 +41,130 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
 
     if (result == null) return;
     final path = result.files.single.path!;
-    if (file == 'pickup') {
+    if (file == 'file1') {
       setState(() {
-        pickupVideo = File(path);
+        file1 = File(path);
         isUploaded1 = false;
       });
     } else {
       setState(() {
-        returnVideo = File(path);
+        file2 = File(path);
         isUploaded2 = false;
       });
     }
-    // setState(() => file == pickupVideo
-    //     ? pickupVideo = File(path)
-    //     : returnVideo = File(path));
   }
 
   Future uploadFile(file) async {
     if (file == null) return;
     final contractId = widget.contract.id;
+    final contractRef =
+        FirebaseFirestore.instance.collection("contracts").doc(contractId);
+    final bool isRenter = userId == widget.contract.renterId;
 
-    if (file == 'pickup') {
+    if (file == 'file1') {
       //final fileName = basename(pickupVideo!.path);
-      final destination =
-          'contract_evidence/$contractId/renter/pickup_video';
-      await FirebaseApi.uploadFile(destination, pickupVideo!);
+      final destination = isRenter
+          ? 'contract_evidence/$contractId/renter/pickup_video'
+          : 'contract_evidence/$contractId/owner/delivery_video';
+      final ref = FirebaseStorage.instance.ref(destination);
+
+      await FirebaseApi.uploadFile(destination, file1!);
+      await ref
+          .getDownloadURL()
+          .then((value) => setState(() => file1Url = value));
+      isRenter
+          ? await contractRef.update({
+              'renterPickupVideo': file1Url,
+              'renterStatus': 'ที่ต้องส่งคืน',
+            })
+          : await contractRef.update({
+              'ownerDeliveryVideo': file1Url,
+              'ownerStatus': 'ที่ต้องได้คืน',
+            });
       setState(() {
         isUploaded1 = true;
       });
-      // if (task1 == null) return;
-      // final snapshot1 = await task1!.whenComplete(() {});
-      // final urlDownload = await snapshot1.ref.getDownloadURL();
-      // print('Download-Link: $urlDownload');
     } else {
       //final fileName = basename(returnVideo!.path);
-      final destination =
-          'contract_evidence/$contractId/renter/return_video';
-      await FirebaseApi.uploadFile(destination, returnVideo!);
+      final destination = isRenter
+          ? 'contract_evidence/$contractId/renter/return_video'
+          : 'contract_evidence/$contractId/owner/pickup_video';
+      final ref = FirebaseStorage.instance.ref(destination);
+
+      await FirebaseApi.uploadFile(destination, file2!);
+      await ref
+          .getDownloadURL()
+          .then((value) => setState(() => file2Url = value));
+      isRenter
+          ? await contractRef.update({
+              'renterReturnVideo': file2Url,
+            })
+          : await contractRef.update({
+              'ownerPickupVideo': file2Url,
+            });
       setState(() {
         isUploaded2 = true;
       });
-      // if (task2 == null) return;
-      //final snapshot2 = await task2!.whenComplete(() {});
-      //final urlDownload = await snapshot2.ref.getDownloadURL();
-      //print('Download-Link: $urlDownload');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    bool isRenter = userId == widget.contract.renterId;
+    if (isRenter) {
+      if (widget.contract.renterPickupVideo != '') {
+        isUploaded1 = true;
+      }
+      if (widget.contract.renterReturnVideo != '') {
+        isUploaded2 = true;
+      }
+    } else {
+      if (widget.contract.ownerDeliveryVideo != '') {
+        isUploaded1 = true;
+      }
+      if (widget.contract.ownerPickupVideo != '') {
+        isUploaded2 = true;
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var fileName1 =
-        pickupVideo != null ? basename(pickupVideo!.path) : 'กรุณาเลือกไฟล์';
-    var fileName2 =
-        returnVideo != null ? basename(returnVideo!.path) : 'กรุณาเลือกไฟล์';
+    var fileName1 = file1 != null ? basename(file1!.path) : '';
+    var fileName2 = file2 != null ? basename(file2!.path) : '';
     DateTime startDate = widget.contract.startDate.toDate();
     DateTime endDate = widget.contract.endDate.toDate();
     String formattedStartDate = DateFormat('dd-MM-yyyy').format(startDate);
     String formattedEndDate = DateFormat('dd-MM-yyyy').format(endDate);
+    final bool isRenter = userId == widget.contract.renterId;
     return Scaffold(
       appBar: AppBar(
         title: const Text('สัญญาเช่า'),
+        actions: <Widget>[
+          TextButton(
+            child: Row(
+              children: [
+                isRenter
+                    ? const Text(
+                        'ติดต่อผู้ให้เช่า',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: primaryColor,
+                            fontWeight: FontWeight.normal),
+                      )
+                    : const Text(
+                        'ติดต่อผู้เช่า',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: primaryColor,
+                            fontWeight: FontWeight.normal),
+                      )
+              ],
+            ),
+            onPressed: () {},
+          ),
+        ],
       ),
       backgroundColor: Colors.white,
       body: FutureBuilder<DocumentSnapshot>(
@@ -136,35 +202,19 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                               ),
                             ),
                             child: Row(
-                              children: [
-                                const Icon(Icons.videocam, color: Colors.white),
-                                const SizedBox(
+                              children: const [
+                                Icon(Icons.videocam, color: Colors.white),
+                                SizedBox(
                                   width: 8,
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: const [
-                                        Text(
-                                          'ที่ต้องได้รับ',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ],
+                                SizedBox(height: 4),
+                                Expanded(
+                                  child: Text(
+                                    'กรุณาถ่ายและอัปโหลดวิดีโอเพื่อเป็นหลักฐาน\nในการรับและการจัดส่งสินค้า',
+                                    style: TextStyle(
+                                      color: Colors.white,
                                     ),
-                                    const SizedBox(height: 4),
-                                    const Text(
-                                      'กรุณาถ่ายและอัปโหลดวิดีโอการเปิดกล่องพัสดุ',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -270,7 +320,8 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                                               ),
                                               Text(
                                                 '฿' +
-                                                    currencyFormat(widget.contract.rentalPrice),
+                                                    currencyFormat(widget
+                                                        .contract.rentalPrice),
                                                 style: const TextStyle(
                                                   fontSize: 24,
                                                   color: primaryColor,
@@ -309,26 +360,40 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: widget.contract.imageUrls.length,
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3),
-                              itemBuilder: (context, index) {
-                                return Ink.image(
-                                  image: NetworkImage(
-                                      widget.contract.imageUrls[index]),
-                                  fit: BoxFit.cover,
-                                  child: InkWell(
-                                    onTap: () {
-                                      //Go to ImageView
-                                    },
-                                  ),
-                                );
-                              }),
-                          const SizedBox(height: 16),
+                          widget.contract.renterAttachments.isNotEmpty
+                              ? GridView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount:
+                                      widget.contract.renterAttachments.length,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3),
+                                  itemBuilder: (context, index) {
+                                    return Row(
+                                      children: [
+                                        Ink.image(
+                                          image: NetworkImage(widget.contract
+                                              .renterAttachments[index]),
+                                          fit: BoxFit.cover,
+                                          child: InkWell(
+                                            onTap: () {
+                                              //Go to ImageView
+                                            },
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 4,
+                                        ),
+                                      ],
+                                    );
+                                  })
+                              : const Text(
+                                  'ไม่มีเอกสารแนบ',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.grey),
+                                ),
+                          const SizedBox(height: 32),
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
@@ -407,8 +472,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                                     ),
                               ),
                               Text(
-                                '฿' +
-                                    currencyFormat(widget.contract.deposit),
+                                '฿' + currencyFormat(widget.contract.deposit),
                                 style: const TextStyle(
                                   fontSize: 18,
                                   // color: primaryColor,
@@ -433,7 +497,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                               Text(
                                 '฿' +
                                     currencyFormat(widget.contract.rentalPrice +
-                                            widget.contract.deposit),
+                                        widget.contract.deposit),
                                 style: const TextStyle(
                                   fontSize: 24,
                                   color: primaryColor,
@@ -513,208 +577,313 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
   }
 
   Widget _buildUploadSection(fileName1, fileName2) {
+    bool isRenter = userId == widget.contract.renterId;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'เมื่อได้รับสินค้า',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        isRenter
+            ? const Text(
+                'เมื่อได้รับสินค้า',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : const Text(
+                'เมื่อส่งสินค้า',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
         const SizedBox(height: 4),
         const Text(
-          'อัปโหลดวิดีโอหลักฐานตอนเปิดกล่องพัสดุ และตรวจสอบสินค้าก่อนใช้งาน',
-          style: TextStyle(
-              //fontWeight: FontWeight.bold,
-              ),
+          'อัปโหลดวิดีโอหลักฐาน',
         ),
         const SizedBox(height: 16),
-        SizedBox(
-          width: 100,
-          height: 100,
-          child: InkWell(
-            splashColor: primaryColor,
-            onTap: () {
-              selectFile('pickup');
-            },
-            child: Ink(
-              decoration: BoxDecoration(
-                color: primaryColor[50],
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-              ),
-              child: const Icon(Icons.videocam, color: primaryColor, size: 48),
-            ),
-          ),
-        ),
-        Text(fileName1, style: const TextStyle(height: 2)),
-        pickupVideo != null
-            ? Row(
-                children: [
-                  SizedBox(
-                    width: 140,
-                    child: isUploaded1
-                        ? Row(
-                            children: const [
-                              Icon(Icons.done, color: primaryColor, size: 20),
-                              Text(
-                                'อัปโหลดแล้ว',
-                                style: TextStyle(
-                                  color: primaryColor,
-                                ),
+        Row(
+          children: [
+            SizedBox(
+              width: 100,
+              height: 100,
+              child: InkWell(
+                splashColor: primaryColor,
+                onTap: () {
+                  selectFile('file1');
+                },
+                child: Ink(
+                  decoration: BoxDecoration(
+                    color: primaryColor[50],
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.videocam,
+                        color: primaryColor,
+                        size: 48,
+                      ),
+                      isUploaded1
+                          ? const Text(
+                              'เลือกวิดีโอใหม่',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: primaryColor,
                               ),
-                            ],
-                          )
-                        : TextButton(
-                            onPressed: () {
-                              uploadFile('pickup');
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Text(
-                                  'อัปโหลดวิดีโอ',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                              ],
+                            )
+                          : const Text(
+                              'เลือกวิดีโอ',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: primaryColor,
+                              ),
                             ),
-                            style: TextButton.styleFrom(
-                              primary: Colors.white,
-                              backgroundColor: primaryColor,
-                              padding: const EdgeInsets.symmetric(vertical: 6),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                isUploaded1
+                    ? const SizedBox.shrink()
+                    : SizedBox(
+                        width: 160,
+                        child: Text(
+                          '$fileName1',
+                          style: const TextStyle(height: 2),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
+                isUploaded1
+                    ? Row(
+                        children: const [
+                          Icon(Icons.done, color: primaryColor, size: 20),
+                          Text(
+                            'อัปโหลดแล้ว',
+                            style: TextStyle(
+                              color: primaryColor,
+                            ),
+                          ),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+                file1 == null || isUploaded1
+                    ? const SizedBox.shrink()
+                    : Row(
+                        children: [
+                          SizedBox(
+                            width: 140,
+                            child: TextButton(
+                              onPressed: () {
+                                uploadFile('file1');
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Text(
+                                    'อัปโหลดวิดีโอ',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
+                              style: TextButton.styleFrom(
+                                primary: Colors.white,
+                                backgroundColor: primaryColor,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 6),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
                               ),
                             ),
                           ),
-                  ),
-                  const SizedBox(width: 4),
-                ],
-              )
-            : const SizedBox.shrink(),
+                          const SizedBox(width: 4),
+                        ],
+                      ),
+              ],
+            ),
+          ],
+        ),
         const SizedBox(height: 16),
         const Divider(thickness: 0.6, height: 32),
-        const Text(
-          'เมื่อส่งคืนสินค้า',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        isRenter
+            ? const Text(
+                'เมื่อส่งคืนสินค้า',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : const Text(
+                'เมื่อได้รับสินค้า',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
         const SizedBox(height: 4),
         const Text(
-          'อัปโหลดวิดีโอหลักฐานในการส่งสินค้า และตรวจสอบสินค้าก่อนส่งคืน',
-          style: TextStyle(
-              //fontWeight: FontWeight.bold,
-              ),
+          'อัปโหลดวิดีโอหลักฐาน',
         ),
         const SizedBox(height: 16),
-        SizedBox(
-          width: 100,
-          height: 100,
-          child: InkWell(
-            splashColor: primaryColor,
-            onTap: () {
-              selectFile('return');
-            },
-            child: Ink(
-              decoration: BoxDecoration(
-                color: primaryColor[50],
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-              ),
-              child: const Icon(Icons.videocam, color: primaryColor, size: 48),
-            ),
-          ),
-        ),
-        Text(fileName2, style: const TextStyle(height: 2)),
-        returnVideo != null
-            ? Row(
-                children: [
-                  SizedBox(
-                    width: 140,
-                    child: isUploaded2
-                        ? Row(
-                            children: const [
-                              Icon(Icons.done, color: primaryColor, size: 20),
-                              Text(
-                                'อัปโหลดแล้ว',
-                                style: TextStyle(
-                                  color: primaryColor,
-                                ),
+        Row(
+          children: [
+            SizedBox(
+              width: 100,
+              height: 100,
+              child: InkWell(
+                splashColor: primaryColor,
+                onTap: () {
+                  selectFile('file2');
+                },
+                child: Ink(
+                  decoration: BoxDecoration(
+                    color: primaryColor[50],
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.videocam,
+                        color: primaryColor,
+                        size: 48,
+                      ),
+                      isUploaded2
+                          ? const Text(
+                              'เลือกวิดีโอใหม่',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: primaryColor,
                               ),
-                            ],
-                          )
-                        : TextButton(
-                            onPressed: () {
-                              uploadFile('return');
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Text(
-                                  'อัปโหลดวิดีโอ',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                              ],
+                            )
+                          : const Text(
+                              'เลือกวิดีโอ',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: primaryColor,
+                              ),
                             ),
-                            style: TextButton.styleFrom(
-                              primary: Colors.white,
-                              backgroundColor: primaryColor,
-                              padding: const EdgeInsets.symmetric(vertical: 6),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                isUploaded1
+                    ? const SizedBox.shrink()
+                    : SizedBox(
+                        width: 160,
+                        child: Text(
+                          '$fileName2',
+                          style: const TextStyle(height: 2),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
+                isUploaded2
+                    ? Row(
+                        children: const [
+                          Icon(Icons.done, color: primaryColor, size: 20),
+                          Text(
+                            'อัปโหลดแล้ว',
+                            style: TextStyle(
+                              color: primaryColor,
+                            ),
+                          ),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+                file2 != null
+                    ? Row(
+                        children: [
+                          SizedBox(
+                            width: 140,
+                            child: TextButton(
+                              onPressed: () {
+                                uploadFile('file2');
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Text(
+                                    'อัปโหลดวิดีโอ',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
+                              style: TextButton.styleFrom(
+                                primary: Colors.white,
+                                backgroundColor: primaryColor,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 6),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
                               ),
                             ),
                           ),
-                  ),
-                  const SizedBox(width: 4),
-                ],
-              )
-            : const SizedBox.shrink(),
-        const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: outlineColor,
+                          const SizedBox(width: 4),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+              ],
             ),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(8),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
-                    'ส่งคืนที่อยู่',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'ภูริวัจน์ วิจิตธัญโรจน์'.replaceAll('\\n', '\n'),
-              ),
-              Text(
-                '0837476791'.replaceAll('\\n', '\n'),
-              ),
-              Text(
-                '123/2 ซ.ฉลองกรุง 1, ถ.ฉลองกรุง, แขวงลาดกระบัง,\n ลาดกระบัง, กรุงเทพมหานคร, 10520'
-                    .replaceAll('\\n', '\n'),
-              ),
-            ],
-          ),
+          ],
         ),
+        const SizedBox(height: 16),
+        isRenter ? _buildAddress() : const SizedBox.shrink(),
         const SizedBox(height: 16),
       ],
     );
   }
+}
+
+_buildAddress() {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      border: Border.all(
+        color: outlineColor,
+      ),
+      borderRadius: const BorderRadius.all(
+        Radius.circular(8),
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text(
+              'ที่อยู่',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'ภูริวัจน์ วิจิตธัญโรจน์'.replaceAll('\\n', '\n'),
+        ),
+        Text(
+          '0837476791'.replaceAll('\\n', '\n'),
+        ),
+        Text(
+          '123/2 ซ.ฉลองกรุง 1, ถ.ฉลองกรุง, แขวงลาดกระบัง,\n ลาดกระบัง, กรุงเทพมหานคร, 10520'
+              .replaceAll('\\n', '\n'),
+        ),
+      ],
+    ),
+  );
 }

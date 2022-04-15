@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/upload_evidence_screen.dart';
 import 'package:rental_app/screens/view_contract_screen.dart';
+import 'package:rental_app/screens/view_dispute_screen.dart';
 
 ownerContractAddition(context, Contract contract, product, userType) {
+  DateTime endDate = contract.endDate.toDate();
+  String formattedEndDate = DateFormat('dd-MM-yyyy').format(endDate);
   switch (contract.ownerStatus) {
     case 'รอการอนุมัติ':
       return Row(
@@ -104,14 +108,15 @@ ownerContractAddition(context, Contract contract, product, userType) {
             ),
           ),
           TextButton(
-            child: const Text('หลักฐานการส่งพัสดุ'),
+            child: const Text('ดูสัญญาเช่า'),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => UploadEvidenceScreen(
-                          contract: contract,
-                        )),
+                  builder: (context) => UploadEvidenceScreen(
+                    contract: contract,
+                  ),
+                ),
               );
             },
             style: TextButton.styleFrom(
@@ -125,18 +130,27 @@ ownerContractAddition(context, Contract contract, product, userType) {
           )
         ],
       );
-    case 'ที่ต้องได้รับ':
+    case 'ที่ต้องได้คืน':
       return Row(
         children: [
           Expanded(
             child: Text(
-              'กรุณาส่งคืนสินค้าภายใน 12:00 น. 15 ม.ค. 64',
+              'ลูกค้าส่งคืนสินค้าภายใน $formattedEndDate',
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
           TextButton(
-            child: const Text('หลักฐานเปิดกล่องพัสดุ'),
-            onPressed: () {},
+            child: const Text('ดูสัญญาเช่า'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UploadEvidenceScreen(
+                    contract: contract,
+                  ),
+                ),
+              );
+            },
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               primary: Colors.white,
@@ -176,22 +190,10 @@ ownerContractAddition(context, Contract contract, product, userType) {
         children: [
           Expanded(
             child: Text(
-              'โปรดให้คะแนนการเช่าครั้งนี้',
+              'การเช่าสำเร็จ',
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
-          TextButton(
-            child: const Text('ให้คะแนน'),
-            onPressed: () {},
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              primary: Colors.white,
-              backgroundColor: primaryColor,
-              textStyle: const TextStyle(
-                fontSize: 14,
-              ),
-            ),
-          )
         ],
       );
     case 'ยกเลิกแล้ว':
@@ -215,8 +217,17 @@ ownerContractAddition(context, Contract contract, product, userType) {
             ),
           ),
           TextButton(
-            child: const Text('ดำเนินการต่อ'),
-            onPressed: () {},
+            child: const Text('ดูข้อพิพาท'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ViewDisputeScreen(
+                    contract: contract,
+                  ),
+                ),
+              );
+            },
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               primary: Colors.white,

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
@@ -8,8 +9,9 @@ import 'package:rental_app/screens/view_contract_screen.dart';
 import 'package:rental_app/screens/view_dispute_screen.dart';
 
 renterContractAddition(context, Contract contract, Product product, userType) {
-  String type = contract.renterStatus;
-  switch (type) {
+  DateTime endDate = contract.endDate.toDate();
+  String formattedEndDate = DateFormat('dd-MM-yyyy').format(endDate);
+  switch (contract.renterStatus) {
     case 'รอการอนุมัติ':
       return Column(
         children: [
@@ -33,7 +35,7 @@ renterContractAddition(context, Contract contract, Product product, userType) {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Row(
@@ -171,7 +173,7 @@ renterContractAddition(context, Contract contract, Product product, userType) {
         children: [
           Expanded(
             child: Text(
-              'กรุณาส่งคืนสินค้าภายใน 12:00 น. 15 ม.ค. 64',
+              'กรุณาส่งคืนสินค้าภายใน $formattedEndDate',
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
@@ -294,4 +296,59 @@ renterContractAddition(context, Contract contract, Product product, userType) {
   }
 }
 
-class Firestore {}
+showAlertDialog(BuildContext context, Contract contract) {
+      // set up the buttons
+      Widget cancelButton = TextButton(
+        child: const Text(
+          "ยกเลิก",
+          style: TextStyle(
+            decoration: TextDecoration.underline,
+          ),
+        ),
+        style: TextButton.styleFrom(
+          //primary: errorColor,
+          textStyle: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      );
+      Widget continueButton = TextButton(
+        child: const Text("ยืนยัน"),
+        style: TextButton.styleFrom(
+          primary: Colors.white,
+          backgroundColor: primaryColor,
+          textStyle: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+        onPressed: () async {
+          final ref = FirebaseFirestore.instance.collection("contracts").doc(contract.id);
+          await ref.update({
+            'renterStatus': 'สำเร็จ',
+            //'ownerStatus': 'ยกเลิกแล้ว',
+          });
+          Navigator.pop(context);
+        },
+      );
+
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+        title: const Text("ยืนยันการจบสัญญาเช่านี้?"),
+        content: const Text("คุณได้ส่งของคืนแก่ผู้ให้เช่าเรียบร้อยแล้ว"),
+        actions: [
+          cancelButton,
+          continueButton,
+        ],
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }

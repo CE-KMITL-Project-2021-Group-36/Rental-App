@@ -19,8 +19,6 @@ class ContractCard extends StatelessWidget {
   final Contract contract;
   final String userType;
 
-  
-
   @override
   Widget build(BuildContext context) {
     DateTime startDate = contract.startDate.toDate();
