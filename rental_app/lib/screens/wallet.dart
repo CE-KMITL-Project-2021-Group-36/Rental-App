@@ -28,6 +28,7 @@ class _WalletState extends State<Wallet> {
         FirebaseFirestore.instance.collection('users');
 
     return Scaffold(
+      backgroundColor: surfaceColor,
       appBar: AppBar(
         leading: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
@@ -106,31 +107,37 @@ class _WalletState extends State<Wallet> {
                         children: [
                           Expanded(
                             flex: 1,
-                            child: Container(
-                              height: 75,
-                              decoration: BoxDecoration(
-                                  color: primaryLightColor,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                      color: primaryColor, width: 2)),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: const [
-                                  Icon(
-                                    Icons.payments,
-                                    size: 40,
-                                    color: primaryColor,
-                                  ),
-                                  Text(
-                                    'ถอนเงิน',
-                                    style: TextStyle(
-                                      fontSize: 20,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, '/wallet_request_withdrawal');
+                              },
+                              child: Ink(
+                                height: 75,
+                                decoration: BoxDecoration(
+                                    color: backgroundColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                        color: primaryColor, width: 2)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: const [
+                                    Icon(
+                                      Icons.payments,
+                                      size: 40,
                                       color: primaryColor,
-                                      fontWeight: FontWeight.w600,
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      'ถอนเงิน',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -149,18 +156,16 @@ class _WalletState extends State<Wallet> {
                                     color: primaryColor,
                                     borderRadius: BorderRadius.circular(10)),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: const [
                                     Icon(
                                       Icons.add,
                                       size: 40,
                                       color: surfaceColor,
                                     ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
                                     Text(
-                                      'เติมเงิน',
+                                      'เติมเงิน  ',
                                       style: TextStyle(
                                           fontSize: 20,
                                           color: surfaceColor,

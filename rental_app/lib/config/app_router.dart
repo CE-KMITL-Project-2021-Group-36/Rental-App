@@ -4,6 +4,7 @@ import 'package:rental_app/screens/screens.dart';
 import 'package:rental_app/screens/wallet.dart';
 import 'package:rental_app/screens/wallet_init_passcode_screen.dart';
 import 'package:rental_app/screens/wallet_input_passcode_screen.dart';
+import 'package:rental_app/screens/wallet_request_withdrawal.dart';
 import 'package:rental_app/screens/wallet_top_up.dart';
 import 'package:rental_app/widgets/widget.dart';
 
@@ -48,6 +49,8 @@ class AppRouter {
         return WalletInputPasscode.route();
       case WalletTopUp.routeName:
         return WalletTopUp.route();
+      case WalletRequestWithdrawal.routeName:
+        return WalletRequestWithdrawal.route();
 
       default:
         return _errorRoute();

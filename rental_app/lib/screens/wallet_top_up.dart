@@ -26,25 +26,26 @@ class WalletTopUp extends StatefulWidget {
 class _WalletTopUpState extends State<WalletTopUp> {
   final _formKey = GlobalKey<FormState>();
 
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+  final CollectionReference users =
+      FirebaseFirestore.instance.collection('users');
+  final TextEditingController _amount = TextEditingController();
+  final ValueNotifier<bool> _continuousValidation = ValueNotifier(false);
+
+  Future<void> _onPressedFunction() async {
+    if (!_formKey.currentState!.validate()) {
+      _continuousValidation.value = true;
+    } else {
+      debugPrint('Submitting ' + _amount.text);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final userId = FirebaseAuth.instance.currentUser!.uid;
-    final CollectionReference users =
-        FirebaseFirestore.instance.collection('users');
-    final TextEditingController _amount = TextEditingController();
-    ValueNotifier<bool> _continuousValidation = ValueNotifier(false);
-
-    Future<void> _onPressedFunction() async {
-      if (!_formKey.currentState!.validate()) {
-        _continuousValidation.value = true;
-      } else {
-        debugPrint('Submitting ' + _amount.text);
-      }
-    }
-
     return KeyboardDismisser(
       gestures: const [GestureType.onTap, GestureType.onPanUpdateAnyDirection],
       child: Scaffold(
+        backgroundColor: surfaceColor,
         appBar: AppBar(
           leading: const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
@@ -147,14 +148,17 @@ class _WalletTopUpState extends State<WalletTopUp> {
                               autocorrect: false,
                               keyboardType: TextInputType.number,
                               inputFormatters: [
-                                LengthLimitingTextInputFormatter(6)
+                                FilteringTextInputFormatter.deny(
+                                    RegExp(r'^0+')),
+                                LengthLimitingTextInputFormatter(6),
+                                FilteringTextInputFormatter.digitsOnly
                               ],
                               validator: (input) {
                                 if (!RegExp(
-                                        r"""^([1-9]|[1-8][0-9]|9[0-9]|[1-8][0-9]{2}|9[0-8][0-9]|99[0-9]|[1-8][0-9]{3}|9[0-8][0-9]{2}|99[0-8][0-9]|999[0-9]|[1-8][0-9]{4}|9[0-8][0-9]{3}|99[0-8][0-9]{2}|999[0-8][0-9]|9999[0-9]|100000)$""")
+                                        r"""^0*([1-9]|[1-8][0-9]|9[0-9]|[1-8][0-9]{2}|9[0-8][0-9]|99[0-9]|[1-8][0-9]{3}|9[0-8][0-9]{2}|99[0-8][0-9]|999[0-9]|[1-8][0-9]{4}|9[0-8][0-9]{3}|99[0-8][0-9]{2}|999[0-8][0-9]|9999[0-9]|100000)$""")
                                     .hasMatch(input!)) {
                                   return 'ระบุจำนวนเงิน 1 - 100,000 บาท เท่านั้น';
-                                } else {}
+                                }
                                 return null;
                               },
                             ),
