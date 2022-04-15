@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:rental_app/config/palette.dart';
 
 String currencyFormat(double n) {
-  final formatter = NumberFormat("#,###.##");
-  //n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 2);
+  final formatter =
+      n % 1 == 0 ? NumberFormat("#,###") : NumberFormat("#,###.00");
   return formatter.format(n);
 }
 
