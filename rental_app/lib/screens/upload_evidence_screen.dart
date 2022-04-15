@@ -788,7 +788,8 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                         ),
                       ),
                 isUploaded2
-                    ? Row(
+                    ? const SizedBox.shrink()
+                    : Row(
                         children: const [
                           Icon(Icons.done, color: primaryColor, size: 20),
                           Text(
@@ -798,8 +799,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                             ),
                           ),
                         ],
-                      )
-                    : const SizedBox.shrink(),
+                      ),
                 file2 != null
                     ? Row(
                         children: [
