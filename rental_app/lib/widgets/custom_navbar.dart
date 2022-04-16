@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/screens/account_screen.dart';
+import 'package:rental_app/screens/kyc_screen.dart';
 import 'package:rental_app/screens/screens.dart';
 
 class CustomNavBar extends StatefulWidget {

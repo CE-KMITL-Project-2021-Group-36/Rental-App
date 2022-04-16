@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart' as path;
@@ -30,8 +31,6 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
       firebase_storage.FirebaseStorage.instance;
   CollectionReference contractRef =
       FirebaseFirestore.instance.collection('contracts');
-  CollectionReference imgRef =
-      FirebaseFirestore.instance.collection('imageURLs');
 
   bool uploading = false;
   double val = 0;
@@ -41,7 +40,6 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
   final picker = ImagePicker();
 
   chooseImage() async {
-    
     await showModalBottomSheet(
       context: context,
       builder: (context) => BottomSheet(
@@ -115,12 +113,18 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
     await contractRef.add({
       'productId': widget.product.id,
       'renterId': FirebaseAuth.instance.currentUser?.uid,
-      'retalPrice': widget.price,
+      'ownerId' : widget.product.owner,
+      'rentalPrice': widget.price,
       'deposit': 0,
       'startDate': widget.dateRange.start,
       'endDate': widget.dateRange.end,
-      'status': 'waiting',
-      'imageUrls': FieldValue.arrayUnion(_imageUrl),
+      'renterStatus': 'รอการอนุมัติ',
+      'ownerStatus': 'รอการอนุมัติ',
+      'renterAttachments': FieldValue.arrayUnion(_imageUrl),
+      'renterPickupVideo': '',
+      'renterReturnVideo': '',
+      'ownerDeliveryVideo': '',
+      'ownerPickupVideo': '',
     });
   }
 
@@ -210,7 +214,7 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                                     ),
                                   ),
                                   Text(
-                                    '฿' + price.toStringAsFixed(0),
+                                    '฿' + currencyFormat(price),
                                     style: const TextStyle(
                                       fontSize: 24,
                                       color: primaryColor,
