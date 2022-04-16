@@ -183,7 +183,8 @@ class AccountPage extends ConsumerWidget {
                                         onTap: () {},
                                         child: Column(
                                           children: const [
-                                            Icon(FontAwesomeIcons.clipboardQuestion),
+                                            Icon(FontAwesomeIcons
+                                                .clipboardQuestion),
                                             SizedBox(
                                               height: 5,
                                             ),
@@ -333,12 +334,10 @@ class AccountPage extends ConsumerWidget {
                                       ),
                                     ),
                                   ),
-
                                 ],
                               ),
                             ),
                           ),
-
                           const SizedBox(
                             height: 20,
                           ),

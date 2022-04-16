@@ -93,10 +93,10 @@ class _KYCState extends State<KYC> {
 
     await users.doc(userId).update(
       {
-        'kycStatus': 'รอตรวจสอบ',
-        'frontPhoto': frontURL,
-        'selfiePhoto': selfieURL,
-        'kycCreated': DateTime.now(),
+        'kyc.status': 'รอตรวจสอบ',
+        'kyc.frontPhoto': frontURL,
+        'kyc.selfiePhoto': selfieURL,
+        'kyc.created': FieldValue.serverTimestamp(),
       },
     );
   }
@@ -181,8 +181,14 @@ class _KYCState extends State<KYC> {
                   children: [
                     Expanded(
                       child: TextButton(
-                        onPressed:
-                            picked ? () => _uploadPhotosAndCreateKYC() : null,
+                        onPressed: picked
+                            ? () {
+                                _uploadPhotosAndCreateKYC();
+                                // show success pop-up dialog
+                                // then press 'รับทราบ' and navigate to home screen
+                                Navigator.of(context).pushReplacementNamed('/');
+                              }
+                            : null,
                         child: Text(
                           'ดำเนินการต่อ',
                           style: textTheme().button,
@@ -200,7 +206,7 @@ class _KYCState extends State<KYC> {
                 const SizedBox(height: 10),
                 TextButton(
                   onPressed: () {
-                    debugPrint(_frontPhoto!.path.toString());
+                    Navigator.of(context).pushReplacementNamed('/');
                   },
                   child: Text(
                     'ดำเนินการภายหลัง',
