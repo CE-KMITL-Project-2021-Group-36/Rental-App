@@ -333,10 +333,12 @@ class AccountPage extends ConsumerWidget {
                                       ),
                                     ),
                                   ),
+
                                 ],
                               ),
                             ),
                           ),
+
                           const SizedBox(
                             height: 20,
                           ),
