@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="17522974-1c5f-4ee5-af4c-e161c17a372e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rental_app/lib/screens/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/rental_app/lib/screens/home_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rental_app/lib/models/contract_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/rental_app/lib/models/contract_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rental_app/lib/screens/contract_management_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/rental_app/lib/screens/contract_management_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rental_app/lib/screens/rent_request_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/rental_app/lib/screens/rent_request_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rental_app/lib/screens/upload_evidence_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/rental_app/lib/screens/upload_evidence_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rental_app/lib/screens/view_contract_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/rental_app/lib/screens/view_contract_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rental_app/lib/widgets/contract_card.dart" beforeDir="false" afterPath="$PROJECT_DIR$/rental_app/lib/widgets/contract_card.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rental_app/lib/widgets/owner_contract_addition.dart" beforeDir="false" afterPath="$PROJECT_DIR$/rental_app/lib/widgets/owner_contract_addition.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rental_app/lib/widgets/renter_contract_addition.dart" beforeDir="false" afterPath="$PROJECT_DIR$/rental_app/lib/widgets/renter_contract_addition.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

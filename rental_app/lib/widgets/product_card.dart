@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/widgets/widget.dart';
 
@@ -134,11 +135,11 @@ class ProductCard extends StatelessWidget {
 
   String displayPrice() {
     if (product.pricePerDay > 0) {
-      return '฿' + product.pricePerDay.toString() + '/วัน';
+      return '฿' + currencyFormat(product.pricePerDay) + '/วัน';
     } else if (product.pricePerWeek > 0) {
-      return '฿' + product.pricePerWeek.toString() + '/สัปดาห์';
+      return '฿' + currencyFormat(product.pricePerWeek) + '/สัปดาห์';
     } else {
-      return '฿' + product.pricePerMonth.toString() + '/เดือน';
+      return '฿' + currencyFormat(product.pricePerMonth) + '/เดือน';
     }
   }
 }

@@ -51,6 +51,9 @@ class AppRouter {
         return WalletTopUp.route();
       case WalletRequestWithdrawal.routeName:
         return WalletRequestWithdrawal.route();
+      case ContractManagementScreen.routeName:
+        return ContractManagementScreen.route(userType: settings.arguments as String);
+
 
       default:
         return _errorRoute();

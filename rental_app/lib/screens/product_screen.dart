@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_nullsafety/carousel_nullsafety.dart';
 import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/widgets/choice_chip.dart';
 import 'package:rental_app/widgets/product_slide_panel.dart';
@@ -281,7 +282,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   ),
                   widget.product.pricePerDay != 0
                       ? Text(
-                          '฿' + widget.product.pricePerDay.toString() + '/วัน',
+                          '฿' + currencyFormat(widget.product.pricePerDay) + '/วัน',
                           style: const TextStyle(
                             fontSize: 16,
                             color: primaryColor,
@@ -291,7 +292,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   widget.product.pricePerWeek != 0
                       ? Text(
                           '฿' +
-                              widget.product.pricePerWeek.toString() +
+                              currencyFormat(widget.product.pricePerWeek) +
                               '/สัปดาห์',
                           style: const TextStyle(
                             fontSize: 16,
@@ -302,7 +303,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   widget.product.pricePerMonth != 0
                       ? Text(
                           '฿' +
-                              widget.product.pricePerMonth.toString() +
+                              currencyFormat(widget.product.pricePerMonth) +
                               '/เดือน',
                           style: const TextStyle(
                             fontSize: 16,
