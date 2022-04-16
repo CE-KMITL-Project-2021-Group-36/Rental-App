@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/config/theme.dart';
 
 class Wallet extends StatefulWidget {
   const Wallet({Key? key}) : super(key: key);
@@ -89,7 +90,7 @@ class _WalletState extends State<Wallet> {
                               bottom: 10,
                               right: 10,
                               child: Text(
-                                '฿ $balance',
+                                '฿' + currencyFormat(balance!),
                                 style: const TextStyle(
                                   fontSize: 36,
                                   fontWeight: FontWeight.w600,
