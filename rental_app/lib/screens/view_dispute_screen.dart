@@ -1,14 +1,8 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:path/path.dart' as path;
 
 class ViewDisputeScreen extends StatefulWidget {
   const ViewDisputeScreen({Key? key, required this.contract}) : super(key: key);
@@ -106,7 +100,9 @@ class _ViewDisputeScreenState extends State<ViewDisputeScreen> {
                                 );
                               }),
                           const SizedBox(height: 32),
-                          Text('สร้างเมื่อ '+ DateFormat('dd-MM-yyyy').format(dispute['dateCreated'].toDate()))
+                          Text('สร้างเมื่อ ' +
+                              DateFormat('dd-MM-yyyy')
+                                  .format(dispute['dateCreated'].toDate()))
                         ],
                       ),
                     ),

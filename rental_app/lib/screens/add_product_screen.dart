@@ -62,7 +62,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       final imageTemporary = File(image.path);
       setState(() => this.image = imageTemporary);
     } on PlatformException catch (e) {
-      print('Failed to pick image: $e');
+      debugPrint('Failed to pick image: $e');
     }
   }
 
@@ -77,13 +77,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
       await ref.getDownloadURL().then((loc) => setState(() => imageUrl = loc));
       //(imageUrl);
     } catch (e) {
-      print('error occured');
+      debugPrint('error occurred');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print('price' + pricePerDay.toString());
+    debugPrint('price' + pricePerDay.toString());
     return Scaffold(
       appBar: AppBar(title: const Text("เพิ่มสินค้า")),
       body: Form(
@@ -315,9 +315,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         'isFeature': isFeature,
                         'dateCreated': DateTime.now(),
                       })
-                      .then((value) => print('Product Added'))
-                      .catchError(
-                          (error) => print('Failed to add product: $error'));
+                      .then((value) => debugPrint('Product Added'))
+                      .catchError((error) =>
+                          debugPrint('Failed to add product: $error'));
                   Navigator.pop(context, '/user_store');
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('เพิ่มสินค้าแล้ว'),

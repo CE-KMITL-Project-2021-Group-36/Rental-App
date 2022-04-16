@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:path/path.dart' as path;
 
 class AddDisputeScreen extends StatefulWidget {
   const AddDisputeScreen({Key? key, required this.contract}) : super(key: key);
@@ -84,7 +84,7 @@ class _AddDisputeScreenState extends State<AddDisputeScreen> {
         _image.add(File(response.file!.path));
       });
     } else {
-      print(response.file);
+      debugPrint(response.file.toString());
     }
   }
 

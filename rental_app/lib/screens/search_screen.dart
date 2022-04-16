@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_app/models/models.dart';
 
@@ -88,8 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                 );
               }
-            })
-      );
+            }));
   }
 
   void searchProduct(String query) {
@@ -153,7 +151,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         product.pricePerDay,
-                        style: const TextStyle(fontSize: 12, color: Colors.indigo),
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.indigo),
                         maxLines: 3,
                       ),
                     ),

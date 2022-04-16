@@ -160,7 +160,11 @@ class AccountPage extends ConsumerWidget {
                                   top: 10,
                                   right: 10,
                                   child: InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, '/contract_management',
+                                          arguments: 'renter');
+                                    },
                                     child: Row(
                                       children: const [
                                         Text(
