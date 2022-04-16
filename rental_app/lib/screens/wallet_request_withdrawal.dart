@@ -167,7 +167,7 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
                                     bottom: 10,
                                     right: 10,
                                     child: Text(
-                                      '฿ $balance',
+                                      '฿' + currencyFormat(balance!),
                                       style: const TextStyle(
                                         fontSize: 36,
                                         fontWeight: FontWeight.w600,

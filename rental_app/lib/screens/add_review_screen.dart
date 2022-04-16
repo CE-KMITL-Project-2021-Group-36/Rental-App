@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
@@ -39,8 +38,11 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
   }
 
   _setDataInit() async {
-    final snapshot =
-        await products.doc(widget.product.id).collection("reviews").doc(_userId).get();
+    final snapshot = await products
+        .doc(widget.product.id)
+        .collection("reviews")
+        .doc(_userId)
+        .get();
     if (snapshot.exists) {
       await products
           .doc(widget.product.id)
@@ -192,9 +194,9 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                       'text': _text,
                       'dateCreated': DateTime.now(),
                     })
-                    .then((value) => print('Review Added'))
+                    .then((value) => debugPrint('Review Added'))
                     .catchError(
-                        (error) => print('Failed to add review: $error'));
+                        (error) => debugPrint('Failed to add review: $error'));
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text('อัพเดทรีวิว'),

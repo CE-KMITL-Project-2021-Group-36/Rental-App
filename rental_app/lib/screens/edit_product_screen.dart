@@ -82,7 +82,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       final imageTemporary = File(image.path);
       setState(() => this.image = imageTemporary);
     } on PlatformException catch (e) {
-      print('Failed to pick image: $e');
+      debugPrint('Failed to pick image: $e');
     }
   }
 
@@ -97,7 +97,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       await ref.getDownloadURL().then((loc) => setState(() => imageUrl = loc));
       //(imageUrl);
     } catch (e) {
-      print('error occured');
+      debugPrint('error occurred');
     }
   }
 
@@ -384,9 +384,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
             TextButton(
               child: const Text('แก้ไขสินค้านี้'),
               onPressed: () async {
-                bool priceNotFilled = (pricePerDay == 0) &&
-                    (pricePerWeek == 0) &&
-                    (pricePerMonth == 0);
                 if (_formKey.currentState!.validate()
                     //&& !priceNotFilled
                     ) {

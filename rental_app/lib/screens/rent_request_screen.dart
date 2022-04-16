@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path;
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:path/path.dart' as path;
 
 class RentRequestScreen extends StatefulWidget {
   const RentRequestScreen(
@@ -87,7 +87,7 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
         _image.add(File(response.file!.path));
       });
     } else {
-      print(response.file);
+      debugPrint(response.file.toString());
     }
   }
 
@@ -113,7 +113,7 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
     await contractRef.add({
       'productId': widget.product.id,
       'renterId': FirebaseAuth.instance.currentUser?.uid,
-      'ownerId' : widget.product.owner,
+      'ownerId': widget.product.owner,
       'rentalPrice': widget.price,
       'deposit': 0,
       'startDate': widget.dateRange.start,

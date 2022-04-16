@@ -13,7 +13,7 @@ class ConfirmDeposit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('ค่ามัดจำ: ${contract.deposit}');
+    debugPrint('ค่ามัดจำ: ${contract.deposit}');
     CollectionReference contracts =
         FirebaseFirestore.instance.collection("contracts");
     return Scaffold(
@@ -107,9 +107,9 @@ class ConfirmDeposit extends StatelessWidget {
                             'ownerStatus': 'รอการชำระ',
                             'deposit': deposit,
                           })
-                          .then((value) => print('Contract Update'))
+                          .then((value) => debugPrint('Contract Update'))
                           .catchError((error) =>
-                              print('Failed to update contract: $error'));
+                              debugPrint('Failed to update contract: $error'));
                       Navigator.pop(context);
                     },
                     child: const Text("ยืนยันและสร้างสัญญา"),
