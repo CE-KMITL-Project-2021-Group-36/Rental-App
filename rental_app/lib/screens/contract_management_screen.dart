@@ -30,7 +30,7 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
     'ที่ต้องชำระ',
     'ที่ต้องได้รับ',
     'ที่ต้องส่งคืน',
-    'ยืนยันจบสัญญา',
+    'รอการจบสัญญา',
     'สำเร็จ',
     'ยกเลิกแล้ว',
     'ข้อพิพาท'
@@ -41,7 +41,6 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
     'รอการชำระ',
     'ที่ต้องจัดส่ง',
     'ที่ต้องได้คืน',
-    'ยืนยันจบสัญญา',
     'สำเร็จ',
     'ยกเลิกแล้ว',
     'ข้อพิพาท'

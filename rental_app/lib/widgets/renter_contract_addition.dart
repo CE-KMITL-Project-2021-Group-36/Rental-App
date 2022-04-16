@@ -146,26 +146,7 @@ renterContractAddition(context, Contract contract, Product product, userType) {
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
-          TextButton(
-            child: const Text('ดูสัญญาเช่า'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => UploadEvidenceScreen(
-                          contract: contract,
-                        )),
-              );
-            },
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              primary: Colors.white,
-              backgroundColor: primaryColor,
-              textStyle: const TextStyle(
-                fontSize: 14,
-              ),
-            ),
-          )
+          _buildViewContractButton(context, contract),
         ],
       );
     case 'ที่ต้องส่งคืน':
@@ -177,49 +158,19 @@ renterContractAddition(context, Contract contract, Product product, userType) {
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
-          TextButton(
-            child: const Text('ดูสัญญาเช่า'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => UploadEvidenceScreen(
-                          contract: contract,
-                        )),
-              );
-            },
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              primary: Colors.white,
-              backgroundColor: primaryColor,
-              textStyle: const TextStyle(
-                fontSize: 14,
-              ),
-            ),
-          )
+          _buildViewContractButton(context, contract),
         ],
       );
-    case 'ยืนยันจบสัญญา':
+    case 'รอการจบสัญญา':
       return Row(
         children: [
           Expanded(
             child: Text(
-              'ข้าพเจ้ายืนยันว่าสินค้าและการเช่าเป็นไปตามสัญญา และไม่มีปัญหา',
+              'รอผู้ให้เช่าตรวจสอบสินค้า และยืนยันการจบสัญญา',
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
-          TextButton(
-            child: const Text('ยืนยันจบสัญญา'),
-            onPressed: () {},
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              primary: Colors.white,
-              backgroundColor: primaryColor,
-              textStyle: const TextStyle(
-                fontSize: 14,
-              ),
-            ),
-          )
+          _buildViewContractButton(context, contract),
         ],
       );
     case 'สำเร็จ':
@@ -231,6 +182,7 @@ renterContractAddition(context, Contract contract, Product product, userType) {
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
+          _buildViewContractButton(context, contract),
           TextButton(
             child: const Text('ให้คะแนน'),
             onPressed: () {
@@ -256,6 +208,7 @@ renterContractAddition(context, Contract contract, Product product, userType) {
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
+          _buildViewContractButton(context, contract),
         ],
       );
     case 'ข้อพิพาท':
@@ -296,59 +249,26 @@ renterContractAddition(context, Contract contract, Product product, userType) {
   }
 }
 
-showAlertDialog(BuildContext context, Contract contract) {
-      // set up the buttons
-      Widget cancelButton = TextButton(
-        child: const Text(
-          "ยกเลิก",
-          style: TextStyle(
-            decoration: TextDecoration.underline,
+_buildViewContractButton(context, contract) {
+  return TextButton(
+    child: const Text('ดูสัญญาเช่า'),
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UploadEvidenceScreen(
+            contract: contract,
           ),
         ),
-        style: TextButton.styleFrom(
-          //primary: errorColor,
-          textStyle: const TextStyle(
-            fontSize: 16,
-          ),
-        ),
-        onPressed: () {
-          Navigator.pop(context);
-        },
       );
-      Widget continueButton = TextButton(
-        child: const Text("ยืนยัน"),
-        style: TextButton.styleFrom(
-          primary: Colors.white,
-          backgroundColor: primaryColor,
-          textStyle: const TextStyle(
-            fontSize: 16,
-          ),
-        ),
-        onPressed: () async {
-          final ref = FirebaseFirestore.instance.collection("contracts").doc(contract.id);
-          await ref.update({
-            'renterStatus': 'สำเร็จ',
-            //'ownerStatus': 'ยกเลิกแล้ว',
-          });
-          Navigator.pop(context);
-        },
-      );
-
-      // set up the AlertDialog
-      AlertDialog alert = AlertDialog(
-        title: const Text("ยืนยันการจบสัญญาเช่านี้?"),
-        content: const Text("คุณได้ส่งของคืนแก่ผู้ให้เช่าเรียบร้อยแล้ว"),
-        actions: [
-          cancelButton,
-          continueButton,
-        ],
-      );
-
-      // show the dialog
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alert;
-        },
-      );
-    }
+    },
+    style: TextButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      primary: Colors.white,
+      backgroundColor: primaryColor,
+      textStyle: const TextStyle(
+        fontSize: 14,
+      ),
+    ),
+  );
+}

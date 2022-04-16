@@ -138,6 +138,11 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
     String formattedStartDate = DateFormat('dd-MM-yyyy').format(startDate);
     String formattedEndDate = DateFormat('dd-MM-yyyy').format(endDate);
     final bool isRenter = userId == widget.contract.renterId;
+    final bool isActive = widget.contract.renterStatus == 'ที่ต้องได้รับ' ||
+        widget.contract.renterStatus == 'ที่ต้องส่งคืน' ||
+        widget.contract.ownerStatus == 'ที่ต้องจัดส่ง' ||
+        widget.contract.ownerStatus == 'ที่ต้องได้คืน';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('สัญญาเช่า'),
@@ -190,60 +195,63 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: primaryColor,
-                              border: Border.all(
-                                color: outlineColor,
-                              ),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(8),
-                              ),
-                            ),
-                            child: Row(
-                              children: const [
-                                Icon(Icons.videocam, color: Colors.white),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                SizedBox(height: 4),
-                                Expanded(
-                                  child: Text(
-                                    'กรุณาถ่ายและอัปโหลดวิดีโอเพื่อเป็นหลักฐาน\nในการรับและการจัดส่งสินค้า',
-                                    style: TextStyle(
-                                      color: Colors.white,
+                          isActive
+                              ? Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor,
+                                    border: Border.all(
+                                      color: outlineColor,
+                                    ),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(8),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          _buildUploadSection(fileName1, fileName2),
-                          //const Divider(thickness: 0.6, height: 32),
-                          const SizedBox(
-                            height: 16,
-                          ),
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.videocam, color: Colors.white),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      SizedBox(height: 4),
+                                      Expanded(
+                                        child: Text(
+                                          'กรุณาถ่ายและอัปโหลดวิดีโอเพื่อเป็นหลักฐาน\nในการรับและการจัดส่งสินค้า',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                          isActive
+                              ? Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 32,
+                                    ),
+                                    _buildUploadSection(fileName1, fileName2),
+                                    const SizedBox(
+                                      height: 32,
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
                           Row(children: const <Widget>[
-                            Expanded(
-                              child: Divider(color: primaryColor),
-                            ),
                             Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: EdgeInsets.only(right: 4),
                               child: Text(
                                 'รายละเอียดสัญญา',
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  color: primaryColor,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: Colors.grey,
                                 ),
                               ),
                             ),
                             Expanded(
-                              child: Divider(color: primaryColor),
+                              child: Divider(color: Colors.grey),
                             ),
                           ]),
                           const SizedBox(
@@ -455,11 +463,12 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                                     currencyFormat(widget.contract.rentalPrice),
                                 style: const TextStyle(
                                   fontSize: 18,
-                                  // color: primaryColor,
-                                  // fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
+                          ),
+                          const SizedBox(
+                            height: 4,
                           ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -467,16 +476,11 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                             children: [
                               const Text(
                                 'ค่ามัดจำ',
-                                style: TextStyle(
-                                    //fontWeight: FontWeight.bold,
-                                    ),
                               ),
                               Text(
                                 '฿' + currencyFormat(widget.contract.deposit),
                                 style: const TextStyle(
                                   fontSize: 18,
-                                  // color: primaryColor,
-                                  // fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
@@ -506,68 +510,71 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                               ),
                             ],
                           ),
-                          const Divider(thickness: 0.6, height: 32),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => AddDisputeScreen(
-                                          contract: widget.contract,
+                          const SizedBox(
+                            height: 32,
+                          ),
+                          isActive
+                              ? Column(
+                                  children: [
+                                    Row(children: const <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 4),
+                                        child: Text(
+                                          'จัดการสัญญา',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
                                         ),
                                       ),
-                                    );
-                                  },
-                                  child: const Text('เปิดข้อพิพาท'),
-                                  style: TextButton.styleFrom(
-                                    primary: primaryColor,
-                                    //backgroundColor: primaryColor,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      side: const BorderSide(
-                                          color: primaryColor, width: 1),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextButton(
-                                  onPressed: () async {},
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Icon(Icons.chat_bubble_rounded),
-                                      SizedBox(
-                                        width: 4,
+                                      Expanded(
+                                        child: Divider(color: Colors.grey),
                                       ),
-                                      Text('ติดต่อผู้ให้เช่า'),
-                                    ],
-                                  ),
-                                  style: TextButton.styleFrom(
-                                    primary: Colors.white,
-                                    backgroundColor: primaryColor,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
+                                    ]),
+                                    const SizedBox(
+                                      height: 16,
                                     ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddDisputeScreen(
+                                                    contract: widget.contract,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: const Text('เปิดข้อพิพาท'),
+                                            style: TextButton.styleFrom(
+                                              primary: primaryColor,
+                                              //backgroundColor: primaryColor,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                side: const BorderSide(
+                                                    color: primaryColor,
+                                                    width: 1),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    _confirmation(context, isRenter),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
                         ],
                       ),
                     ),
@@ -576,29 +583,120 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
     );
   }
 
+  // if(isRenter && widget.contract.renterStatus == 'ที่ต้องได้รับ')
+  // if(isRenter && widget.contract.renterStatus == 'ที่ต้องส่งคืน')
+  // if(!isRenter && widget.contract.ownerStatus == 'ที่ต้องจัดส่ง')
+  // if(!isRenter && widget.contract.ownerStatus == 'ที่ต้องได้คืน')
+  Widget _confirmation(context, bool isRenter) {
+    //ชำระเงิน -> รอจัดส่ง = ที่ต้องได้รับ
+    //ส่งสินค้า -> รอผู้เช่ายืนยัน
+    if (!isRenter && widget.contract.ownerStatus == 'ที่ต้องจัดส่ง') {
+      return _buildConfirmButton(context, 'ยืนยันการส่งสินค้าสำเร็จ', 1);
+    }
+    //รับสินค้า -> รอส่งคืน
+    if (isRenter && widget.contract.renterStatus == 'ที่ต้องได้รับ') {
+      return _buildConfirmButton(context, 'ยืนยันการรับสินค้าสำเร็จ', 2);
+    }
+    //คืนสินค้า -> รอผู้ให้เช่ายืนยัน
+    if (isRenter && widget.contract.renterStatus == 'ที่ต้องส่งคืน') {
+      return _buildConfirmButton(context, 'ยืนยันการส่งคืนสินค้าสำเร็จ', 3);
+    }
+    //จบสัญญา
+    if (!isRenter && widget.contract.ownerStatus == 'ที่ต้องได้คืน') {
+      return _buildConfirmButton(context, 'ยืนยันการรับสินค้าคืนสำเร็จ', 4);
+    }
+    return const SizedBox.shrink();
+  }
+
+  void _updateStatus(condition) async {
+    final contractId = widget.contract.id;
+    final contractRef =
+        FirebaseFirestore.instance.collection("contracts").doc(contractId);
+
+    if (condition == 1) {
+      await contractRef.update({
+        'ownerStatus': 'ที่ต้องได้คืน',
+      });
+    }
+    if (condition == 2) {
+      await contractRef.update({
+        'renterStatus': 'ที่ต้องส่งคืน',
+      });
+    }
+    if (condition == 3) {
+      await contractRef.update({
+        'renterStatus': 'รอการจบสัญญา',
+      });
+    }
+    if (condition == 4) {
+      await contractRef.update({
+        'renterStatus': 'สำเร็จ',
+        'ownerStatus': 'สำเร็จ',
+      });
+    }
+  }
+
+  Widget _buildConfirmButton(context, String text, condition) {
+    return Row(
+      children: [
+        Expanded(
+          child: TextButton(
+            onPressed: () {
+              _updateStatus(condition);
+              Navigator.pop(context);
+            },
+            child: Text(text),
+            style: TextButton.styleFrom(
+              primary: Colors.white,
+              backgroundColor: primaryColor,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildUploadSection(fileName1, fileName2) {
     bool isRenter = userId == widget.contract.renterId;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Row(children: const <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 4),
+            child: Text(
+              'อัปโหลดวิดีโอหลักฐาน',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Divider(color: Colors.grey),
+          ),
+        ]),
+        const SizedBox(
+          height: 16,
+        ),
         isRenter
             ? const Text(
-                'เมื่อได้รับสินค้า',
+                'วิดีโอเมื่อได้รับสินค้า',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
               )
             : const Text(
-                'เมื่อส่งสินค้า',
+                'วิดีโอเมื่อส่งสินค้า',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-        const SizedBox(height: 4),
-        const Text(
-          'อัปโหลดวิดีโอหลักฐาน',
-        ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         Row(
           children: [
             SizedBox(
@@ -709,145 +807,152 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
-        const Divider(thickness: 0.6, height: 32),
-        isRenter
-            ? const Text(
-                'เมื่อส่งคืนสินค้า',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              )
-            : const Text(
-                'เมื่อได้รับสินค้า',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-        const SizedBox(height: 4),
-        const Text(
-          'อัปโหลดวิดีโอหลักฐาน',
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            SizedBox(
-              width: 100,
-              height: 100,
-              child: InkWell(
-                splashColor: primaryColor,
-                onTap: () {
-                  selectFile('file2');
-                },
-                child: Ink(
-                  decoration: BoxDecoration(
-                    color: primaryColor[50],
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+        widget.contract.renterStatus == 'ที่ต้องส่งคืน' ||
+                widget.contract.ownerStatus == 'ที่ต้องได้คืน'
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 32),
+                  isRenter
+                      ? const Text(
+                          'วิดีโอเมื่อส่งคืนสินค้า',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : const Text(
+                          'วิดีโอเมื่อได้รับสินค้า',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                  const SizedBox(height: 8),
+                  Row(
                     children: [
-                      const Icon(
-                        Icons.videocam,
-                        color: primaryColor,
-                        size: 48,
-                      ),
-                      isUploaded2
-                          ? const Text(
-                              'เลือกวิดีโอใหม่',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: primaryColor,
-                              ),
-                            )
-                          : const Text(
-                              'เลือกวิดีโอ',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: primaryColor,
-                              ),
+                      SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: InkWell(
+                          splashColor: primaryColor,
+                          onTap: () {
+                            selectFile('file2');
+                          },
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              color: primaryColor[50],
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(8)),
                             ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                isUploaded2
-                    ? const SizedBox.shrink()
-                    : SizedBox(
-                        width: 160,
-                        child: Text(
-                          '$fileName2',
-                          style: const TextStyle(height: 2),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.videocam,
+                                  color: primaryColor,
+                                  size: 48,
+                                ),
+                                isUploaded2
+                                    ? const Text(
+                                        'เลือกวิดีโอใหม่',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: primaryColor,
+                                        ),
+                                      )
+                                    : const Text(
+                                        'เลือกวิดีโอ',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: primaryColor,
+                                        ),
+                                      ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                isUploaded2
-                    ? const SizedBox.shrink()
-                    : Row(
-                        children: const [
-                          Icon(Icons.done, color: primaryColor, size: 20),
-                          Text(
-                            'อัปโหลดแล้ว',
-                            style: TextStyle(
-                              color: primaryColor,
-                            ),
-                          ),
+                      const SizedBox(width: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          isUploaded2
+                              ? const SizedBox.shrink()
+                              : SizedBox(
+                                  width: 160,
+                                  child: Text(
+                                    '$fileName2',
+                                    style: const TextStyle(height: 2),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                  ),
+                                ),
+                          isUploaded2
+                              ? Row(
+                                  children: const [
+                                    Icon(Icons.done,
+                                        color: primaryColor, size: 20),
+                                    Text(
+                                      'อัปโหลดแล้ว',
+                                      style: TextStyle(
+                                        color: primaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                          file2 == null || isUploaded2
+                              ? const SizedBox.shrink()
+                              : Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 140,
+                                      child: TextButton(
+                                        onPressed: () {
+                                          uploadFile('file2');
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Text(
+                                              'อัปโหลดวิดีโอ',
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                            ),
+                                          ],
+                                        ),
+                                        style: TextButton.styleFrom(
+                                          primary: Colors.white,
+                                          backgroundColor: primaryColor,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 6),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                  ],
+                                ),
                         ],
                       ),
-                file2 != null
-                    ? Row(
-                        children: [
-                          SizedBox(
-                            width: 140,
-                            child: TextButton(
-                              onPressed: () {
-                                uploadFile('file2');
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Text(
-                                    'อัปโหลดวิดีโอ',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                ],
-                              ),
-                              style: TextButton.styleFrom(
-                                primary: Colors.white,
-                                backgroundColor: primaryColor,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 6),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                        ],
-                      )
-                    : const SizedBox.shrink(),
-              ],
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        isRenter ? _buildAddress() : const SizedBox.shrink(),
-        const SizedBox(height: 16),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  isRenter ? _buildAddress() : const SizedBox.shrink(),
+                ],
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }
 }
 
-_buildAddress() {
+Widget _buildAddress() {
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(

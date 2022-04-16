@@ -107,27 +107,7 @@ ownerContractAddition(context, Contract contract, product, userType) {
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
-          TextButton(
-            child: const Text('ดูสัญญาเช่า'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => UploadEvidenceScreen(
-                    contract: contract,
-                  ),
-                ),
-              );
-            },
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              primary: Colors.white,
-              backgroundColor: primaryColor,
-              textStyle: const TextStyle(
-                fontSize: 14,
-              ),
-            ),
-          )
+          _buildViewContractButton(context, contract),
         ],
       );
     case 'ที่ต้องได้คืน':
@@ -139,50 +119,7 @@ ownerContractAddition(context, Contract contract, product, userType) {
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
-          TextButton(
-            child: const Text('ดูสัญญาเช่า'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => UploadEvidenceScreen(
-                    contract: contract,
-                  ),
-                ),
-              );
-            },
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              primary: Colors.white,
-              backgroundColor: primaryColor,
-              textStyle: const TextStyle(
-                fontSize: 14,
-              ),
-            ),
-          )
-        ],
-      );
-    case 'ยืนยันจบสัญญา':
-      return Row(
-        children: [
-          Expanded(
-            child: Text(
-              'ข้าพเจ้ายืนยันว่าสินค้าและการเช่าเป็นไปตามสัญญา และไม่มีปัญหา',
-              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-            ),
-          ),
-          TextButton(
-            child: const Text('ยืนยันจบสัญญา'),
-            onPressed: () {},
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              primary: Colors.white,
-              backgroundColor: primaryColor,
-              textStyle: const TextStyle(
-                fontSize: 14,
-              ),
-            ),
-          )
+          _buildViewContractButton(context, contract),
         ],
       );
     case 'สำเร็จ':
@@ -194,6 +131,7 @@ ownerContractAddition(context, Contract contract, product, userType) {
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
+          _buildViewContractButton(context, contract),
         ],
       );
     case 'ยกเลิกแล้ว':
@@ -205,6 +143,7 @@ ownerContractAddition(context, Contract contract, product, userType) {
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
+          _buildViewContractButton(context, contract),
         ],
       );
     case 'ข้อพิพาท':
@@ -243,4 +182,28 @@ ownerContractAddition(context, Contract contract, product, userType) {
     default:
       return const SizedBox.shrink();
   }
+}
+
+_buildViewContractButton(context, contract) {
+  return TextButton(
+    child: const Text('ดูสัญญาเช่า'),
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UploadEvidenceScreen(
+            contract: contract,
+          ),
+        ),
+      );
+    },
+    style: TextButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      primary: Colors.white,
+      backgroundColor: primaryColor,
+      textStyle: const TextStyle(
+        fontSize: 14,
+      ),
+    ),
+  );
 }
