@@ -54,7 +54,10 @@ renterContractAddition(context, Contract contract, Product product, userType) {
                 ),
               ),
               TextButton(
-                child: const Text('ดูคำขอเช่า', style: TextStyle(fontSize: 14)),
+                child: const Text(
+                  'ดูคำขอเช่า',
+                  style: TextStyle(fontSize: 14),
+                ),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -128,16 +131,18 @@ renterContractAddition(context, Contract contract, Product product, userType) {
                 ),
               ),
               TextButton(
-                child: const Text('ชำระเงินตอนนี้'),
+                child: const Text(
+                  'ชำระเงินตอนนี้',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
                 onPressed: () {},
                 style: TextButton.styleFrom(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   primary: Colors.white,
                   backgroundColor: primaryColor,
-                  textStyle: const TextStyle(
-                    fontSize: 14,
-                  ),
                 ),
               )
             ],
@@ -198,7 +203,12 @@ renterContractAddition(context, Contract contract, Product product, userType) {
           ),
           _buildViewContractButton(context, contract),
           TextButton(
-            child: const Text('ให้คะแนน'),
+            child: const Text(
+              'ให้คะแนน',
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            ),
             onPressed: () {
               Navigator.pushNamed(context, '/add_review', arguments: product);
             },
@@ -206,9 +216,6 @@ renterContractAddition(context, Contract contract, Product product, userType) {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               primary: Colors.white,
               backgroundColor: primaryColor,
-              textStyle: const TextStyle(
-                fontSize: 14,
-              ),
             ),
           )
         ],
@@ -235,7 +242,12 @@ renterContractAddition(context, Contract contract, Product product, userType) {
             ),
           ),
           TextButton(
-            child: const Text('ดูข้อพิพาท'),
+            child: const Text(
+              'ดูข้อพิพาท',
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            ),
             onPressed: () {
               Navigator.push(
                 context,
@@ -250,9 +262,6 @@ renterContractAddition(context, Contract contract, Product product, userType) {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               primary: Colors.white,
               backgroundColor: primaryColor,
-              textStyle: const TextStyle(
-                fontSize: 14,
-              ),
             ),
           )
         ],
@@ -265,7 +274,12 @@ renterContractAddition(context, Contract contract, Product product, userType) {
 
 _buildViewContractButton(context, contract) {
   return TextButton(
-    child: const Text('ดูสัญญาเช่า'),
+    child: const Text(
+      'ดูสัญญาเช่า',
+      style: TextStyle(
+        fontSize: 14,
+      ),
+    ),
     onPressed: () {
       Navigator.push(
         context,
@@ -280,9 +294,6 @@ _buildViewContractButton(context, contract) {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       primary: Colors.white,
       backgroundColor: primaryColor,
-      textStyle: const TextStyle(
-        fontSize: 14,
-      ),
     ),
   );
 }

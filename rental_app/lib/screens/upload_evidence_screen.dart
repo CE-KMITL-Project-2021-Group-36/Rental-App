@@ -314,18 +314,16 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                                           const SizedBox(
                                             height: 8,
                                           ),
+                                          const Text(
+                                            'ค่าเช่าไม่รวมมัดจำ',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                           Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                                MainAxisAlignment.end,
                                             children: [
-                                              const Text(
-                                                'ค่าเช่าไม่รวมมัดจำ',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
                                               Text(
                                                 '฿' +
                                                     currencyFormat(widget

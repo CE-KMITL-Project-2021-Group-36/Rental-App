@@ -21,7 +21,12 @@ ownerContractAddition(context, Contract contract, product, userType) {
             ),
           ),
           TextButton(
-            child: const Text('ดูคำขอเช่า'),
+            child: const Text(
+              'ดูคำขอเช่า',
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            ),
             onPressed: () {
               Navigator.push(
                 context,
@@ -37,9 +42,6 @@ ownerContractAddition(context, Contract contract, product, userType) {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               primary: Colors.white,
               backgroundColor: primaryColor,
-              textStyle: const TextStyle(
-                fontSize: 14,
-              ),
             ),
           )
         ],
@@ -160,7 +162,12 @@ ownerContractAddition(context, Contract contract, product, userType) {
             ),
           ),
           TextButton(
-            child: const Text('ดูข้อพิพาท'),
+            child: const Text(
+              'ดูข้อพิพาท',
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            ),
             onPressed: () {
               Navigator.push(
                 context,
@@ -175,9 +182,6 @@ ownerContractAddition(context, Contract contract, product, userType) {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               primary: Colors.white,
               backgroundColor: primaryColor,
-              textStyle: const TextStyle(
-                fontSize: 14,
-              ),
             ),
           )
         ],
@@ -190,7 +194,12 @@ ownerContractAddition(context, Contract contract, product, userType) {
 
 _buildViewContractButton(context, contract) {
   return TextButton(
-    child: const Text('ดูสัญญาเช่า'),
+    child: const Text(
+      'ดูสัญญาเช่า',
+      style: TextStyle(
+        fontSize: 14,
+      ),
+    ),
     onPressed: () {
       Navigator.push(
         context,
@@ -205,9 +214,6 @@ _buildViewContractButton(context, contract) {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       primary: Colors.white,
       backgroundColor: primaryColor,
-      textStyle: const TextStyle(
-        fontSize: 14,
-      ),
     ),
   );
 }
