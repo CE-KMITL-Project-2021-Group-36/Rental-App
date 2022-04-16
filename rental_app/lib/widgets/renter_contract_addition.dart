@@ -40,6 +40,13 @@ renterContractAddition(context, Contract contract, Product product, userType) {
           ),
           Row(
             children: [
+              const Icon(
+                Icons.schedule_outlined,
+                color: Colors.grey,
+              ),
+              const SizedBox(
+                width: 4,
+              ),
               Expanded(
                 child: Text(
                   'ผู้ให้เช่ากำลังทำการตรวจสอบข้อมูลและเอกสารโปรดรอการแจ้งเตือนจากระบบ',
@@ -164,6 +171,13 @@ renterContractAddition(context, Contract contract, Product product, userType) {
     case 'รอการจบสัญญา':
       return Row(
         children: [
+          const Icon(
+            Icons.schedule_outlined,
+            color: Colors.grey,
+          ),
+          const SizedBox(
+            width: 4,
+          ),
           Expanded(
             child: Text(
               'รอผู้ให้เช่าตรวจสอบสินค้า และยืนยันการจบสัญญา',

@@ -88,6 +88,10 @@ ownerContractAddition(context, Contract contract, product, userType) {
           const SizedBox(height: 8),
           Row(
             children: [
+              const Icon(
+                Icons.schedule_outlined,
+                color: Colors.grey,
+              ),
               Expanded(
                 child: Text(
                   'รอผู้เช่าชำระเงินภายใน 24 ชั่วโมงหากไม่ดำเนินการ สัญญาจะถูกยกเลิกอัตโนมัติ',
