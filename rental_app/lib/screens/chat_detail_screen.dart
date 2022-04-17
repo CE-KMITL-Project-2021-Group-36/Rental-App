@@ -1,125 +1,156 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:rental_app/config/palette.dart';
 
 class ChatDetailScreen extends StatefulWidget {
-  const ChatDetailScreen({Key? key}) : super(key: key);
-
+  const ChatDetailScreen(
+      {Key? key,
+      required this.chatWithUserName,
+      required this.chatId,
+      required this.chatWithUserId})
+      : super(key: key);
+  final String chatWithUserName, chatId, chatWithUserId;
   @override
   _ChatDetailScreenState createState() => _ChatDetailScreenState();
-
-  static const String routeName = '/chat_detail';
-
-  static Route route() {
-    return MaterialPageRoute(
-      settings: const RouteSettings(name: routeName),
-      builder: (_) => const ChatDetailScreen(),
-    );
-  }
 }
 
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
-  List<ChatMessage> messages = [
-    ChatMessage(
-        messageContent: "ร้านเดินทางไปได้ยังไงครับ?", messageType: "sender"),
-    ChatMessage(
-        messageContent: "ลง bts ห้าแยกลาดพร้าว อยู่ตรงข้ามเซนทรัลครับ",
-        messageType: "receiver"),
-    ChatMessage(messageContent: "โอเคครับ👍", messageType: "sender"),
-    ChatMessage(
-        messageContent: "ถ้าหาร้านไม่เจอ เดี๋ยวทักมาอีกรอบนะครับ",
-        messageType: "sender"),
-    ChatMessage(messageContent: "ได้ครับ😀", messageType: "receiver"),
-  ];
+  final TextEditingController _controller = TextEditingController();
+  final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: Text('RentKlong'),
-      ),
-      body: Stack(
-        children: [
-          ListView.builder(
-            itemCount: messages.length,
+  void sendMessage() async {
+    CollectionReference messages = FirebaseFirestore.instance
+        .collection('chats')
+        .doc(widget.chatId)
+        .collection('messages');
+    CollectionReference chats = FirebaseFirestore.instance.collection('chats');
+    await messages.add(
+      {
+        'createdOn': DateTime.now(),
+        'message': _controller.text,
+        'sender': currentUserId,
+      },
+    );
+    await chats.doc(widget.chatId).update(
+      {
+        'lastestMessage': _controller.text,
+      },
+    );
+    _controller.clear();
+  }
+
+  Widget _buildMessageList() {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('chats')
+            .doc(widget.chatId)
+            .collection('messages')
+            .orderBy('createdOn', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Text('มีบางอย่างผิดพลาด');
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+          final messages = snapshot.data;
+          return ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            reverse: true,
             shrinkWrap: true,
-            padding: const EdgeInsets.only(top: 10, bottom: 10),
-            physics: const NeverScrollableScrollPhysics(),
+            itemCount: messages!.docs.length,
             itemBuilder: (context, index) {
-              return Container(
-                padding: const EdgeInsets.only(
-                    left: 14, right: 14, top: 10, bottom: 10),
-                child: Align(
-                  alignment: (messages[index].messageType == "receiver"
-                      ? Alignment.topLeft
-                      : Alignment.topRight),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: (messages[index].messageType == "receiver"
-                          ? Colors.grey.shade200
-                          : primaryColor),
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Text(
-                      messages[index].messageContent,
-                      style: TextStyle(
-                          color: (messages[index].messageType == "receiver"
-                              ? Colors.black
-                              : Colors.white),
-                          fontSize: 15),
-                    ),
-                  ),
-                ),
+              final message = messages.docs[index];
+              return _buildMessage(
+                message: message['message'],
+                isMe: message['sender'] == currentUserId,
               );
             },
-          ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              width: double.infinity,
-              color: Colors.white,
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.add,
-                    ),
-                    color: primaryColor,
-                    onPressed: () {},
-                  ),
-                  const Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.all(4.0),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "พิมพ์ข้อความ...",
-                          enabledBorder: InputBorder.none,
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.send,
-                    ),
-                    color: primaryColor,
-                    onPressed: () {},
-                  ),
-                ],
+          );
+        });
+  }
+
+  Widget _buildSendMessageTextField() {
+    return Row(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: TextField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                hintText: "พิมพ์ข้อความ...",
+                enabledBorder: InputBorder.none,
+                border: InputBorder.none,
               ),
             ),
           ),
-        ],
+        ),
+        IconButton(
+          icon: const Icon(
+            Icons.send,
+          ),
+          color: primaryColor,
+          onPressed: () {
+            sendMessage();
+          },
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyboardDismisser(
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          title: Text(widget.chatWithUserName),
+        ),
+        body:
+            Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 16),
+                child: _buildMessageList(),
+              ),
+            ),
+            _buildSendMessageTextField(),
+          ],
+        ),
       ),
     );
   }
-}
 
-class ChatMessage {
-  String messageContent;
-  String messageType;
-  ChatMessage({required this.messageContent, required this.messageType});
+  Widget _buildMessage({required String message, required bool isMe}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 2),
+      //padding: const EdgeInsets.only(left: 16, right: 16, top: 1, bottom: 1),
+      child: Align(
+        alignment: (isMe ? Alignment.topRight : Alignment.topLeft),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            color: (isMe ? primaryColor : Colors.grey.shade200),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
+          child: Text(
+            message,
+            style: TextStyle(
+                color: (isMe ? Colors.white : Colors.black), fontSize: 20),
+          ),
+        ),
+      ),
+    );
+  }
 }

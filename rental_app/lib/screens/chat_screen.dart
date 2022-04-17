@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:rental_app/config/palette.dart';
+import 'package:rental_app/screens/screens.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -52,21 +53,22 @@ class _ChatScreenState extends State<ChatScreen> {
         }
         final chatData = snapshot.data;
         return ListView.builder(
+          physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: chatData!.docs.length,
           itemBuilder: (context, index) {
             DocumentSnapshot chat = chatData.docs[index];
-            String? chatUserId;
+            String? chatWithUserId;
             for (final i in chat['users']) {
               if (i != currentUserId) {
-                chatUserId = i;
+                chatWithUserId = i;
                 break;
               }
             }
             return StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection("users")
-                  .doc(chatUserId)
+                  .doc(chatWithUserId)
                   .snapshots(),
               builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (snapshot.hasError) {
@@ -82,11 +84,13 @@ class _ChatScreenState extends State<ChatScreen> {
                 }
                 final userData = snapshot.data;
                 final avatarUrl = userData!['avatarUrl'];
-                final userName =
+                final chatWithUserName =
                     '${userData['firstName']} ${userData['lastName']}';
                 return _buildUserChat(
+                  chat.id,
+                  userData.id,
                   avatarUrl,
-                  userName,
+                  chatWithUserName,
                   chat['lastestMessage'],
                 );
               },
@@ -219,10 +223,20 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buildUserChat(avatarUrl, name, lastest) {
+  Widget _buildUserChat(String chatId, String userId, String avatarUrl,
+      String name, String lastestMessage) {
     return TextButton(
       onPressed: () {
-        Navigator.of(context).pushNamed('/chat_detail');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatDetailScreen(
+              chatWithUserName: name,
+              chatId: chatId,
+              chatWithUserId: userId,
+            ),
+          ),
+        );
       },
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(Colors.white),
@@ -248,7 +262,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         fontWeight: FontWeight.bold,
                         color: textColor)),
                 const SizedBox(height: 2),
-                Text(lastest,
+                Text(lastestMessage,
                     style: const TextStyle(color: Colors.grey, fontSize: 16))
               ],
             ),
