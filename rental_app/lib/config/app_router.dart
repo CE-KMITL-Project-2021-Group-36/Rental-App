@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/screens.dart';
-import 'package:rental_app/screens/wallet.dart';
 import 'package:rental_app/screens/wallet_init_passcode_screen.dart';
 import 'package:rental_app/screens/wallet_input_passcode_screen.dart';
-import 'package:rental_app/screens/wallet_request_withdrawal.dart';
-import 'package:rental_app/screens/wallet_top_up.dart';
+import 'package:rental_app/screens/wallet_payment_gateway_screen.dart';
+import 'package:rental_app/screens/wallet_request_withdrawal_screen.dart';
+import 'package:rental_app/screens/wallet_screen.dart';
+import 'package:rental_app/screens/wallet_top_up_screen.dart';
 import 'package:rental_app/widgets/widget.dart';
 
 class AppRouter {
@@ -52,8 +53,11 @@ class AppRouter {
       case WalletRequestWithdrawal.routeName:
         return WalletRequestWithdrawal.route();
       case ContractManagementScreen.routeName:
-        return ContractManagementScreen.route(userType: settings.arguments as String);
-
+        return ContractManagementScreen.route(
+            userType: settings.arguments as String);
+      case PaymentGatewayScreen.routeName:
+        return PaymentGatewayScreen.route(
+            ksherLink: settings.arguments as String);
 
       default:
         return _errorRoute();

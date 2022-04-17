@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
@@ -32,11 +35,45 @@ class _WalletTopUpState extends State<WalletTopUp> {
   final TextEditingController _amount = TextEditingController();
   final ValueNotifier<bool> _continuousValidation = ValueNotifier(false);
 
+  var url =
+      Uri.parse('https://srentalapp.vip.ksher.net/api/v1/redirect/orders/');
+
   Future<void> _onPressedFunction() async {
     if (!_formKey.currentState!.validate()) {
       _continuousValidation.value = true;
     } else {
       debugPrint('Submitting ' + _amount.text);
+      final String timestamp =
+          ((DateTime.now().toUtc().millisecondsSinceEpoch / 1000).ceil())
+              .toString();
+      try {
+        debugPrint('in try block');
+        final response = await http.post(url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(
+              <String, String>{
+                'amount': _amount.text + '00',
+                'merchant_order_id': '${userId}_$timestamp',
+                'redirect_url': 'https://www.google.com',
+                'redirect_url_fail': 'https://www.blognone.com',
+                'signature': '',
+                'timestamp': timestamp,
+                'product_name': 'เติมเงินเข้า Renz Wallet',
+                'note': 'เติมเงินเข้า Renz Wallet'
+              },
+            ));
+        // debugPrint(response.body);
+        if (response.statusCode == 200) {
+          Map<String, dynamic> postResponse = jsonDecode(response.body);
+          final String ksherLink = postResponse['reference'];
+          // debugPrint(postResponse.toString());
+          debugPrint(ksherLink);
+          Navigator.pushNamed(context, '/wallet_payment_gateway',
+              arguments: ksherLink);
+        }
+      } on Exception catch (e) {
+        debugPrint(e.toString());
+      }
     }
   }
 
