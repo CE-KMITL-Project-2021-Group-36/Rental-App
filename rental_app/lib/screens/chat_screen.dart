@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/screens/screens.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -25,19 +27,30 @@ class _ChatScreenState extends State<ChatScreen> {
   bool isSearching = false;
   Stream? userStream;
   final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+  List userNameList = [];
 
   TextEditingController searchUserEditingController = TextEditingController();
 
   onSearch() async {
     isSearching = true;
-    setState(() {});
+    userNameList = userNameList.where((userName) {
+      final nameLower = userName.toLowerCase();
+      final searchLower = searchUserEditingController.text.toLowerCase();
+      return nameLower.contains(searchLower);
+    }).toList();
+
+    setState(() {
+      userNameList = userNameList;
+    });
+    print(userNameList);
   }
 
   Widget _buildChatsList() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection("chats")
-          .where('users', arrayContains: currentUserId)
+          .where('usersInChat', arrayContains: currentUserId)
+          .orderBy('lastestMessageCreatedOn', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
@@ -59,7 +72,7 @@ class _ChatScreenState extends State<ChatScreen> {
           itemBuilder: (context, index) {
             DocumentSnapshot chat = chatData.docs[index];
             String? chatWithUserId;
-            for (final i in chat['users']) {
+            for (final i in chat['usersInChat']) {
               if (i != currentUserId) {
                 chatWithUserId = i;
                 break;
@@ -88,10 +101,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     '${userData['firstName']} ${userData['lastName']}';
                 return _buildUserChat(
                   chat.id,
-                  userData.id,
                   avatarUrl,
                   chatWithUserName,
                   chat['lastestMessage'],
+                  chat['lastestMessageSender'],
+                  chat['lastestMessageCreatedOn'],
                 );
               },
             );
@@ -116,52 +130,21 @@ class _ChatScreenState extends State<ChatScreen> {
               icon: const Icon(
                 Icons.support_agent,
               ),
-              onPressed: () {},
+              onPressed: () async {
+                enterChatRoom(context, currentUserId, 'admin');
+              },
             ),
           ],
         ),
         body: Column(
           children: [
             _buildSearchBar(),
-            _buildChatsList(),
-            // Expanded(
-            //   child: SingleChildScrollView(
-            //     child: Column(
-            //       crossAxisAlignment: CrossAxisAlignment.start,
-            //       children: [
-            //         _buildChatRoom('assets/images/shop_profile.png',
-            //             'RentKlong', 'ได้ครับ😀', 'วันนี้\n9:10 PM'),
-            //         _buildChatRoom('assets/images/manee_profile.png',
-            //             'มานี มีนา', 'ขอลดหน่อยได้มั้ย', 'เมื่อวาน\n8:10 AM'),
-            //         _buildChatRoom(
-            //             'assets/images/tony_profile.png',
-            //             'โทนี่ พีรศักดิ์',
-            //             'ขอดูสินค้าเพิ่มเติมหน่อยครับ',
-            //             '30 พ.ย.\n11:12 PM'),
-            //         _buildChatRoom(
-            //             'assets/images/tony_profile.png',
-            //             'โทนี่ พีรศักดิ์',
-            //             'ขอดูสินค้าเพิ่มเติมหน่อยครับ',
-            //             '30 พ.ย.\n11:12 PM'),
-            //         _buildChatRoom(
-            //             'assets/images/tony_profile.png',
-            //             'โทนี่ พีรศักดิ์',
-            //             'ขอดูสินค้าเพิ่มเติมหน่อยครับ',
-            //             '30 พ.ย.\n11:12 PM'),
-            //         _buildChatRoom(
-            //             'assets/images/tony_profile.png',
-            //             'โทนี่ พีรศักดิ์',
-            //             'ขอดูสินค้าเพิ่มเติมหน่อยครับ',
-            //             '30 พ.ย.\n11:12 PM'),
-            //         _buildChatRoom(
-            //             'assets/images/tony_profile.png',
-            //             'โทนี่ พีรศักดิ์',
-            //             'ขอดูสินค้าเพิ่มเติมหน่อยครับ',
-            //             '30 พ.ย.\n11:12 PM'),
-            //       ],
-            //     ),
-            //   ),
-            // ),
+            isSearching
+                ? const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text('ไม่พบการค้นหา'),
+                  )
+                : _buildChatsList(),
           ],
         ),
       ),
@@ -177,9 +160,8 @@ class _ChatScreenState extends State<ChatScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: TextField(
           onTap: () {
-            if (searchUserEditingController.text != '') {
-              onSearch();
-            }
+            onSearch();
+            if (searchUserEditingController.text != '') {}
           },
           controller: searchUserEditingController,
           decoration: InputDecoration(
@@ -192,6 +174,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       isSearching = false;
                       searchUserEditingController.text = "";
                       FocusManager.instance.primaryFocus?.unfocus();
+                      userNameList = [];
                       setState(() {});
                     },
                     child: const Padding(
@@ -223,8 +206,22 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buildUserChat(String chatId, String userId, String avatarUrl,
-      String name, String lastestMessage) {
+  Widget _buildUserChat(
+      String chatId,
+      String avatarUrl,
+      String name,
+      String lastestMessage,
+      String lastestMessageSender,
+      lastestMessageCreatedOn) {
+    bool isMylastestMessage = currentUserId == lastestMessageSender;
+    initializeDateFormatting('th', null);
+    String date =
+        DateFormat('dd MMM', 'th').format(lastestMessageCreatedOn.toDate());
+    String time =
+        DateFormat('hh:mm a').format(lastestMessageCreatedOn.toDate());
+
+    lastestMessage =
+        isMylastestMessage ? 'คุณ: $lastestMessage' : lastestMessage;
     return TextButton(
       onPressed: () {
         Navigator.push(
@@ -233,7 +230,6 @@ class _ChatScreenState extends State<ChatScreen> {
             builder: (context) => ChatDetailScreen(
               chatWithUserName: name,
               chatId: chatId,
-              chatWithUserId: userId,
             ),
           ),
         );
@@ -256,25 +252,76 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name,
-                    style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: textColor)),
-                const SizedBox(height: 2),
-                Text(lastestMessage,
-                    style: const TextStyle(color: Colors.grey, fontSize: 16))
+                Text(
+                  name,
+                  style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: textColor),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  lastestMessage,
+                  style: const TextStyle(color: Colors.grey, fontSize: 16),
+                )
               ],
             ),
           ),
-          // Text(
-          //   timestamp,
-          //   style: const TextStyle(
-          //       fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w400),
-          //   textAlign: TextAlign.right,
-          // ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                time,
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+              Text(
+                date,
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
+}
+
+Future<void> enterChatRoom(context, currentUser, chatWithUser) async {
+  final chats = FirebaseFirestore.instance.collection('chats');
+  String chatId;
+  final snapshot = await chats
+      .where("usersCheck.$currentUser", isEqualTo: true)
+      .where("usersCheck.$chatWithUser", isEqualTo: true)
+      .get();
+  if (snapshot.docs.isEmpty) {
+    var chatRef = await FirebaseFirestore.instance.collection('chats').add({
+      'lastestMessage': '',
+      'usersInChat': [currentUser, chatWithUser],
+      'usersCheck': {currentUser: true, chatWithUser: true},
+    });
+    chatId = chatRef.id;
+  } else {
+    chatId = snapshot.docs[0].id;
+  }
+
+  String firstName = '';
+  String lastName = '';
+  var collection = FirebaseFirestore.instance.collection('users');
+  var docSnapshot = await collection.doc(chatWithUser).get();
+  if (docSnapshot.exists) {
+    Map<String, dynamic>? data = docSnapshot.data();
+    firstName = data?['firstName'];
+    lastName = data?['lastName'];
+  }
+  String userName = '$firstName $lastName';
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ChatDetailScreen(
+        chatId: chatId,
+        chatWithUserName: userName,
+      ),
+    ),
+  );
 }

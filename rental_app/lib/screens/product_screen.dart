@@ -5,6 +5,7 @@ import 'package:carousel_nullsafety/carousel_nullsafety.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/screens/screens.dart';
 import 'package:rental_app/widgets/choice_chip.dart';
 import 'package:rental_app/widgets/product_slide_panel.dart';
 import 'package:rental_app/widgets/widget.dart';
@@ -28,11 +29,12 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   bool isOwner = false;
+  final currentUserId = FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
     super.initState();
-    isOwner = FirebaseAuth.instance.currentUser?.uid == widget.product.owner;
+    isOwner = currentUserId == widget.product.owner;
   }
 
   void _slidePanel() {
@@ -85,7 +87,9 @@ class _ProductScreenState extends State<ProductScreen> {
             Expanded(
               flex: 2,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  enterChatRoom(context, currentUserId, widget.product.owner);
+                },
                 child: Column(
                   children: const [
                     Icon(Icons.chat_bubble),
@@ -282,7 +286,9 @@ class _ProductScreenState extends State<ProductScreen> {
                   ),
                   widget.product.pricePerDay != 0
                       ? Text(
-                          '฿' + currencyFormat(widget.product.pricePerDay) + '/วัน',
+                          '฿' +
+                              currencyFormat(widget.product.pricePerDay) +
+                              '/วัน',
                           style: const TextStyle(
                             fontSize: 16,
                             color: primaryColor,

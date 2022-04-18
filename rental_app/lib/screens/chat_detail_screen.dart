@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:rental_app/config/palette.dart';
 
 class ChatDetailScreen extends StatefulWidget {
-  const ChatDetailScreen(
-      {Key? key,
-      required this.chatWithUserName,
-      required this.chatId,
-      required this.chatWithUserId})
-      : super(key: key);
-  final String chatWithUserName, chatId, chatWithUserId;
+  const ChatDetailScreen({
+    Key? key,
+    required this.chatWithUserName,
+    required this.chatId,
+  }) : super(key: key);
+  final String chatWithUserName, chatId;
   @override
   _ChatDetailScreenState createState() => _ChatDetailScreenState();
 }
@@ -36,6 +36,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     await chats.doc(widget.chatId).update(
       {
         'lastestMessage': _controller.text,
+        'lastestMessageSender': currentUserId,
+        'lastestMessageCreatedOn': DateTime.now(),
       },
     );
     _controller.clear();
@@ -72,6 +74,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               return _buildMessage(
                 message: message['message'],
                 isMe: message['sender'] == currentUserId,
+                createdOn: DateFormat('yyyy-MM-dd hh:mm')
+                    .format(message['createdOn'].toDate()),
               );
             },
           );
@@ -116,12 +120,13 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           backgroundColor: Colors.white,
           title: Text(widget.chatWithUserName),
         ),
-        body:
-            Column(
+        //backgroundColor: primaryColor[50],
+        body: Column(
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 child: _buildMessageList(),
               ),
             ),
@@ -132,22 +137,27 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  Widget _buildMessage({required String message, required bool isMe}) {
+  Widget _buildMessage(
+      {required String message,
+      required bool isMe,
+      required String createdOn}) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 2),
-      //padding: const EdgeInsets.only(left: 16, right: 16, top: 1, bottom: 1),
       child: Align(
         alignment: (isMe ? Alignment.topRight : Alignment.topLeft),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            color: (isMe ? primaryColor : Colors.grey.shade200),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
-          child: Text(
-            message,
-            style: TextStyle(
-                color: (isMe ? Colors.white : Colors.black), fontSize: 20),
+        child: Tooltip(
+          message: createdOn,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              color: (isMe ? primaryColor : Colors.grey[200]),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
+            child: Text(
+              message,
+              style: TextStyle(
+                  color: (isMe ? Colors.white : Colors.black), fontSize: 20),
+            ),
           ),
         ),
       ),
