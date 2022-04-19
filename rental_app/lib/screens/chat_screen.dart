@@ -131,7 +131,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 Icons.support_agent,
               ),
               onPressed: () async {
-                enterChatRoom(context, currentUserId, 'admin');
+                enterChatRoom(context, currentUserId, 'admin', null);
               },
             ),
           ],
@@ -286,18 +286,18 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
-Future<void> enterChatRoom(context, currentUser, chatWithUser) async {
+Future<void> enterChatRoom(context, currentUserId, chatWithUser, contractId) async {
   final chats = FirebaseFirestore.instance.collection('chats');
   String chatId;
   final snapshot = await chats
-      .where("usersCheck.$currentUser", isEqualTo: true)
+      .where("usersCheck.$currentUserId", isEqualTo: true)
       .where("usersCheck.$chatWithUser", isEqualTo: true)
       .get();
   if (snapshot.docs.isEmpty) {
     var chatRef = await FirebaseFirestore.instance.collection('chats').add({
       'lastestMessage': '',
-      'usersInChat': [currentUser, chatWithUser],
-      'usersCheck': {currentUser: true, chatWithUser: true},
+      'usersInChat': [currentUserId, chatWithUser],
+      'usersCheck': {currentUserId: true, chatWithUser: true},
     });
     chatId = chatRef.id;
   } else {
@@ -315,6 +315,8 @@ Future<void> enterChatRoom(context, currentUser, chatWithUser) async {
   }
   String userName = '$firstName $lastName';
 
+  if (contractId != null) sendContract(chatId, contractId, currentUserId);
+
   Navigator.push(
     context,
     MaterialPageRoute(
@@ -325,3 +327,18 @@ Future<void> enterChatRoom(context, currentUser, chatWithUser) async {
     ),
   );
 }
+
+  void sendContract(chatId, contractId, currentUserId) async {
+    CollectionReference messages = FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages');
+    await messages.add(
+      {
+        'createdOn': DateTime.now(),
+        'message': contractId,
+        'sender': currentUserId,
+        'type': 'contract'
+      },
+    );
+  }

@@ -10,6 +10,8 @@ import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart';
+import 'package:rental_app/models/models.dart';
+import 'package:rental_app/screens/upload_evidence_screen.dart';
 
 class ChatDetailScreen extends StatefulWidget {
   const ChatDetailScreen({
@@ -228,7 +230,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  Widget _buildContent(type, message, isMe) {
+  _buildContent(type, message, isMe) {
     switch (type) {
       case 'text':
         return Container(
@@ -249,13 +251,142 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         return Container(
           constraints: const BoxConstraints(minWidth: 100, maxWidth: 200),
           clipBehavior: Clip.antiAlias,
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Image.network(
             message,
           ),
         );
+      case 'contract':
+        return StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection("contracts")
+                .doc(message)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text('มีบางอย่างผิดพลาด');
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+              final contractData = snapshot.data;
+              final startDate =
+                  DateFormat('dd-MM-yyyy').format(contractData!['startDate'].toDate());
+              final endDate =
+                  DateFormat('dd-MM-yyyy').format(contractData['endDate'].toDate());
+              return StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('products')
+                      .doc(contractData['productId'])
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return const Text('มีบางอย่างผิดพลาด');
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    final data = snapshot.data;
+                    return Material(
+                      color: surfaceColor,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UploadEvidenceScreen(
+                                contract: Contract.fromSnapshot(contractData),
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: 300,
+                          decoration: BoxDecoration(
+                            //color: surfaceColor,
+                            border: Border.all(
+                              color: outlineColor,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'สัญญาเช่าสินค้า',
+                                style: TextStyle(
+                                    color: primaryColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: SizedBox.fromSize(
+                                        child: Image.network(
+                                      data!['imageUrl'],
+                                      fit: BoxFit.cover,
+                                      height: 100.0,
+                                      width: 100.0,
+                                    )),
+                                  ),
+                                  const SizedBox(
+                                    width: 16,
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          data['name'],
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.left,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Text(
+                                          'เช่าวันที่ $startDate ถึง $endDate',
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  });
+            });
       default:
         return const Text('บางอย่างผิดพลาด');
     }

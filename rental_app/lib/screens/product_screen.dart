@@ -88,7 +88,7 @@ class _ProductScreenState extends State<ProductScreen> {
               flex: 2,
               child: TextButton(
                 onPressed: () {
-                  enterChatRoom(context, currentUserId, widget.product.owner);
+                  enterChatRoom(context, currentUserId, widget.product.owner, null);
                 },
                 child: Column(
                   children: const [
