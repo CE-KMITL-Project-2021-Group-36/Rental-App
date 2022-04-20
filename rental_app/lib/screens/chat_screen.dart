@@ -131,7 +131,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 Icons.support_agent,
               ),
               onPressed: () async {
-                enterChatRoom(context, currentUserId, 'admin', null);
+                enterChatRoom(context: context, currentUserId: currentUserId, chatWithUser: 'admin');
               },
             ),
           ],
@@ -286,7 +286,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
-Future<void> enterChatRoom(context, currentUserId, chatWithUser, contractId) async {
+Future<void> enterChatRoom({context, currentUserId, chatWithUser, message, messageType}) async {
   final chats = FirebaseFirestore.instance.collection('chats');
   String chatId;
   final snapshot = await chats
@@ -315,7 +315,7 @@ Future<void> enterChatRoom(context, currentUserId, chatWithUser, contractId) asy
   }
   String userName = '$firstName $lastName';
 
-  if (contractId != null) sendContract(chatId, contractId, currentUserId);
+  if (message != null && messageType != null) sendMessageContent(chatId, message, messageType, currentUserId);
 
   Navigator.push(
     context,
@@ -328,7 +328,22 @@ Future<void> enterChatRoom(context, currentUserId, chatWithUser, contractId) asy
   );
 }
 
-  void sendContract(chatId, contractId, currentUserId) async {
+  void sendMessageContent(chatId, message, messageType, currentUserId) async {
+    CollectionReference messages = FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages');
+    await messages.add(
+      {
+        'createdOn': DateTime.now(),
+        'message': message,
+        'sender': currentUserId,
+        'type': messageType,
+      },
+    );
+  }
+
+  void sendProduct(chatId, contractId, currentUserId) async {
     CollectionReference messages = FirebaseFirestore.instance
         .collection('chats')
         .doc(chatId)
@@ -338,7 +353,7 @@ Future<void> enterChatRoom(context, currentUserId, chatWithUser, contractId) asy
         'createdOn': DateTime.now(),
         'message': contractId,
         'sender': currentUserId,
-        'type': 'contract'
+        'type': 'product'
       },
     );
   }

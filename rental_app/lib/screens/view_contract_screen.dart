@@ -122,10 +122,18 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
             ),
             onPressed: () {
               isRenter
-                  ? enterChatRoom(context, currentUserId,
-                      widget.contract.ownerId, null)
-                  : enterChatRoom(context, currentUserId,
-                      widget.contract.renterId, null);
+                  ? enterChatRoom(
+                      context: context,
+                      currentUserId: currentUserId,
+                      chatWithUser: widget.contract.ownerId,
+                      message: widget.contract.id,
+                      messageType: 'contract')
+                  : enterChatRoom(
+                      context: context,
+                      currentUserId: currentUserId,
+                      chatWithUser: widget.contract.renterId,
+                      message: widget.contract.id,
+                      messageType: 'contract');
             },
           ),
         ],
@@ -397,15 +405,16 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                             },
                                             child: const Text('ยกเลิกคำขอเช่า'),
                                             style: TextButton.styleFrom(
-                                            primary: Colors.white,
-                                            backgroundColor: errorColor,
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 12),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
+                                              primary: Colors.white,
+                                              backgroundColor: errorColor,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
                                             ),
-                                          ),
                                           ),
                                         ),
                                       ],

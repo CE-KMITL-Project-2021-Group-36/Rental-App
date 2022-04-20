@@ -129,8 +129,6 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     var fileName1 = file1 != null ? basename(file1!.path) : '';
@@ -172,9 +170,17 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
             onPressed: () {
               isRenter
                   ? enterChatRoom(
-                      context, currentUserId, widget.contract.ownerId, widget.contract.id)
+                      context: context,
+                      currentUserId: currentUserId,
+                      chatWithUser: widget.contract.ownerId,
+                      message: widget.contract.id,
+                      messageType: 'contract')
                   : enterChatRoom(
-                      context, currentUserId, widget.contract.renterId, widget.contract.id);
+                      context: context,
+                      currentUserId: currentUserId,
+                      chatWithUser: widget.contract.renterId,
+                      message: widget.contract.id,
+                      messageType: 'contract');
             },
           ),
         ],

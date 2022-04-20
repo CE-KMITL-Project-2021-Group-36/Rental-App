@@ -77,72 +77,81 @@ class _ProductScreenState extends State<ProductScreen> {
               arguments: widget.product);
         },
       ),
-      bottomNavigationBar: Container(
-        height: 80,
-        color: Colors.white,
-        padding: const EdgeInsets.all(8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              flex: 2,
-              child: TextButton(
-                onPressed: () {
-                  enterChatRoom(context, currentUserId, widget.product.owner, null);
-                },
-                child: Column(
-                  children: const [
-                    Icon(Icons.chat_bubble),
-                    Text('ส่งข้อความ'),
-                  ],
-                ),
-                style: ButtonStyle(
-                  textStyle: MaterialStateProperty.all(
-                    const TextStyle(fontSize: 14),
+      bottomNavigationBar: isOwner
+          ? null
+          : Container(
+              height: 80,
+              color: Colors.white,
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: TextButton(
+                      onPressed: () {
+                        enterChatRoom(
+                            context: context,
+                            currentUserId: currentUserId,
+                            chatWithUser: widget.product.owner,
+                            message: widget.product.id,
+                            messageType: 'product');
+                      },
+                      child: Column(
+                        children: const [
+                          Icon(Icons.chat_bubble),
+                          Text('ส่งข้อความ'),
+                        ],
+                      ),
+                      style: ButtonStyle(
+                        textStyle: MaterialStateProperty.all(
+                          const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 2,
+                    child: TextButton(
+                      onPressed: () {},
+                      child: Column(
+                        children: const [
+                          Icon(Icons.shopping_cart),
+                          Text('ใส่รถเข็น'),
+                        ],
+                      ),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            primaryColor.withOpacity(0.2)),
+                        textStyle: MaterialStateProperty.all(
+                          const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 3,
+                    child: TextButton(
+                      onPressed: () {
+                        _slidePanel();
+                      },
+                      child: const Text('ส่งคำขอเช่า'),
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                        backgroundColor:
+                            MaterialStateProperty.all(primaryColor),
+                        textStyle: MaterialStateProperty.all(
+                          const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              flex: 2,
-              child: TextButton(
-                onPressed: () {},
-                child: Column(
-                  children: const [
-                    Icon(Icons.shopping_cart),
-                    Text('ใส่รถเข็น'),
-                  ],
-                ),
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(primaryColor.withOpacity(0.2)),
-                  textStyle: MaterialStateProperty.all(
-                    const TextStyle(fontSize: 14),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              flex: 3,
-              child: TextButton(
-                onPressed: () {
-                  _slidePanel();
-                },
-                child: const Text('ส่งคำขอเช่า'),
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all(Colors.white),
-                  backgroundColor: MaterialStateProperty.all(primaryColor),
-                  textStyle: MaterialStateProperty.all(
-                    const TextStyle(fontSize: 14),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [

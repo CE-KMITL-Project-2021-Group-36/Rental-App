@@ -10,7 +10,9 @@ import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart';
+import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/screens/screens.dart';
 import 'package:rental_app/screens/upload_evidence_screen.dart';
 
 class ChatDetailScreen extends StatefulWidget {
@@ -277,10 +279,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 );
               }
               final contractData = snapshot.data;
-              final startDate =
-                  DateFormat('dd-MM-yyyy').format(contractData!['startDate'].toDate());
-              final endDate =
-                  DateFormat('dd-MM-yyyy').format(contractData['endDate'].toDate());
+              final startDate = DateFormat('dd-MM-yyyy')
+                  .format(contractData!['startDate'].toDate());
+              final endDate = DateFormat('dd-MM-yyyy')
+                  .format(contractData['endDate'].toDate());
               return StreamBuilder<DocumentSnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('products')
@@ -387,6 +389,129 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     );
                   });
             });
+      case 'product':
+        return StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection("products")
+              .doc(message)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('มีบางอย่างผิดพลาด');
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+            final productData = snapshot.data;
+            String displayPrice() {
+              if (productData!['pricePerDay'] > 0.0) {
+                return '฿' +
+                    currencyFormat(productData['pricePerDay'].toDouble()) +
+                    '/วัน';
+              } else if (productData['pricePerWeek'] > 0.0) {
+                return '฿' +
+                    currencyFormat(productData['pricePerWeek'].toDouble()) +
+                    '/สัปดาห์';
+              } else {
+                return '฿' +
+                    currencyFormat(productData['pricePerMonth'].toDouble()) +
+                    '/เดือน';
+              }
+            }
+            return Material(
+              color: surfaceColor,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductScreen(
+                        product: Product.fromSnapshot(productData!),
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: 250,
+                  decoration: BoxDecoration(
+                    //color: surfaceColor,
+                    border: Border.all(
+                      color: outlineColor,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'สินค้า',
+                        style: TextStyle(
+                            color: primaryColor, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: SizedBox.fromSize(
+                                child: Image.network(
+                              productData!['imageUrl'],
+                              fit: BoxFit.cover,
+                              height: 80,
+                              width: 80,
+                            )),
+                          ),
+                          const SizedBox(
+                            width: 16,
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  productData['name'],
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.left,
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                Text(
+                                  displayPrice(),
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
       default:
         return const Text('บางอย่างผิดพลาด');
     }
