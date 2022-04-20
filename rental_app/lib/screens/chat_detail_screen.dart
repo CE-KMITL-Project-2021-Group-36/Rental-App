@@ -243,7 +243,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             message,
             style: TextStyle(
               color: (isMe ? Colors.white : Colors.black),
-              fontSize: 20,
+              fontSize: 16,
             ),
           ),
         );
@@ -310,7 +310,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           );
                         },
                         child: Container(
-                          width: 300,
+                          width: 250,
                           decoration: BoxDecoration(
                             //color: surfaceColor,
                             border: Border.all(
@@ -341,8 +341,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                         child: Image.network(
                                       data!['imageUrl'],
                                       fit: BoxFit.cover,
-                                      height: 100.0,
-                                      width: 100.0,
+                                      height: 80,
+                                      width: 80,
                                     )),
                                   ),
                                   const SizedBox(
