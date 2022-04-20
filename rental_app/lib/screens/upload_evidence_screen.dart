@@ -26,7 +26,7 @@ class UploadEvidenceScreen extends StatefulWidget {
 }
 
 class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
-  final userId = FirebaseAuth.instance.currentUser?.uid;
+  final currentUserId = FirebaseAuth.instance.currentUser?.uid;
   File? file1;
   File? file2;
   String file1Url = '';
@@ -59,7 +59,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
     final contractId = widget.contract.id;
     final contractRef =
         FirebaseFirestore.instance.collection("contracts").doc(contractId);
-    final bool isRenter = userId == widget.contract.renterId;
+    final bool isRenter = currentUserId == widget.contract.renterId;
 
     if (file == 'file1') {
       //final fileName = basename(pickupVideo!.path);
@@ -111,7 +111,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
   @override
   void initState() {
     super.initState();
-    bool isRenter = userId == widget.contract.renterId;
+    bool isRenter = currentUserId == widget.contract.renterId;
     if (isRenter) {
       if (widget.contract.renterPickupVideo != '') {
         isUploaded1 = true;
@@ -137,7 +137,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
     DateTime endDate = widget.contract.endDate.toDate();
     String formattedStartDate = DateFormat('dd-MM-yyyy').format(startDate);
     String formattedEndDate = DateFormat('dd-MM-yyyy').format(endDate);
-    final bool isRenter = userId == widget.contract.renterId;
+    final bool isRenter = currentUserId == widget.contract.renterId;
     final bool isActive = widget.contract.renterStatus == 'ที่ต้องได้รับ' ||
         widget.contract.renterStatus == 'ที่ต้องส่งคืน' ||
         widget.contract.ownerStatus == 'ที่ต้องจัดส่ง' ||
@@ -167,7 +167,21 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                       )
               ],
             ),
-            onPressed: () {},
+            onPressed: () {
+              isRenter
+                  ? enterChatRoom(
+                      context: context,
+                      currentUserId: currentUserId,
+                      chatWithUser: widget.contract.ownerId,
+                      message: widget.contract.id,
+                      messageType: 'contract')
+                  : enterChatRoom(
+                      context: context,
+                      currentUserId: currentUserId,
+                      chatWithUser: widget.contract.renterId,
+                      message: widget.contract.id,
+                      messageType: 'contract');
+            },
           ),
         ],
       ),
@@ -659,7 +673,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
   }
 
   Widget _buildUploadSection(fileName1, fileName2) {
-    bool isRenter = userId == widget.contract.renterId;
+    bool isRenter = currentUserId == widget.contract.renterId;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

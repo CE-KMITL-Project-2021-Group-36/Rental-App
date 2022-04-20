@@ -196,14 +196,13 @@ renterContractAddition(context, Contract contract, Product product, userType) {
         children: [
           Expanded(
             child: Text(
-              'โปรดให้คะแนนการเช่าครั้งนี้',
+              'การเช่าสำเร็จ',
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
-          _buildViewContractButton(context, contract),
           TextButton(
             child: const Text(
-              'ให้คะแนน',
+              'รีวิวการเช่า',
               style: TextStyle(
                 fontSize: 14,
               ),
@@ -213,10 +212,17 @@ renterContractAddition(context, Contract contract, Product product, userType) {
             },
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              primary: Colors.white,
-              backgroundColor: primaryColor,
+              primary: primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                side: const BorderSide(
+                  color: primaryColor,
+                ),
+              ),
             ),
-          )
+          ),
+          const SizedBox(width: 8),
+          _buildViewContractButton(context, contract),
         ],
       );
     case 'ยกเลิกแล้ว':

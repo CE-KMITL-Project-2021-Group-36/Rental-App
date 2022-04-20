@@ -5,6 +5,7 @@ import 'package:carousel_nullsafety/carousel_nullsafety.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/screens/screens.dart';
 import 'package:rental_app/widgets/choice_chip.dart';
 import 'package:rental_app/widgets/product_slide_panel.dart';
 import 'package:rental_app/widgets/widget.dart';
@@ -28,11 +29,12 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   bool isOwner = false;
+  final currentUserId = FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
     super.initState();
-    isOwner = FirebaseAuth.instance.currentUser?.uid == widget.product.owner;
+    isOwner = currentUserId == widget.product.owner;
   }
 
   void _slidePanel() {
@@ -75,70 +77,81 @@ class _ProductScreenState extends State<ProductScreen> {
               arguments: widget.product);
         },
       ),
-      bottomNavigationBar: Container(
-        height: 80,
-        color: Colors.white,
-        padding: const EdgeInsets.all(8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              flex: 2,
-              child: TextButton(
-                onPressed: () {},
-                child: Column(
-                  children: const [
-                    Icon(Icons.chat_bubble),
-                    Text('ส่งข้อความ'),
-                  ],
-                ),
-                style: ButtonStyle(
-                  textStyle: MaterialStateProperty.all(
-                    const TextStyle(fontSize: 14),
+      bottomNavigationBar: isOwner
+          ? null
+          : Container(
+              height: 80,
+              color: Colors.white,
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: TextButton(
+                      onPressed: () {
+                        enterChatRoom(
+                            context: context,
+                            currentUserId: currentUserId,
+                            chatWithUser: widget.product.owner,
+                            message: widget.product.id,
+                            messageType: 'product');
+                      },
+                      child: Column(
+                        children: const [
+                          Icon(Icons.chat_bubble),
+                          Text('ส่งข้อความ'),
+                        ],
+                      ),
+                      style: ButtonStyle(
+                        textStyle: MaterialStateProperty.all(
+                          const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 2,
+                    child: TextButton(
+                      onPressed: () {},
+                      child: Column(
+                        children: const [
+                          Icon(Icons.shopping_cart),
+                          Text('ใส่รถเข็น'),
+                        ],
+                      ),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            primaryColor.withOpacity(0.2)),
+                        textStyle: MaterialStateProperty.all(
+                          const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 3,
+                    child: TextButton(
+                      onPressed: () {
+                        _slidePanel();
+                      },
+                      child: const Text('ส่งคำขอเช่า'),
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                        backgroundColor:
+                            MaterialStateProperty.all(primaryColor),
+                        textStyle: MaterialStateProperty.all(
+                          const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              flex: 2,
-              child: TextButton(
-                onPressed: () {},
-                child: Column(
-                  children: const [
-                    Icon(Icons.shopping_cart),
-                    Text('ใส่รถเข็น'),
-                  ],
-                ),
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(primaryColor.withOpacity(0.2)),
-                  textStyle: MaterialStateProperty.all(
-                    const TextStyle(fontSize: 14),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              flex: 3,
-              child: TextButton(
-                onPressed: () {
-                  _slidePanel();
-                },
-                child: const Text('ส่งคำขอเช่า'),
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all(Colors.white),
-                  backgroundColor: MaterialStateProperty.all(primaryColor),
-                  textStyle: MaterialStateProperty.all(
-                    const TextStyle(fontSize: 14),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -282,7 +295,9 @@ class _ProductScreenState extends State<ProductScreen> {
                   ),
                   widget.product.pricePerDay != 0
                       ? Text(
-                          '฿' + currencyFormat(widget.product.pricePerDay) + '/วัน',
+                          '฿' +
+                              currencyFormat(widget.product.pricePerDay) +
+                              '/วัน',
                           style: const TextStyle(
                             fontSize: 16,
                             color: primaryColor,
