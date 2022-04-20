@@ -251,8 +251,9 @@ Future<void> enterChatRoom(
   }
   String userName = '$firstName $lastName';
 
-  if (message != null && messageType != null)
+  if (message != null && messageType != null) {
     sendMessageContent(chatId, message, messageType, currentUserId);
+  }
 
   Navigator.push(
     context,

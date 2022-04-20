@@ -30,8 +30,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final TextEditingController _controller = TextEditingController();
   final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-  //File? image;
-  //String? imageUrl;
   final ImagePicker _picker = ImagePicker();
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
@@ -40,12 +38,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     XFile? file = await _picker.pickImage(source: source);
     if (file == null) return;
     File image = File(file.path);
-    print('/pick image');
     await uploadImage(image);
   }
 
   Future uploadImage(image) async {
-    print('/upload image: $image');
     if (image == null) return;
     final imageName = basename(image!.path);
     final destination = 'chats/$currentUserId/$imageName';
@@ -103,42 +99,43 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   Widget _buildMessageList() {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('chats')
-            .doc(widget.chatId)
-            .collection('messages')
-            .orderBy('createdOn', descending: true)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Text('มีบางอย่างผิดพลาด');
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-          final messages = snapshot.data;
-          return ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            reverse: true,
-            shrinkWrap: true,
-            itemCount: messages!.docs.length,
-            itemBuilder: (context, index) {
-              final message = messages.docs[index];
-              return _buildMessage(
-                message: message['message'],
-                type: message['type'],
-                isMe: message['sender'] == currentUserId,
-                createdOn: DateFormat('yyyy-MM-dd hh:mm')
-                    .format(message['createdOn'].toDate()),
-              );
-            },
+      stream: FirebaseFirestore.instance
+          .collection('chats')
+          .doc(widget.chatId)
+          .collection('messages')
+          .orderBy('createdOn', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Text('มีบางอย่างผิดพลาด');
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CircularProgressIndicator(),
+            ),
           );
-        });
+        }
+        final messages = snapshot.data;
+        return ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          reverse: true,
+          shrinkWrap: true,
+          itemCount: messages!.docs.length,
+          itemBuilder: (context, index) {
+            final message = messages.docs[index];
+            return _buildMessage(
+              message: message['message'],
+              type: message['type'],
+              isMe: message['sender'] == currentUserId,
+              createdOn: DateFormat('yyyy-MM-dd hh:mm')
+                  .format(message['createdOn'].toDate()),
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _buildSendMessageTextField() {
@@ -197,7 +194,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           backgroundColor: Colors.white,
           title: Text(widget.chatWithUserName),
         ),
-        //backgroundColor: primaryColor[50],
         body: Column(
           children: [
             Expanded(
@@ -314,7 +310,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                         child: Container(
                           width: 250,
                           decoration: BoxDecoration(
-                            //color: surfaceColor,
                             border: Border.all(
                               color: outlineColor,
                             ),
@@ -407,7 +402,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 ),
               );
             }
+
             final productData = snapshot.data;
+
             String displayPrice() {
               if (productData!['pricePerDay'] > 0.0) {
                 return '฿' +
@@ -423,6 +420,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     '/เดือน';
               }
             }
+
             return Material(
               color: surfaceColor,
               child: InkWell(
@@ -464,12 +462,13 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: SizedBox.fromSize(
-                                child: Image.network(
-                              productData!['imageUrl'],
-                              fit: BoxFit.cover,
-                              height: 80,
-                              width: 80,
-                            )),
+                              child: Image.network(
+                                productData!['imageUrl'],
+                                fit: BoxFit.cover,
+                                height: 80,
+                                width: 80,
+                              ),
+                            ),
                           ),
                           const SizedBox(
                             width: 16,
