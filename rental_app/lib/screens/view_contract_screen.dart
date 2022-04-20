@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/confirm_deposit.dart';
+import 'package:rental_app/screens/screens.dart';
 import 'package:rental_app/widgets/widget.dart';
 
 class ViewContractScreen extends StatefulWidget {
@@ -19,17 +21,20 @@ class ViewContractScreen extends StatefulWidget {
 }
 
 class _ViewContractScreenState extends State<ViewContractScreen> {
+  final currentUserId = FirebaseAuth.instance.currentUser?.uid;
   CollectionReference contracts =
       FirebaseFirestore.instance.collection("contracts");
+
   @override
   Widget build(BuildContext context) {
     DateTime startDate = widget.contract.startDate.toDate();
     DateTime endDate = widget.contract.endDate.toDate();
     String formattedStartDate = DateFormat('dd-MM-yyyy').format(startDate);
     String formattedEndDate = DateFormat('dd-MM-yyyy').format(endDate);
-
+    final bool isRenter = currentUserId == widget.contract.renterId;
     double inputDeposit = 0;
 
+    @override
     showAlertDialog(BuildContext context) {
       // set up the buttons
       Widget cancelButton = TextButton(
@@ -94,6 +99,36 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('คำขอเช่า'),
+        actions: <Widget>[
+          TextButton(
+            child: Row(
+              children: [
+                isRenter
+                    ? const Text(
+                        'ติดต่อผู้ให้เช่า',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: primaryColor,
+                            fontWeight: FontWeight.normal),
+                      )
+                    : const Text(
+                        'ติดต่อผู้เช่า',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: primaryColor,
+                            fontWeight: FontWeight.normal),
+                      )
+              ],
+            ),
+            onPressed: () {
+              isRenter
+                  ? enterChatRoom(context, currentUserId,
+                      widget.contract.ownerId, null)
+                  : enterChatRoom(context, currentUserId,
+                      widget.contract.renterId, null);
+            },
+          ),
+        ],
       ),
       backgroundColor: Colors.white,
       body: StreamBuilder<DocumentSnapshot>(
@@ -224,18 +259,16 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                           const SizedBox(
                                             height: 8,
                                           ),
+                                          const Text(
+                                            'ค่าเช่าไม่รวมมัดจำ',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                           Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                                MainAxisAlignment.end,
                                             children: [
-                                              const Text(
-                                                'ค่าเช่าไม่รวมมัดจำ',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
                                               Text(
                                                 '฿' +
                                                     currencyFormat(widget
@@ -351,7 +384,7 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 32),
                           widget.userType == 'renter'
                               ? Column(
                                   children: [
@@ -364,56 +397,19 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                             },
                                             child: const Text('ยกเลิกคำขอเช่า'),
                                             style: TextButton.styleFrom(
-                                              primary: primaryColor,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 12),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                side: const BorderSide(
-                                                    color: primaryColor,
-                                                    width: 1),
-                                              ),
+                                            primary: Colors.white,
+                                            backgroundColor: errorColor,
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
                                             ),
+                                          ),
                                           ),
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: TextButton(
-                                            onPressed: () async {},
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: const [
-                                                Icon(Icons.chat_bubble_rounded),
-                                                SizedBox(
-                                                  width: 4,
-                                                ),
-                                                Text('ติดต่อผู้ให้เช่า'),
-                                              ],
-                                            ),
-                                            style: TextButton.styleFrom(
-                                              primary: Colors.white,
-                                              backgroundColor: primaryColor,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 12),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
                                   ],
                                 )
                               : Column(
@@ -451,15 +447,14 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                           child: Center(child: Text("ยกเลิก")),
                                         ),
                                         style: TextButton.styleFrom(
-                                          primary: primaryColor,
-                                          //backgroundColor: primaryColor,
+                                          primary: errorColor,
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 12),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(8.0),
                                             side: const BorderSide(
-                                                color: primaryColor, width: 1),
+                                                color: errorColor, width: 1),
                                           ),
                                         ),
                                       ),
