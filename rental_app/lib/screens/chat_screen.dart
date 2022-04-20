@@ -24,26 +24,10 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  bool isSearching = false;
   Stream? userStream;
   final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-  List userNameList = [];
 
   TextEditingController searchUserEditingController = TextEditingController();
-
-  onSearch() async {
-    isSearching = true;
-    userNameList = userNameList.where((userName) {
-      final nameLower = userName.toLowerCase();
-      final searchLower = searchUserEditingController.text.toLowerCase();
-      return nameLower.contains(searchLower);
-    }).toList();
-
-    setState(() {
-      userNameList = userNameList;
-    });
-    print(userNameList);
-  }
 
   Widget _buildChatsList() {
     return StreamBuilder<QuerySnapshot>(
@@ -131,77 +115,16 @@ class _ChatScreenState extends State<ChatScreen> {
                 Icons.support_agent,
               ),
               onPressed: () async {
-                enterChatRoom(context: context, currentUserId: currentUserId, chatWithUser: 'admin');
+                enterChatRoom(
+                    context: context,
+                    currentUserId: currentUserId,
+                    chatWithUser: 'admin');
               },
             ),
           ],
         ),
-        body: Column(
-          children: [
-            _buildSearchBar(),
-            isSearching
-                ? const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text('ไม่พบการค้นหา'),
-                  )
-                : _buildChatsList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: TextField(
-          onTap: () {
-            onSearch();
-            if (searchUserEditingController.text != '') {}
-          },
-          controller: searchUserEditingController,
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
-            hintText: 'ค้นหา',
-            prefixIcon: const Icon(Icons.search),
-            suffixIcon: isSearching
-                ? GestureDetector(
-                    onTap: () {
-                      isSearching = false;
-                      searchUserEditingController.text = "";
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      userNameList = [];
-                      setState(() {});
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.only(right: 8.0),
-                      child: Icon(
-                        Icons.close,
-                      ),
-                    ),
-                  )
-                : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(64),
-              borderSide: const BorderSide(
-                width: 2,
-                color: outlineColor,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(64),
-              borderSide: const BorderSide(
-                width: 2,
-                color: outlineColor,
-              ),
-            ),
-            disabledBorder: InputBorder.none,
-          ),
-        ),
+        backgroundColor: surfaceColor,
+        body: _buildChatsList(),
       ),
     );
   }
@@ -262,7 +185,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 const SizedBox(height: 8),
                 Text(
                   lastestMessage,
-                  style: const TextStyle(color: Colors.grey, fontSize: 16),
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                  ),
                 )
               ],
             ),
@@ -272,11 +199,19 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               Text(
                 time,
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                ),
               ),
               Text(
                 date,
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                ),
               ),
             ],
           ),
@@ -286,7 +221,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
-Future<void> enterChatRoom({context, currentUserId, chatWithUser, message, messageType}) async {
+Future<void> enterChatRoom(
+    {context, currentUserId, chatWithUser, message, messageType}) async {
   final chats = FirebaseFirestore.instance.collection('chats');
   String chatId;
   final snapshot = await chats
@@ -315,7 +251,8 @@ Future<void> enterChatRoom({context, currentUserId, chatWithUser, message, messa
   }
   String userName = '$firstName $lastName';
 
-  if (message != null && messageType != null) sendMessageContent(chatId, message, messageType, currentUserId);
+  if (message != null && messageType != null)
+    sendMessageContent(chatId, message, messageType, currentUserId);
 
   Navigator.push(
     context,
@@ -328,32 +265,32 @@ Future<void> enterChatRoom({context, currentUserId, chatWithUser, message, messa
   );
 }
 
-  void sendMessageContent(chatId, message, messageType, currentUserId) async {
-    CollectionReference messages = FirebaseFirestore.instance
-        .collection('chats')
-        .doc(chatId)
-        .collection('messages');
-    await messages.add(
-      {
-        'createdOn': DateTime.now(),
-        'message': message,
-        'sender': currentUserId,
-        'type': messageType,
-      },
-    );
-  }
+void sendMessageContent(chatId, message, messageType, currentUserId) async {
+  CollectionReference messages = FirebaseFirestore.instance
+      .collection('chats')
+      .doc(chatId)
+      .collection('messages');
+  await messages.add(
+    {
+      'createdOn': DateTime.now(),
+      'message': message,
+      'sender': currentUserId,
+      'type': messageType,
+    },
+  );
+}
 
-  void sendProduct(chatId, contractId, currentUserId) async {
-    CollectionReference messages = FirebaseFirestore.instance
-        .collection('chats')
-        .doc(chatId)
-        .collection('messages');
-    await messages.add(
-      {
-        'createdOn': DateTime.now(),
-        'message': contractId,
-        'sender': currentUserId,
-        'type': 'product'
-      },
-    );
-  }
+void sendProduct(chatId, contractId, currentUserId) async {
+  CollectionReference messages = FirebaseFirestore.instance
+      .collection('chats')
+      .doc(chatId)
+      .collection('messages');
+  await messages.add(
+    {
+      'createdOn': DateTime.now(),
+      'message': contractId,
+      'sender': currentUserId,
+      'type': 'product'
+    },
+  );
+}
