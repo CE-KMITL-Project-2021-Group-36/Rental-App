@@ -76,6 +76,7 @@ class _WalletTopUpState extends State<WalletTopUp> {
               forceWebView: true,
               enableJavaScript: true,
             );
+            Navigator.pop(context);
           }
         }
       } on Exception catch (e) {
