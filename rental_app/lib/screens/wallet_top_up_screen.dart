@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
@@ -71,8 +70,6 @@ class _WalletTopUpState extends State<WalletTopUp> {
           final String ksherLink = postResponse['reference'];
           // debugPrint(postResponse.toString());
           debugPrint(ksherLink);
-          // Navigator.pushReplacementNamed(context, '/wallet_payment_gateway',
-          //     arguments: ksherLink);
           if (await canLaunch(ksherLink)) {
             await launch(
               ksherLink,
@@ -80,10 +77,6 @@ class _WalletTopUpState extends State<WalletTopUp> {
               enableJavaScript: true,
             );
           }
-          // browser.openUrlRequest(
-          //     urlRequest: URLRequest(url: Uri.parse(ksherLink)),
-          //     options: InAppBrowserClassOptions(
-          //         crossPlatform: InAppBrowserOptions(hideUrlBar: true)));
         }
       } on Exception catch (e) {
         debugPrint(e.toString());
@@ -91,22 +84,14 @@ class _WalletTopUpState extends State<WalletTopUp> {
     }
   }
 
-  // final InAppBrowser browser = InAppBrowser();
-
   void test() async {
-    // Navigator.pushReplacementNamed(context, '/wallet_payment_gateway',
-    //     arguments: 'https://www.google.com');
-    // if (await canLaunch('https://www.google.com')) {
-    //   await launch(
-    //     'https://www.google.com',
-    //     forceWebView: true,
-    //     enableJavaScript: true,
-    //   );
-    // }
-    // browser.openUrlRequest(
-    //     urlRequest: URLRequest(url: Uri.parse('https://www.google.com')),
-    //     options: InAppBrowserClassOptions(
-    //         crossPlatform: InAppBrowserOptions(hideUrlBar: true)));
+    if (await canLaunch('https://www.google.com')) {
+      await launch(
+        'https://www.google.com',
+        forceWebView: true,
+        enableJavaScript: true,
+      );
+    }
   }
 
   @override
