@@ -4,11 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+// import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WalletTopUp extends StatefulWidget {
   const WalletTopUp({Key? key}) : super(key: key);
@@ -52,14 +54,15 @@ class _WalletTopUpState extends State<WalletTopUp> {
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode(
               <String, String>{
-                'amount': _amount.text + '00',
-                'merchant_order_id': '${userId}_$timestamp',
+                'amount': '${_amount.text}00',
+                'merchant_order_id': '${timestamp}_${_amount.text}00.$userId',
                 'redirect_url': 'https://www.google.com',
                 'redirect_url_fail': 'https://www.blognone.com',
                 'signature': '',
                 'timestamp': timestamp,
                 'product_name': 'เติมเงินเข้า Renz Wallet',
-                'note': 'เติมเงินเข้า Renz Wallet'
+                'note': 'เติมเงิน ${_amount.text}',
+                'lang': 'th'
               },
             ));
         // debugPrint(response.body);
@@ -68,13 +71,42 @@ class _WalletTopUpState extends State<WalletTopUp> {
           final String ksherLink = postResponse['reference'];
           // debugPrint(postResponse.toString());
           debugPrint(ksherLink);
-          Navigator.pushNamed(context, '/wallet_payment_gateway',
-              arguments: ksherLink);
+          // Navigator.pushReplacementNamed(context, '/wallet_payment_gateway',
+          //     arguments: ksherLink);
+          if (await canLaunch(ksherLink)) {
+            await launch(
+              ksherLink,
+              forceWebView: true,
+              enableJavaScript: true,
+            );
+          }
+          // browser.openUrlRequest(
+          //     urlRequest: URLRequest(url: Uri.parse(ksherLink)),
+          //     options: InAppBrowserClassOptions(
+          //         crossPlatform: InAppBrowserOptions(hideUrlBar: true)));
         }
       } on Exception catch (e) {
         debugPrint(e.toString());
       }
     }
+  }
+
+  // final InAppBrowser browser = InAppBrowser();
+
+  void test() async {
+    // Navigator.pushReplacementNamed(context, '/wallet_payment_gateway',
+    //     arguments: 'https://www.google.com');
+    // if (await canLaunch('https://www.google.com')) {
+    //   await launch(
+    //     'https://www.google.com',
+    //     forceWebView: true,
+    //     enableJavaScript: true,
+    //   );
+    // }
+    // browser.openUrlRequest(
+    //     urlRequest: URLRequest(url: Uri.parse('https://www.google.com')),
+    //     options: InAppBrowserClassOptions(
+    //         crossPlatform: InAppBrowserOptions(hideUrlBar: true)));
   }
 
   @override
