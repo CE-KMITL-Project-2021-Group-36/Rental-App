@@ -38,6 +38,10 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
   final ValueNotifier<bool> _continuousValidation = ValueNotifier(false);
   final ValueNotifier<int> _currentTabIndex = ValueNotifier(0);
 
+  late final String _fullName, _timestamp;
+  late final double _balance;
+  late String? selectedBank;
+
   final List<String> bankList = [
     'กสิกรไทย',
     'กรุงไทย',
@@ -63,29 +67,80 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
     'ทิสโก้',
   ];
 
-  late String? selectedBank;
-
   @override
   Widget build(BuildContext context) {
     Future<void> _onPressedFunction() async {
+      //Bank Account
       if (_currentTabIndex.value == 0) {
         if (!_formBankAccount.currentState!.validate()) {
           _continuousValidation.value = true;
         } else {
+          Navigator.pop(context);
+          _timestamp =
+              (DateTime.now().millisecondsSinceEpoch / 1000).ceil().toString();
           debugPrint('Submitting: ' +
               _amount.text +
               ' page: ' +
               _currentTabIndex.value.toString());
+          await FirebaseFirestore.instance
+              .collection('withdrawal_requests')
+              .add({
+            'type': 'บัญชีธนาคาร',
+            'fullName': _fullName,
+            'userId': userId,
+            'destination': _accountNumber.text,
+            'bank': selectedBank,
+            'amount': _amount.text,
+            'timestamp': FieldValue.serverTimestamp(),
+          });
+          await users
+              .doc(userId)
+              .collection('wallet_transactions')
+              .doc(_timestamp)
+              .set({
+            'amount': _amount.text,
+            'type': 'ถอนเงิน',
+            'timestamp': _timestamp
+          });
+          await users.doc(userId).update({
+            'wallet.balance': FieldValue.increment(-double.parse(_amount.text))
+          });
         }
       }
+      //PromptPay
       if (_currentTabIndex.value == 1) {
         if (!_formPromptpay.currentState!.validate()) {
           _continuousValidation.value = true;
         } else {
+          Navigator.pop(context);
+          _timestamp =
+              (DateTime.now().millisecondsSinceEpoch / 1000).ceil().toString();
           debugPrint('Submitting: ' +
               _amount.text +
               ' page: ' +
               _currentTabIndex.value.toString());
+          await FirebaseFirestore.instance
+              .collection('withdrawal_requests')
+              .add({
+            'type': 'พร้อมเพย์',
+            'fullName': _fullName,
+            'userId': userId,
+            'destination': _promptpayNumber.text,
+            'amount': _amount.text,
+            'timestamp': _timestamp,
+          });
+          await users
+              .doc(userId)
+              .collection('wallet_transactions')
+              .doc(_timestamp)
+              .set({
+            'amount': _amount.text,
+            'type': 'ถอนเงิน',
+            'timestamp': _timestamp
+          });
+          await users.doc(userId).update({
+            'wallet.balance': FieldValue.increment(-double.parse(_amount.text))
+          });
         }
       }
     }
@@ -131,7 +186,9 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
                               ConnectionState.done) {
                             Map<String, dynamic> data =
                                 snapshot.data!.data() as Map<String, dynamic>;
-                            final double? balance = data['wallet']?['balance'];
+                            _balance = data['wallet']['balance'];
+                            _fullName =
+                                '${data['firstName']} ${data['lastName']}';
                             return Container(
                               margin: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 10),
@@ -167,7 +224,7 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
                                     bottom: 10,
                                     right: 10,
                                     child: Text(
-                                      '฿' + currencyFormat(balance!),
+                                      '฿' + currencyFormat(_balance),
                                       style: const TextStyle(
                                         fontSize: 36,
                                         fontWeight: FontWeight.w600,
@@ -316,6 +373,13 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
                                                   .digitsOnly
                                             ],
                                             validator: (input) {
+                                              if (_amount.text != '') {
+                                                if ((double.parse(
+                                                        _amount.text) >
+                                                    _balance)) {
+                                                  return 'จำนวนเงินในบัญชีไม่เพียงพอ';
+                                                }
+                                              }
                                               if (!RegExp(
                                                       r"""^0*([1-9]|[1-8][0-9]|9[0-9]|[1-8][0-9]{2}|9[0-8][0-9]|99[0-9]|[1-8][0-9]{3}|9[0-8][0-9]{2}|99[0-8][0-9]|999[0-9]|[1-8][0-9]{4}|9[0-8][0-9]{3}|99[0-8][0-9]{2}|999[0-8][0-9]|9999[0-9]|100000)$""")
                                                   .hasMatch(input!)) {
@@ -391,6 +455,13 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
                                                   .digitsOnly
                                             ],
                                             validator: (input) {
+                                              if (_amount.text != '') {
+                                                if ((double.parse(
+                                                        _amount.text) >
+                                                    _balance)) {
+                                                  return 'จำนวนเงินในบัญชีไม่เพียงพอ';
+                                                }
+                                              }
                                               if (!RegExp(
                                                       r"""^0*([1-9]|[1-8][0-9]|9[0-9]|[1-8][0-9]{2}|9[0-8][0-9]|99[0-9]|[1-8][0-9]{3}|9[0-8][0-9]{2}|99[0-8][0-9]|999[0-9]|[1-8][0-9]{4}|9[0-8][0-9]{3}|99[0-8][0-9]{2}|999[0-8][0-9]|9999[0-9]|100000)$""")
                                                   .hasMatch(input!)) {
