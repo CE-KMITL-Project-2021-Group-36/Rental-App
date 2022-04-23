@@ -55,48 +55,57 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                           snapshot.data!.docs.map((DocumentSnapshot document) {
                         Map<String, dynamic> data =
                             document.data()! as Map<String, dynamic>;
-                        return Ink(
-                          // height: 150,
-                          decoration: BoxDecoration(
-                              color: primaryLightColor,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: ListTile(
-                            onTap: () {},
-                            contentPadding: const EdgeInsets.all(15),
-                            trailing: IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.edit,
-                                color: primaryColor,
-                              ),
-                            ),
-                            title: Padding(
-                              padding: const EdgeInsets.only(bottom: 5),
-                              child: Wrap(
-                                children: [
-                                  Text(
-                                    data['name'],
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
+                        return Column(
+                          children: [
+                            Ink(
+                              decoration: BoxDecoration(
+                                  color: primaryLightColor,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: ListTile(
+                                onTap: () {},
+                                contentPadding: const EdgeInsets.all(15),
+                                trailing: IconButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/add_address',
+                                        arguments: document.id);
+                                  },
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: primaryColor,
                                   ),
-                                  Text(
-                                    '   ' + data['phone'],
-                                    style: const TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
+                                ),
+                                title: Padding(
+                                  padding: const EdgeInsets.only(bottom: 5),
+                                  child: Wrap(
+                                    children: [
+                                      Text(
+                                        data['name'],
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      Text(
+                                        '   ' + data['phone'],
+                                        style: const TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
+                                subtitle: Text(
+                                  data['address'],
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
                               ),
                             ),
-                            subtitle: Text(
-                              data['address'],
-                              style: const TextStyle(
-                                fontSize: 14,
-                              ),
+                            SizedBox(
+                              height: 10,
                             ),
-                          ),
+                          ],
                         );
                       }).toList(),
                     );
@@ -121,7 +130,10 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                           vertical: 15,
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/add_address',
+                            arguments: '');
+                      },
                     ),
                   ),
                 ],

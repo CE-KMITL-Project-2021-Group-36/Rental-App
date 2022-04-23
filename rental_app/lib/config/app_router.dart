@@ -51,6 +51,8 @@ class AppRouter {
         return EditProfileScreen.route();
       case EditAddressScreen.routeName:
         return EditAddressScreen.route();
+      case AddAddressScreen.routeName:
+        return AddAddressScreen.route(documentId: settings.arguments as String);
 
       default:
         return _errorRoute();
