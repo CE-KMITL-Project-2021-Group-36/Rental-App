@@ -36,17 +36,15 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           centerTitle: true,
           title: const Text(
-            "Rental App",
-            style: TextStyle(
-                color: primaryColor,
-                fontWeight: FontWeight.bold),
+            "RENZ",
+            style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
           ),
-          actions: [IconButton(
-              icon: const Icon(
-                Icons.search
-              ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search),
               onPressed: () {},
-            ),],
+            ),
+          ],
         ),
         backgroundColor: surfaceColor,
         body: SingleChildScrollView(
@@ -152,9 +150,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               return Row(
                                 children: [
                                   ProductCard(
-                                    product: Product.fromSnapshot(data.docs[index]),
+                                    product:
+                                        Product.fromSnapshot(data.docs[index]),
                                   ),
-                                  const SizedBox(width: 8,)
+                                  const SizedBox(
+                                    width: 8,
+                                  )
                                 ],
                               );
                             },

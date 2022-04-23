@@ -7,6 +7,7 @@ export 'chat_screen.dart';
 export 'contract_management_screen.dart';
 export 'edit_product_screen.dart';
 export 'edit_product_screen.dart';
+export 'edit_profile_screen.dart';
 export 'home_screen.dart';
 export 'kyc_screen.dart';
 export 'notification_screen.dart';

@@ -163,7 +163,6 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: BackButton(),
             ),
-            centerTitle: false,
             title: const Text('รายละเอียดคำขอถอนเงิน'),
           ),
           body: SafeArea(
@@ -246,7 +245,8 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
                     SizedBox(
                       height: 50,
                       child: AppBar(
-                        backgroundColor: backgroundColor,
+                        elevation: 0.5,
+                        backgroundColor: surfaceColor,
                         bottom: TabBar(
                           labelColor: primaryColor,
                           unselectedLabelColor: Colors.black54,
@@ -267,8 +267,11 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
                         ),
                       ),
                     ),
+                    const SizedBox(
+                      height: 1,
+                    ),
                     Container(
-                      color: backgroundColor,
+                      color: surfaceColor,
                       height: 335,
                       child: TabBarView(
                           physics: const NeverScrollableScrollPhysics(),

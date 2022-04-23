@@ -7,8 +7,8 @@ import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/providers/authentication_provider.dart';
 
-class AccountPage extends ConsumerWidget {
-  const AccountPage({Key? key}) : super(key: key);
+class AccountScreen extends ConsumerWidget {
+  const AccountScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,9 +33,9 @@ class AccountPage extends ConsumerWidget {
                 snapshot.data!.data() as Map<String, dynamic>;
             final String displayName =
                     '${data['firstName']} ${data['lastName']}',
-                kycStatus = data['kyc']['status'];
-            final String avatarUrl = data['avatarUrl'] ??=
-                'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Favatar.png?alt=media&token=0b9a2456-3c04-458b-a319-83f5717c5cd4';
+                kycStatus = data['kyc']['status'],
+                avatarUrl = data['avatarUrl'] ??=
+                    'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Favatar.png?alt=media&token=0b9a2456-3c04-458b-a319-83f5717c5cd4';
             final double? balance = data['wallet']?['balance'];
             final bool kycVerified = data['kyc']['verified'];
 
@@ -439,7 +439,9 @@ class AccountPage extends ConsumerWidget {
                             height: 5,
                           ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.pushNamed(context, '/edit_profile');
+                            },
                             borderRadius: BorderRadius.circular(10),
                             child: Ink(
                               width: double.infinity,
@@ -529,9 +531,10 @@ class AccountPage extends ConsumerWidget {
                               width: double.infinity,
                               height: 45,
                               decoration: BoxDecoration(
+                                  // color: Colors.redAccent.shade100,
                                   border: Border.all(
-                                    color: Colors.redAccent,
-                                    width: 2,
+                                    color: Colors.redAccent.shade100,
+                                    width: 1.5,
                                   ),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(

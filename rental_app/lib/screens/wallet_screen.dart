@@ -39,7 +39,6 @@ class _WalletState extends State<Wallet> {
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: BackButton(),
         ),
-        centerTitle: false,
         title: const Text('Wallet'),
       ),
       body: SafeArea(
