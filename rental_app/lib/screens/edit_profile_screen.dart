@@ -97,7 +97,9 @@ class EditProfileScreen extends ConsumerWidget {
                         height: 20,
                       ),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, '/edit_address');
+                        },
                         borderRadius: BorderRadius.circular(10),
                         child: Ink(
                           width: double.infinity,

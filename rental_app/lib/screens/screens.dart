@@ -5,7 +5,7 @@ export 'catalog_screen.dart';
 export 'chat_detail_screen.dart';
 export 'chat_screen.dart';
 export 'contract_management_screen.dart';
-export 'edit_product_screen.dart';
+export 'edit_address_screen.dart';
 export 'edit_product_screen.dart';
 export 'edit_profile_screen.dart';
 export 'home_screen.dart';

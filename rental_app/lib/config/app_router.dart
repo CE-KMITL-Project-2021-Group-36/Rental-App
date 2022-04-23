@@ -49,6 +49,8 @@ class AppRouter {
             userType: settings.arguments as String);
       case EditProfileScreen.routeName:
         return EditProfileScreen.route();
+      case EditAddressScreen.routeName:
+        return EditAddressScreen.route();
 
       default:
         return _errorRoute();
