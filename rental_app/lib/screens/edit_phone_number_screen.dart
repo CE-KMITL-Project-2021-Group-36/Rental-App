@@ -96,7 +96,7 @@ class _EditPhoneNumberScreenState extends State<EditPhoneNumberScreen> {
                                 return null;
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                             ValueListenableBuilder<TextEditingValue>(

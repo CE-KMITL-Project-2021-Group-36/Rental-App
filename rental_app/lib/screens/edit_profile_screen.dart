@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_app/config/palette.dart';
-import 'package:rental_app/providers/authentication_provider.dart';
 
 class EditProfileScreen extends ConsumerWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -22,7 +21,12 @@ class EditProfileScreen extends ConsumerWidget {
     final userId = FirebaseAuth.instance.currentUser!.uid;
     CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-    final _auth = ref.watch(authenticationProvider);
+    Future<void> _deleteUser() {
+      return users.doc(userId).delete().then((value) => FirebaseAuth
+          .instance.currentUser
+          ?.delete()
+          .then((value) => Navigator.of(context).pushReplacementNamed('/')));
+    }
 
     return FutureBuilder<DocumentSnapshot>(
         future: users.doc(userId).get(),
@@ -223,9 +227,31 @@ class EditProfileScreen extends ConsumerWidget {
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.of(context).pushReplacementNamed('/');
-                          _auth.signOut();
-                          //showdialog confirm deletion
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text(
+                                      'คุณต้องการลบบัญชีและข้อมูลทั้งหมดใช่หรือไม่'),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text(
+                                          'ยกเลิก',
+                                          style:
+                                              TextStyle(color: Colors.black54),
+                                        )),
+                                    TextButton(
+                                        onPressed: _deleteUser,
+                                        child: const Text(
+                                          'ยืนยัน',
+                                          style: TextStyle(color: errorColor),
+                                        )),
+                                  ],
+                                );
+                              });
                         },
                         child: Ink(
                           width: double.infinity,
