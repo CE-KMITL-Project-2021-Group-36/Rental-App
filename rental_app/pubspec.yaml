@@ -47,8 +47,11 @@ dependencies:
   photo_view: ^0.13.0
   file_picker: ^4.5.1
   http: ^0.13.4
-  url_launcher: ^6.1.0
+  url_launcher: ^6.0.20
   flutterfire_ui: ^0.4.0+3
+  firebase_messaging: ^11.2.14
+  flutter_local_notifications: ^9.4.1
+  firebase_analytics: ^9.1.6
 
 dev_dependencies:
   flutter_test:
