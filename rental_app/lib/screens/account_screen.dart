@@ -124,6 +124,13 @@ class AccountPage extends ConsumerWidget {
                           ),
                         ],
                       ),
+                      TextButton(
+                        child: Text('ผู้ให้เช่า'),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/contract_management',
+                              arguments: 'owner');
+                        },
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(20),
                         child: Column(

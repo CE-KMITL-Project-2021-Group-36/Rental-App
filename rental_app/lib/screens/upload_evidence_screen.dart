@@ -86,7 +86,6 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
         isUploaded1 = true;
       });
     } else {
-      //final fileName = basename(returnVideo!.path);
       final destination = isRenter
           ? 'contract_evidence/$contractId/renter/return_video'
           : 'contract_evidence/$contractId/owner/pickup_video';
@@ -128,6 +127,19 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
         isUploaded2 = true;
       }
     }
+    _findProductName();
+  }
+
+  _findProductName() async {
+    var docSnapshot = await FirebaseFirestore.instance
+        .collection("products")
+        .doc(widget.contract.productId)
+        .get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data();
+      productName = data?['name'];
+    }
+    setState(() {});
   }
 
   @override
@@ -202,8 +214,6 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
               );
             }
             final product = snapshot.data;
-            productName = product!['name'];
-            setState(() {});
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -292,7 +302,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                                 borderRadius: BorderRadius.circular(8),
                                 child: SizedBox.fromSize(
                                   child: Image.network(
-                                    product['imageUrl'],
+                                    product!['imageUrl'],
                                     fit: BoxFit.cover,
                                     height: 100.0,
                                     width: 100.0,

@@ -3,13 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/screens/screens.dart';
 
 class ConfirmDeposit extends StatelessWidget {
   const ConfirmDeposit(
-      {Key? key, required this.contract, required this.deposit})
+      {Key? key,
+      required this.contract,
+      required this.deposit,
+      required this.productName})
       : super(key: key);
   final Contract contract;
   final double deposit;
+  final String productName;
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +105,12 @@ class ConfirmDeposit extends StatelessWidget {
                 Expanded(
                   child: TextButton(
                     onPressed: () {
+                      sendNotification(
+                        contract.renterId,
+                        'กรุณาชำระค่าเช่า',
+                        'รายการ: $productName',
+                        'renter',
+                      );
                       contracts
                           .doc(contract.id)
                           .update({
@@ -110,7 +121,8 @@ class ConfirmDeposit extends StatelessWidget {
                           .then((value) => debugPrint('Contract Update'))
                           .catchError((error) =>
                               debugPrint('Failed to update contract: $error'));
-                      Navigator.pop(context);
+                      int count = 0;
+                      Navigator.of(context).popUntil((_) => count++ >= 2);
                     },
                     child: const Text("ยืนยันและสร้างสัญญา"),
                     style: TextButton.styleFrom(

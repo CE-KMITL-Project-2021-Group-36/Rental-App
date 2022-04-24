@@ -92,7 +92,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 itemCount: data!.docs.length,
                 itemBuilder: (context, index) {
                   final doc = data.docs[index];
-                  return _buildNotificationWithIcon(doc['title'], doc['text']);
+                  return _buildNotificationWithIcon(
+                    doc['title'],
+                    doc['text'],
+                    doc['type'],
+                  );
                 },
               );
       },
@@ -132,79 +136,98 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 itemCount: data!.docs.length,
                 itemBuilder: (context, index) {
                   final doc = data.docs[index];
-                  return _buildNotificationWithIcon(doc['title'], doc['text']);
+                  return _buildNotificationWithIcon(
+                    doc['title'],
+                    doc['text'],
+                    doc['type'],
+                  );
                 },
               );
       },
     );
   }
 
-  _buildNotificationWithIcon(title, text) {
+  _buildNotificationWithIcon(title, text, type) {
     switch (title) {
       case 'กรุณาชำระค่าเช่า':
         return _buildNotificationCard(
           icon: Icons.paid,
           title: title,
           subtitle: text,
+          type: type,
         );
       case 'สินค้าจัดส่งแล้ว':
         return _buildNotificationCard(
           icon: Icons.local_shipping,
           title: title,
           subtitle: text,
+          type: type,
         );
       case 'การเช่าสำเร็จ':
         return _buildNotificationCard(
           icon: Icons.verified,
           title: title,
           subtitle: text,
+          type: type,
         );
       case 'มีคำขอเช่าใหม่':
         return _buildNotificationCard(
           icon: Icons.mail,
           title: title,
           subtitle: text,
+          type: type,
         );
       case 'ผู้เช่าได้รับสินค้าแล้ว':
         return _buildNotificationCard(
           icon: Icons.done,
           title: title,
           subtitle: text,
+          type: type,
         );
       case 'ผู้เช่าจัดส่งสินค้าแล้ว':
         return _buildNotificationCard(
           icon: Icons.local_shipping,
           title: title,
           subtitle: text,
+          type: type,
         );
     }
   }
 
-  Widget _buildNotificationCard({icon, title, subtitle}) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        child: ListTile(
-          horizontalTitleGap: 2,
-          leading: Icon(icon, color: primaryColor),
-          title: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: textColor,
+  Widget _buildNotificationCard({icon, title, subtitle, type}) {
+    return GestureDetector(
+      onTap: () {
+        type == 'renter'
+            ? Navigator.pushNamed(context, '/contract_management',
+                arguments: 'renter')
+            : Navigator.pushNamed(context, '/contract_management',
+                arguments: 'owner');
+      },
+      child: Card(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          child: ListTile(
+            horizontalTitleGap: 2,
+            leading: Icon(icon, color: primaryColor),
+            title: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
             ),
-          ),
-          subtitle: Text(
-            subtitle,
-            maxLines: 2,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
+            subtitle: Text(
+              subtitle,
+              maxLines: 2,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
             ),
           ),
         ),
@@ -225,7 +248,12 @@ void sendNotification(receiver, title, text, type) async {
   if (docSnapshot.exists) {
     Map<String, dynamic>? data = docSnapshot.data();
     fcmToken = data?['fcmToken'];
+    if (fcmToken != '') {
+      sendPushNotification(title, text, fcmToken);
+    }
   }
+
+  if (type == 'chat') return;
 
   await notification.add({
     'createdOn': DateTime.now(),
@@ -233,8 +261,6 @@ void sendNotification(receiver, title, text, type) async {
     'text': text,
     'type': type,
   });
-
-  if (fcmToken != '') sendPushNotification(title, text, fcmToken);
 }
 
 void sendPushNotification(title, text, fcmToken) async {
@@ -243,7 +269,8 @@ void sendPushNotification(title, text, fcmToken) async {
       Uri.parse('https://fcm.googleapis.com/fcm/send'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': fcmToken,
+        'Authorization':
+            'key=AAAAC7m5wqY:APA91bGNW85s5iGBQPZZufehmMz-WvyXvzwzuYxItcd16klNcu4pOr-_uEcjeCDTt45no9AMwB7tyLoAm-EZCK9f4m1KiRU7ZCz1Fj918ytzIHx9-ftsqUxTbopD-5Yr-dmYNZxHv6Iu',
       },
       body: jsonEncode(
         <String, dynamic>{
@@ -262,3 +289,10 @@ void sendPushNotification(title, text, fcmToken) async {
     debugPrint("error push notification");
   }
 }
+
+      // sendNotification(
+      //   widget.contract.renterId,
+      //   'สินค้าจัดส่งแล้ว',
+      //   'รายการ: $productName',
+      //   'renter',
+      // );

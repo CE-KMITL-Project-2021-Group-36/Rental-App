@@ -90,6 +90,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         chat.id,
                         avatarUrl,
                         chatWithUserName,
+                        chatWithUserId!,
                         chat['lastestMessage'],
                         chat['lastestMessageSender'],
                         chat['lastestMessageCreatedOn'],
@@ -136,6 +137,7 @@ class _ChatScreenState extends State<ChatScreen> {
       String chatId,
       String avatarUrl,
       String name,
+      String chatWithUserId,
       String lastestMessage,
       String lastestMessageSender,
       lastestMessageCreatedOn) {
@@ -155,6 +157,7 @@ class _ChatScreenState extends State<ChatScreen> {
           MaterialPageRoute(
             builder: (context) => ChatDetailScreen(
               chatWithUserName: name,
+              chatWithUserId: chatWithUserId,
               chatId: chatId,
             ),
           ),
@@ -264,6 +267,7 @@ Future<void> enterChatRoom(
       builder: (context) => ChatDetailScreen(
         chatId: chatId,
         chatWithUserName: userName,
+        chatWithUserId: chatWithUser,
       ),
     ),
   );

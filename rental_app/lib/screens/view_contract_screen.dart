@@ -24,6 +24,25 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
   final currentUserId = FirebaseAuth.instance.currentUser?.uid;
   CollectionReference contracts =
       FirebaseFirestore.instance.collection("contracts");
+  String productName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _findProductName();
+  }
+
+  _findProductName() async {
+    var docSnapshot = await FirebaseFirestore.instance
+        .collection("products")
+        .doc(widget.contract.productId)
+        .get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data();
+      productName = data?['name'];
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +52,6 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
     String formattedEndDate = DateFormat('dd-MM-yyyy').format(endDate);
     final bool isRenter = currentUserId == widget.contract.renterId;
     double inputDeposit = 0;
-    String productName = '';
 
     @override
     showAlertDialog(BuildContext context) {
@@ -155,8 +173,6 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
               );
             }
             final product = snapshot.data;
-            productName = product!['name'];
-            setState(() {});
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -232,7 +248,7 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                 borderRadius: BorderRadius.circular(8),
                                 child: SizedBox.fromSize(
                                   child: Image.network(
-                                    product['imageUrl'],
+                                    product!['imageUrl'],
                                     fit: BoxFit.cover,
                                     height: 100.0,
                                     width: 100.0,
@@ -466,18 +482,13 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                 Expanded(
                                   child: TextButton(
                                     onPressed: () {
-                                      sendNotification(
-                                        widget.contract.renterId,
-                                        'กรุณาชำระค่าเช่า',
-                                        'รายการ: $productName',
-                                        'renter',
-                                      );
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => ConfirmDeposit(
                                             contract: widget.contract,
                                             deposit: inputDeposit,
+                                            productName: productName,
                                           ),
                                         ),
                                       );

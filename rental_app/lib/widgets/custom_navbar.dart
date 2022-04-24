@@ -126,10 +126,8 @@ class _CustomNavBarState extends State<CustomNavBar> {
         .update({
       'fcmToken': token,
     });
-    setState(() {
-      token = token;
-    });
-    print('token: $token');
+    print('token:$token');
+    sendPushNotification('I just send to myself', "test", token);
   }
 
   @override
