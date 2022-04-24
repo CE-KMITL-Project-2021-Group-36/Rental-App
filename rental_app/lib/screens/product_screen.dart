@@ -29,12 +29,29 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   bool isOwner = false;
+  bool isFav = false;
   final currentUserId = FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
     super.initState();
     isOwner = currentUserId == widget.product.owner;
+    _initIsFav();
+  }
+
+  _initIsFav() async {
+    var docSnapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(currentUserId)
+        .collection('favourites')
+        .doc(widget.product.id)
+        .get();
+    if (docSnapshot.exists) {
+      isFav = true;
+    } else {
+      isFav = false;
+    }
+    setState(() {});
   }
 
   void _slidePanel() {
@@ -51,32 +68,7 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.shopping_cart,
-            ),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.more_vert,
-            ),
-            onPressed: () {},
-          ),
-        ],
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.create),
-        onPressed: () {
-          Navigator.pushNamed(context, '/add_review',
-              arguments: widget.product);
-        },
-      ),
+      appBar: AppBar(),
       bottomNavigationBar: isOwner
           ? null
           : Container(
@@ -100,13 +92,17 @@ class _ProductScreenState extends State<ProductScreen> {
                       child: Column(
                         children: const [
                           Icon(Icons.chat_bubble),
-                          Text('ส่งข้อความ'),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Text(
+                            'พูดคุย',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
                         ],
-                      ),
-                      style: ButtonStyle(
-                        textStyle: MaterialStateProperty.all(
-                          const TextStyle(fontSize: 14),
-                        ),
                       ),
                     ),
                   ),
@@ -114,18 +110,59 @@ class _ProductScreenState extends State<ProductScreen> {
                   Expanded(
                     flex: 2,
                     child: TextButton(
-                      onPressed: () {},
-                      child: Column(
-                        children: const [
-                          Icon(Icons.shopping_cart),
-                          Text('ใส่รถเข็น'),
-                        ],
-                      ),
+                      onPressed: () {
+                        if (isFav) {
+                          FirebaseFirestore.instance
+                              .collection("users")
+                              .doc(currentUserId)
+                              .collection('favourites')
+                              .doc(widget.product.id)
+                              .delete();
+                        } else {
+                          FirebaseFirestore.instance
+                              .collection("users")
+                              .doc(currentUserId)
+                              .collection('favourites')
+                              .doc(widget.product.id)
+                              .set({});
+                        }
+                        isFav = !isFav;
+                        setState(() {});
+                      },
+                      child: isFav
+                          ? Column(
+                              children: const [
+                                Icon(Icons.favorite),
+                                SizedBox(
+                                  height: 4,
+                                ),
+                                Text(
+                                  'เพิ่มแล้ว',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Column(
+                              children: const [
+                                Icon(Icons.favorite_outline),
+                                SizedBox(
+                                  height: 4,
+                                ),
+                                Text(
+                                  'เพิ่มในรายการ',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(
-                            primaryColor.withOpacity(0.2)),
-                        textStyle: MaterialStateProperty.all(
-                          const TextStyle(fontSize: 14),
+                          primaryColor.withOpacity(0.2),
                         ),
                       ),
                     ),
@@ -143,9 +180,6 @@ class _ProductScreenState extends State<ProductScreen> {
                             MaterialStateProperty.all(Colors.white),
                         backgroundColor:
                             MaterialStateProperty.all(primaryColor),
-                        textStyle: MaterialStateProperty.all(
-                          const TextStyle(fontSize: 14),
-                        ),
                       ),
                     ),
                   ),
@@ -214,17 +248,12 @@ class _ProductScreenState extends State<ProductScreen> {
                           widget.product.name,
                           style: const TextStyle(
                             fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.favorite_outline,
-                          color: Colors.red,
-                        ),
-                        onPressed: () {},
                       ),
                     ],
                   ),
@@ -248,9 +277,9 @@ class _ProductScreenState extends State<ProductScreen> {
                         if (snapshot.hasData) {
                           final data = snapshot.requireData;
                           double sum = 0;
-                          data.docs.forEach((m) {
+                          for (var m in data.docs) {
                             sum = sum + m['rating']!;
-                          });
+                          }
                           double avg = sum / data.docs.length;
                           bool isHasReview = sum != 0;
                           return Padding(
@@ -264,19 +293,15 @@ class _ProductScreenState extends State<ProductScreen> {
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
-                                          //color: primaryColor,
+                                          color: primaryColor,
                                         ),
                                       )
                                     : const Text(
                                         'ยังไม่มีรีวิว',
                                         style: TextStyle(
-                                            //fontWeight: FontWeight.bold,
-                                            color: Colors.grey),
+                                          color: Colors.grey,
+                                        ),
                                       ),
-                                // Text(
-                                //   ' (' + data.docs.length.toString() + ' รีวิว)',
-                                //   style: const TextStyle(color: Colors.grey),
-                                // ),
                               ],
                             ),
                           );
@@ -497,9 +522,9 @@ class _ProductScreenState extends State<ProductScreen> {
                 if (snapshot.hasData) {
                   final data = snapshot.requireData;
                   double sum = 0;
-                  data.docs.forEach((m) {
+                  for (var m in data.docs) {
                     sum = sum + m['rating']!;
-                  });
+                  }
                   double avg = sum / data.docs.length;
                   bool isHasReview = sum != 0;
                   return Column(
@@ -523,7 +548,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                     children: [
                                       StarRating(rating: avg),
                                       Text(
-                                        avg.toStringAsFixed(1) + '/5',
+                                        avg.toStringAsFixed(1) + '/5.0',
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: primaryColor),
