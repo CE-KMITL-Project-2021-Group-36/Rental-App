@@ -4,7 +4,7 @@ import 'package:rental_app/config/palette.dart';
 
 String currencyFormat(double n) {
   final formatter =
-      n % 1 == 0 ? NumberFormat("#,###") : NumberFormat("#,###.00");
+      n % 1 == 0 ? NumberFormat("#,###") : NumberFormat("#,##0.00");
   return formatter.format(n);
 }
 
