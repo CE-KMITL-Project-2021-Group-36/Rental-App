@@ -41,7 +41,8 @@ class EditProfileScreen extends ConsumerWidget {
             final String displayName =
                     '${data['firstName']} ${data['lastName']}',
                 avatarUrl = data['avatarUrl'] ??=
-                    'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Favatar.png?alt=media&token=0b9a2456-3c04-458b-a319-83f5717c5cd4';
+                    'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Favatar.png?alt=media&token=0b9a2456-3c04-458b-a319-83f5717c5cd4',
+                phoneNumber = data['phoneNumber'];
 
             return Scaffold(
               appBar: AppBar(
@@ -138,7 +139,10 @@ class EditProfileScreen extends ConsumerWidget {
                         height: 10,
                       ),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, '/edit_phone',
+                              arguments: phoneNumber);
+                        },
                         borderRadius: BorderRadius.circular(10),
                         child: Ink(
                           width: double.infinity,
@@ -161,7 +165,7 @@ class EditProfileScreen extends ConsumerWidget {
                                       width: 10,
                                     ),
                                     Text(
-                                      'โทรศัพท์มือถือ',
+                                      'เบอร์โทรศัพท์',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
