@@ -49,56 +49,52 @@ class _ChatScreenState extends State<ChatScreen> {
           );
         }
         final chatData = snapshot.data;
-        return chatData!.size == 0
-            ? const Center(child: Text('ไม่มีข้อความ'))
-            : ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: chatData.docs.length,
-                itemBuilder: (context, index) {
-                  DocumentSnapshot chat = chatData.docs[index];
-                  String? chatWithUserId;
-                  for (final i in chat['usersInChat']) {
-                    if (i != currentUserId) {
-                      chatWithUserId = i;
-                      break;
-                    }
-                  }
-                  return StreamBuilder<DocumentSnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection("users")
-                        .doc(chatWithUserId)
-                        .snapshots(),
-                    builder:
-                        (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        return const Text('มีบางอย่างผิดพลาด');
-                      }
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-                      final userData = snapshot.data;
-                      final avatarUrl = userData!['avatarUrl'];
-                      final chatWithUserName =
-                          '${userData['firstName']} ${userData['lastName']}';
-                      return _buildUserChat(
-                        chat.id,
-                        avatarUrl,
-                        chatWithUserName,
-                        chatWithUserId!,
-                        chat['lastestMessage'],
-                        chat['lastestMessageSender'],
-                        chat['lastestMessageCreatedOn'],
-                      );
-                    },
+        return ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: chatData!.docs.length,
+          itemBuilder: (context, index) {
+            DocumentSnapshot chat = chatData.docs[index];
+            String? chatWithUserId;
+            for (final i in chat['usersInChat']) {
+              if (i != currentUserId) {
+                chatWithUserId = i;
+                break;
+              }
+            }
+            return StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("users")
+                  .doc(chatWithUserId)
+                  .snapshots(),
+              builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('มีบางอย่างผิดพลาด');
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: CircularProgressIndicator(),
+                    ),
                   );
-                },
-              );
+                }
+                final userData = snapshot.data;
+                final avatarUrl = userData!['avatarUrl'];
+                final chatWithUserName =
+                    '${userData['firstName']} ${userData['lastName']}';
+                return _buildUserChat(
+                  chat.id,
+                  avatarUrl,
+                  chatWithUserName,
+                  chat['lastestMessage'],
+                  chat['lastestMessageSender'],
+                  chat['lastestMessageCreatedOn'],
+                );
+              },
+            );
+          },
+        );
       },
     );
   }
@@ -137,7 +133,6 @@ class _ChatScreenState extends State<ChatScreen> {
       String chatId,
       String avatarUrl,
       String name,
-      String chatWithUserId,
       String lastestMessage,
       String lastestMessageSender,
       lastestMessageCreatedOn) {
@@ -157,7 +152,6 @@ class _ChatScreenState extends State<ChatScreen> {
           MaterialPageRoute(
             builder: (context) => ChatDetailScreen(
               chatWithUserName: name,
-              chatWithUserId: chatWithUserId,
               chatId: chatId,
             ),
           ),
@@ -267,7 +261,6 @@ Future<void> enterChatRoom(
       builder: (context) => ChatDetailScreen(
         chatId: chatId,
         chatWithUserName: userName,
-        chatWithUserId: chatWithUser,
       ),
     ),
   );

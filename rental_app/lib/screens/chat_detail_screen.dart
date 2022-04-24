@@ -19,10 +19,9 @@ class ChatDetailScreen extends StatefulWidget {
   const ChatDetailScreen({
     Key? key,
     required this.chatWithUserName,
-    required this.chatWithUserId,
     required this.chatId,
   }) : super(key: key);
-  final String chatWithUserName, chatWithUserId, chatId;
+  final String chatWithUserName, chatId;
   @override
   _ChatDetailScreenState createState() => _ChatDetailScreenState();
 }
@@ -34,26 +33,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final ImagePicker _picker = ImagePicker();
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
-
-  String currentUserName = '';
-
-  _findUserName() async {
-    var docSnapshot = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(currentUserId)
-        .get();
-    if (docSnapshot.exists) {
-      Map<String, dynamic>? data = docSnapshot.data();
-      currentUserName = data?['firstName'] + ' ' + data?['lastName'];
-    }
-    setState(() {});
-  }
-
-  @override
-  initState() {
-    super.initState();
-    _findUserName();
-  }
 
   Future pickImage(ImageSource source) async {
     XFile? file = await _picker.pickImage(source: source);
@@ -92,12 +71,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         'lastestMessageCreatedOn': DateTime.now(),
       },
     );
-    sendNotification(
-      widget.chatWithUserId,
-      currentUserName,
-      'ส่งรูปภาพ',
-      'chat',
-    );
   }
 
   void sendMessage() async {
@@ -120,12 +93,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         'lastestMessageSender': currentUserId,
         'lastestMessageCreatedOn': DateTime.now(),
       },
-    );
-    sendNotification(
-      widget.chatWithUserId,
-      currentUserName,
-      _controller.text,
-      'chat',
     );
     _controller.clear();
   }
