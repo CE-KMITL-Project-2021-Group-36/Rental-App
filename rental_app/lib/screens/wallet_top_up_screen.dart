@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class WalletTopUp extends StatefulWidget {
   const WalletTopUp({Key? key}) : super(key: key);
@@ -70,11 +70,10 @@ class _WalletTopUpState extends State<WalletTopUp> {
           final String ksherLink = postResponse['reference'];
           // debugPrint(postResponse.toString());
           debugPrint(ksherLink);
-          if (await canLaunch(ksherLink)) {
-            await launch(
+          if (await canLaunchUrlString(ksherLink)) {
+            await launchUrlString(
               ksherLink,
-              forceWebView: true,
-              enableJavaScript: true,
+              mode: LaunchMode.inAppWebView,
             );
             Navigator.pop(context);
           }
@@ -82,16 +81,6 @@ class _WalletTopUpState extends State<WalletTopUp> {
       } on Exception catch (e) {
         debugPrint(e.toString());
       }
-    }
-  }
-
-  void test() async {
-    if (await canLaunch('https://www.google.com')) {
-      await launch(
-        'https://www.google.com',
-        forceWebView: true,
-        enableJavaScript: true,
-      );
     }
   }
 
@@ -106,7 +95,6 @@ class _WalletTopUpState extends State<WalletTopUp> {
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: BackButton(),
           ),
-          centerTitle: false,
           title: const Text('รายละเอียดการเติมเงิน'),
         ),
         body: SafeArea(

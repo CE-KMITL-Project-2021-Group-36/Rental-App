@@ -47,6 +47,16 @@ class AppRouter {
       case ContractManagementScreen.routeName:
         return ContractManagementScreen.route(
             userType: settings.arguments as String);
+      case EditProfileScreen.routeName:
+        return EditProfileScreen.route();
+      case EditAddressScreen.routeName:
+        return EditAddressScreen.route();
+      case AddAddressScreen.routeName:
+        return AddAddressScreen.route(documentId: settings.arguments as String);
+      case ResetPasswordScreen.routeName:
+        return ResetPasswordScreen.route();
+      case EditPhoneNumberScreen.routeName:
+        return EditPhoneNumberScreen.route(phone: settings.arguments as String);
 
       default:
         return _errorRoute();

@@ -29,8 +29,8 @@ class _WalletState extends State<Wallet> {
     final userId = FirebaseAuth.instance.currentUser!.uid;
     final CollectionReference users =
         FirebaseFirestore.instance.collection('users');
-    final Stream<QuerySnapshot> _walletTransactionStream =
-        users.doc(userId).collection('wallet_transactions').snapshots();
+    // final Stream<QuerySnapshot> _walletTransactionStream =
+    //     users.doc(userId).collection('wallet_transactions').snapshots();
 
     return Scaffold(
       backgroundColor: surfaceColor,
@@ -39,7 +39,6 @@ class _WalletState extends State<Wallet> {
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: BackButton(),
         ),
-        centerTitle: false,
         title: const Text('Wallet'),
       ),
       body: SafeArea(
