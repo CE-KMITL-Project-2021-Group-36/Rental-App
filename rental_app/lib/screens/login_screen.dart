@@ -5,7 +5,7 @@ import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/providers/authentication_provider.dart';
 import 'package:rental_app/screens/register_with_email_screen.dart';
-import 'package:rental_app/screens/reset_password_page.dart';
+import 'package:rental_app/screens/reset_password_screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -114,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () => Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const ResetPasswordPage())),
+                                    const ResetPasswordScreen())),
                         child: Text(
                           'ลืมรหัสผ่าน?',
                           style: textTheme().bodyText1,

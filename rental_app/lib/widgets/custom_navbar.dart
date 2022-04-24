@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/screens/account_screen.dart';
-import 'package:rental_app/screens/kyc_screen.dart';
 import 'package:rental_app/screens/screens.dart';
 
 class CustomNavBar extends StatefulWidget {
@@ -37,7 +36,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
     const ChatScreen(),
     const Center(child: Text('รถเข็น')),
     const NotificationScreen(),
-    const AccountPage(),
+    const AccountScreen(),
   ];
 
   @override

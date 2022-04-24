@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           centerTitle: true,
           title: const Text(
-            "Rental App",
+            "RENZ",
             style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
           ),
           actions: [
