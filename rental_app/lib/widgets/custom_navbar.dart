@@ -36,7 +36,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
   final pages = [
     const HomeScreen(),
     const ChatScreen(),
-    const Center(child: Text('รถเข็น')),
+    const CartScreen(),
     const NotificationScreen(),
     const AccountScreen(),
   ];
