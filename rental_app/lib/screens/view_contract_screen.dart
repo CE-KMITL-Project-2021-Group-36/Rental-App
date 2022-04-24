@@ -25,6 +25,26 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
   CollectionReference contracts =
       FirebaseFirestore.instance.collection("contracts");
 
+  String productName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _findProductName();
+  }
+
+  _findProductName() async {
+    var docSnapshot = await FirebaseFirestore.instance
+        .collection("products")
+        .doc(widget.contract.productId)
+        .get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data();
+      productName = data?['name'];
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     DateTime startDate = widget.contract.startDate.toDate();
@@ -478,6 +498,7 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                                     ConfirmDeposit(
                                                   contract: widget.contract,
                                                   deposit: inputDeposit,
+                                                  productName: productName,
                                                 ),
                                               ),
                                             );
