@@ -6,9 +6,15 @@ import 'package:rental_app/screens/authentication_checker.dart';
 import 'config/app_router.dart';
 import 'config/theme.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   // runApp(const MyApp());
   runApp(const ProviderScope(child: MyApp()));
 }
