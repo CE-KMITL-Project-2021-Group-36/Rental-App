@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
+import 'package:http/http.dart' as http;
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);
@@ -208,20 +211,54 @@ class _NotificationScreenState extends State<NotificationScreen> {
       ),
     );
   }
+}
 
-  void sendNotification({receiver, title, text, type}) async {
-    CollectionReference notification = FirebaseFirestore.instance
-        .collection('users')
-        .doc(receiver)
-        .collection('notifications');
-    await sendPushNotification();
-    await notification.add({
-      'createdOn': DateTime.now(),
-      'title': title,
-      'text': text,
-      'type': type,
-    });
+void sendNotification(receiver, title, text, type) async {
+  CollectionReference notification = FirebaseFirestore.instance
+      .collection('users')
+      .doc(receiver)
+      .collection('notifications');
+
+  String fcmToken = '';
+  var docSnapshot =
+      await FirebaseFirestore.instance.collection('users').doc(receiver).get();
+  if (docSnapshot.exists) {
+    Map<String, dynamic>? data = docSnapshot.data();
+    fcmToken = data?['fcmToken'];
   }
 
-  sendPushNotification() {}
+  await notification.add({
+    'createdOn': DateTime.now(),
+    'title': title,
+    'text': text,
+    'type': type,
+  });
+
+  if (fcmToken != '') sendPushNotification(title, text, fcmToken);
+}
+
+void sendPushNotification(title, text, fcmToken) async {
+  try {
+    await http.post(
+      Uri.parse('https://fcm.googleapis.com/fcm/send'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': fcmToken,
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          'notification': <String, dynamic>{'body': text, 'title': title},
+          'priority': 'high',
+          'data': <String, dynamic>{
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+            'id': '1',
+            'status': 'done'
+          },
+          "to": fcmToken,
+        },
+      ),
+    );
+  } catch (e) {
+    debugPrint("error push notification");
+  }
 }

@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/screens/screens.dart';
 import 'package:rental_app/widgets/widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -21,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,23 +34,22 @@ class _HomeScreenState extends State<HomeScreen> {
           child: const Icon(Icons.add),
           //backgroundColor: Colors.green,
           onPressed: () {
-            Navigator.pushNamed(context, '/add_product');
+            //Navigator.pushNamed(context, '/add_product');
+            sendPushNotification('title', 'text', 'f0CxIdkCQt6Vg3laYY516j:APA91bEpyyZ5syhdn3WOtRQ9VrVkYlPx6JrYzY1Ph1p7RWC8uO8nVmp3iB-vrdCcEpwAVyO2D-dxv0ajK7l0Cc5Gzu70-qiN50pc2XLuosCTYlqdOMDYVn42ht9jrSA6cQEFug2JaZr1');
           },
         ),
         appBar: AppBar(
           centerTitle: true,
           title: const Text(
             "Rental App",
-            style: TextStyle(
-                color: primaryColor,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
           ),
-          actions: [IconButton(
-              icon: const Icon(
-                Icons.search
-              ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search),
               onPressed: () {},
-            ),],
+            ),
+          ],
         ),
         backgroundColor: surfaceColor,
         body: SingleChildScrollView(
@@ -152,9 +155,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               return Row(
                                 children: [
                                   ProductCard(
-                                    product: Product.fromSnapshot(data.docs[index]),
+                                    product:
+                                        Product.fromSnapshot(data.docs[index]),
                                   ),
-                                  const SizedBox(width: 8,)
+                                  const SizedBox(
+                                    width: 8,
+                                  )
                                 ],
                               );
                             },
