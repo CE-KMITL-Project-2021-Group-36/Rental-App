@@ -30,7 +30,6 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
   String file2Url = '';
   bool isUploaded1 = false;
   bool isUploaded2 = false;
-  String productName = '';
 
   Future selectFile(file) async {
     final result = await FilePicker.platform.pickFiles(
@@ -83,6 +82,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
         isUploaded1 = true;
       });
     } else {
+      //final fileName = basename(returnVideo!.path);
       final destination = isRenter
           ? 'contract_evidence/$contractId/renter/return_video'
           : 'contract_evidence/$contractId/owner/pickup_video';
@@ -124,19 +124,6 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
         isUploaded2 = true;
       }
     }
-    _findProductName();
-  }
-
-  _findProductName() async {
-    var docSnapshot = await FirebaseFirestore.instance
-        .collection("products")
-        .doc(widget.contract.productId)
-        .get();
-    if (docSnapshot.exists) {
-      Map<String, dynamic>? data = docSnapshot.data();
-      productName = data?['name'];
-    }
-    setState(() {});
   }
 
   @override
@@ -211,17 +198,79 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
               );
             }
             final product = snapshot.data;
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    isActive
-                        ? Container(
+            return product == null
+                ? const SizedBox.shrink()
+                : SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          isActive
+                              ? Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor,
+                                    border: Border.all(
+                                      color: outlineColor,
+                                    ),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(8),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.videocam, color: Colors.white),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      SizedBox(height: 4),
+                                      Expanded(
+                                        child: Text(
+                                          'กรุณาถ่ายและอัปโหลดวิดีโอเพื่อเป็นหลักฐาน\nในการรับและการจัดส่งสินค้า',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                          isActive
+                              ? Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 32,
+                                    ),
+                                    _buildUploadSection(fileName1, fileName2),
+                                    const SizedBox(
+                                      height: 32,
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                          Row(children: const <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(right: 4),
+                              child: Text(
+                                'รายละเอียดสัญญา',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Divider(color: Colors.grey),
+                            ),
+                          ]),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: primaryColor,
                               border: Border.all(
                                 color: outlineColor,
                               ),
@@ -229,372 +278,324 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                                 Radius.circular(8),
                               ),
                             ),
-                            child: Row(
-                              children: const [
-                                Icon(Icons.videocam, color: Colors.white),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                SizedBox(height: 4),
-                                Expanded(
-                                  child: Text(
-                                    'กรุณาถ่ายและอัปโหลดวิดีโอเพื่อเป็นหลักฐาน\nในการรับและการจัดส่งสินค้า',
-                                    style: TextStyle(
-                                      color: Colors.white,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: SizedBox.fromSize(
+                                        child: Image.network(
+                                          product['imageUrl'],
+                                          fit: BoxFit.cover,
+                                          height: 100.0,
+                                          width: 100.0,
+                                        ),
+                                      ),
                                     ),
+                                    const SizedBox(
+                                      width: 16,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            product['name'],
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.left,
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          Text(
+                                            'เช่าวันที่ $formattedStartDate ถึง $formattedEndDate',
+                                            style: TextStyle(
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          const Text(
+                                            'ค่าเช่าไม่รวมมัดจำ',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                '฿' +
+                                                    currencyFormat(widget
+                                                        .contract.rentalPrice),
+                                                style: const TextStyle(
+                                                  fontSize: 24,
+                                                  color: primaryColor,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const Divider(thickness: 0.6, height: 32),
+                                const Text(
+                                  'เงื่อนไขค่ามัดจำ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  product['deposit'].replaceAll('\\n', '\n'),
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
                                   ),
                                 ),
                               ],
                             ),
-                          )
-                        : const SizedBox.shrink(),
-                    isActive
-                        ? Column(
-                            children: [
-                              const SizedBox(
-                                height: 32,
-                              ),
-                              _buildUploadSection(fileName1, fileName2),
-                              const SizedBox(
-                                height: 32,
-                              ),
-                            ],
-                          )
-                        : const SizedBox.shrink(),
-                    Row(children: const <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 4),
-                        child: Text(
-                          'รายละเอียดสัญญา',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
                           ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(color: Colors.grey),
-                      ),
-                    ]),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: outlineColor,
-                        ),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(8),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: SizedBox.fromSize(
-                                  child: Image.network(
-                                    product!['imageUrl'],
-                                    fit: BoxFit.cover,
-                                    height: 100.0,
-                                    width: 100.0,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 16,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      product['name'],
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.left,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    Text(
-                                      'เช่าวันที่ $formattedStartDate ถึง $formattedEndDate',
-                                      style: TextStyle(
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const Text(
-                                      'ค่าเช่าไม่รวมมัดจำ',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          '฿' +
-                                              currencyFormat(
-                                                  widget.contract.rentalPrice),
-                                          style: const TextStyle(
-                                            fontSize: 24,
-                                            color: primaryColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                          const Divider(thickness: 0.6, height: 32),
+                          const SizedBox(height: 16),
                           const Text(
-                            'เงื่อนไขค่ามัดจำ',
+                            'เอกสารแนบเพิ่มเติม',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            product['deposit'].replaceAll('\\n', '\n'),
-                            style: TextStyle(
-                              color: Colors.grey[600],
+                          const SizedBox(height: 16),
+                          widget.contract.renterAttachments.isNotEmpty
+                              ? GridView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount:
+                                      widget.contract.renterAttachments.length,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3),
+                                  itemBuilder: (context, index) {
+                                    return Row(
+                                      children: [
+                                        Ink.image(
+                                          image: NetworkImage(widget.contract
+                                              .renterAttachments[index]),
+                                          fit: BoxFit.cover,
+                                          child: InkWell(
+                                            onTap: () {
+                                              //Go to ImageView
+                                            },
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 4,
+                                        ),
+                                      ],
+                                    );
+                                  })
+                              : const Text(
+                                  'ไม่มีเอกสารแนบ',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.grey),
+                                ),
+                          const SizedBox(height: 32),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: outlineColor,
+                              ),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: const [
+                                    Text(
+                                      'ที่อยู่',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'วัชรากร แท่นแก้ว'.replaceAll('\\n', '\n'),
+                                ),
+                                Text(
+                                  '086-123-1669'.replaceAll('\\n', '\n'),
+                                ),
+                                Text(
+                                  '9/1 ถ.พหลโยธิน 35 แขวงลาดยาว\nเขตจตุจักร, จังหวัดกรุงเทพมหานคร, 10900'
+                                      .replaceAll('\\n', '\n'),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'เอกสารแนบเพิ่มเติม',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    widget.contract.renterAttachments.isNotEmpty
-                        ? GridView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: widget.contract.renterAttachments.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3),
-                            itemBuilder: (context, index) {
-                              return Row(
-                                children: [
-                                  Ink.image(
-                                    image: NetworkImage(widget
-                                        .contract.renterAttachments[index]),
-                                    fit: BoxFit.cover,
-                                    child: InkWell(
-                                      onTap: () {
-                                        //Go to ImageView
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 4,
-                                  ),
-                                ],
-                              );
-                            })
-                        : const Text(
-                            'ไม่มีเอกสารแนบ',
-                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'ค่าเช่าทั้งหมด',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                    const SizedBox(height: 32),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: outlineColor,
-                        ),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(8),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Text(
-                                'ที่อยู่',
+                            children: [
+                              const Text(
+                                'ค่าเช่า',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                    //fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              Text(
+                                '฿' +
+                                    currencyFormat(widget.contract.rentalPrice),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 4,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'ค่ามัดจำ',
+                              ),
+                              Text(
+                                '฿' + currencyFormat(widget.contract.deposit),
+                                style: const TextStyle(
+                                  fontSize: 18,
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 4),
-                          Text(
-                            'วัชรากร แท่นแก้ว'.replaceAll('\\n', '\n'),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'ยอดรวมทั้งหมด',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: primaryColor,
+                                ),
+                              ),
+                              Text(
+                                '฿' +
+                                    currencyFormat(widget.contract.rentalPrice +
+                                        widget.contract.deposit),
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  color: primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            '086-123-1669'.replaceAll('\\n', '\n'),
+                          const SizedBox(
+                            height: 32,
                           ),
-                          Text(
-                            '9/1 ถ.พหลโยธิน 35 แขวงลาดยาว\nเขตจตุจักร, จังหวัดกรุงเทพมหานคร, 10900'
-                                .replaceAll('\\n', '\n'),
-                          ),
+                          isActive
+                              ? Column(
+                                  children: [
+                                    Row(children: const <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 4),
+                                        child: Text(
+                                          'จัดการสัญญา',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Divider(color: Colors.grey),
+                                      ),
+                                    ]),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddDisputeScreen(
+                                                    contract: widget.contract,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: const Text('เปิดข้อพิพาท'),
+                                            style: TextButton.styleFrom(
+                                              primary: primaryColor,
+                                              //backgroundColor: primaryColor,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                side: const BorderSide(
+                                                    color: primaryColor,
+                                                    width: 1),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    _confirmation(context, isRenter),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'ค่าเช่าทั้งหมด',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'ค่าเช่า',
-                          style: TextStyle(
-                              //fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        Text(
-                          '฿' + currencyFormat(widget.contract.rentalPrice),
-                          style: const TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'ค่ามัดจำ',
-                        ),
-                        Text(
-                          '฿' + currencyFormat(widget.contract.deposit),
-                          style: const TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'ยอดรวมทั้งหมด',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: primaryColor,
-                          ),
-                        ),
-                        Text(
-                          '฿' +
-                              currencyFormat(widget.contract.rentalPrice +
-                                  widget.contract.deposit),
-                          style: const TextStyle(
-                            fontSize: 24,
-                            color: primaryColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 32,
-                    ),
-                    isActive
-                        ? Column(
-                            children: [
-                              Row(children: const <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(right: 4),
-                                  child: Text(
-                                    'จัดการสัญญา',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(color: Colors.grey),
-                                ),
-                              ]),
-                              const SizedBox(
-                                height: 16,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: TextButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                AddDisputeScreen(
-                                              contract: widget.contract,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: const Text('เปิดข้อพิพาท'),
-                                      style: TextButton.styleFrom(
-                                        primary: primaryColor,
-                                        //backgroundColor: primaryColor,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 12),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                          side: const BorderSide(
-                                              color: primaryColor, width: 1),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              _confirmation(context, isRenter),
-                            ],
-                          )
-                        : const SizedBox.shrink(),
-                  ],
-                ),
-              ),
-            );
+                  );
           }),
     );
   }
 
+  // if(isRenter && widget.contract.renterStatus == 'ที่ต้องได้รับ')
+  // if(isRenter && widget.contract.renterStatus == 'ที่ต้องส่งคืน')
+  // if(!isRenter && widget.contract.ownerStatus == 'ที่ต้องจัดส่ง')
+  // if(!isRenter && widget.contract.ownerStatus == 'ที่ต้องได้คืน')
   Widget _confirmation(context, bool isRenter) {
     //ชำระเงิน -> รอจัดส่ง = ที่ต้องได้รับ
     //ส่งสินค้า -> รอผู้เช่ายืนยัน
@@ -625,46 +626,22 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
       await contractRef.update({
         'ownerStatus': 'ที่ต้องได้คืน',
       });
-      sendNotification(
-        widget.contract.renterId,
-        'สินค้าจัดส่งแล้ว',
-        'รายการ: $productName',
-        'renter',
-      );
     }
     if (condition == 2) {
       await contractRef.update({
         'renterStatus': 'ที่ต้องส่งคืน',
       });
-      sendNotification(
-        widget.contract.ownerId,
-        'ผู้เช่าได้รับสินค้าแล้ว',
-        'รายการ: $productName',
-        'owner',
-      );
     }
     if (condition == 3) {
       await contractRef.update({
         'renterStatus': 'รอการจบสัญญา',
       });
-      sendNotification(
-        widget.contract.ownerId,
-        'ผู้เช่าจัดส่งสินค้าแล้ว',
-        'รายการ: $productName',
-        'owner',
-      );
     }
     if (condition == 4) {
       await contractRef.update({
         'renterStatus': 'สำเร็จ',
         'ownerStatus': 'สำเร็จ',
       });
-      sendNotification(
-        widget.contract.renterId,
-        'การเช่าสำเร็จ',
-        'รายการ: $productName',
-        'owner',
-      );
     }
   }
 

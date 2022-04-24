@@ -278,14 +278,6 @@ class AccountScreen extends ConsumerWidget {
                               ],
                             ),
                           ),
-
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          children: [
-                            Container(
                           const SizedBox(
                             height: 20,
                           ),

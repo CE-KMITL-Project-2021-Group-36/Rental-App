@@ -49,9 +49,6 @@ dependencies:
   http: ^0.13.4
   url_launcher: ^6.1.0
   flutterfire_ui: ^0.4.0+3
-  firebase_messaging: ^11.2.14
-  flutter_local_notifications: ^9.4.1
-  firebase_analytics: ^9.1.6
 
 dev_dependencies:
   flutter_test:

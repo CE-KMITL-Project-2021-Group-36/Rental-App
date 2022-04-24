@@ -10,7 +10,6 @@ import 'package:path/path.dart' as path;
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
-import 'package:rental_app/screens/screens.dart';
 
 class RentRequestScreen extends StatefulWidget {
   const RentRequestScreen(
@@ -364,12 +363,6 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                             .showSnackBar(const SnackBar(
                           content: Text('ส่งคำขอเช่าแล้ว'),
                         ));
-                        sendNotification(
-                          widget.product.owner,
-                          'มีคำขอเช่าใหม่',
-                          'รายการ: ${widget.product.name}',
-                          'owner',
-                        );
                       },
                       child: const Text('ส่งคำขอเช่า'),
                       style: TextButton.styleFrom(
