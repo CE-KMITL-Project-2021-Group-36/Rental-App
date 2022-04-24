@@ -24,3 +24,4 @@ export 'wallet_input_passcode_screen.dart';
 export 'wallet_request_withdrawal_screen.dart';
 export 'wallet_screen.dart';
 export 'wallet_top_up_screen.dart';
+export 'favourites_screen.dart';
