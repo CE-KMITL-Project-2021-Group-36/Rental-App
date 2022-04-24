@@ -177,7 +177,9 @@ class EditProfileScreen extends ConsumerWidget {
                         height: 10,
                       ),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, '/reset_password');
+                        },
                         borderRadius: BorderRadius.circular(10),
                         child: Ink(
                           width: double.infinity,
@@ -213,7 +215,7 @@ class EditProfileScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 20,
                       ),
                       InkWell(
                         onTap: () {

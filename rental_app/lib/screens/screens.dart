@@ -14,6 +14,7 @@ export 'kyc_screen.dart';
 export 'notification_screen.dart';
 export 'product_screen.dart';
 export 'rent_request_screen.dart';
+export 'reset_password_screen.dart';
 export 'review_screen.dart';
 export 'search_screen.dart';
 export 'user_store_screen.dart';

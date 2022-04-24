@@ -53,6 +53,8 @@ class AppRouter {
         return EditAddressScreen.route();
       case AddAddressScreen.routeName:
         return AddAddressScreen.route(documentId: settings.arguments as String);
+      case ResetPasswordScreen.routeName:
+        return ResetPasswordScreen.route();
 
       default:
         return _errorRoute();
