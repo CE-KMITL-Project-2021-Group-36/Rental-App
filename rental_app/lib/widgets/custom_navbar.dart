@@ -63,12 +63,12 @@ class _CustomNavBarState extends State<CustomNavBar> {
     );
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted permission');
+      debugPrint('User granted permission');
     } else if (settings.authorizationStatus ==
         AuthorizationStatus.provisional) {
-      print('User granted provisional permission');
+      debugPrint('User granted provisional permission');
     } else {
-      print('User declined or has not accepted permission');
+      debugPrint('User declined or has not accepted permission');
     }
   }
 
@@ -126,8 +126,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
         .update({
       'fcmToken': token,
     });
-    print('token:$token');
-    sendPushNotification('I just send to myself', "test", token);
+    debugPrint('token:$token');
   }
 
   @override
