@@ -59,6 +59,8 @@ class AppRouter {
         return EditPhoneNumberScreen.route(phone: settings.arguments as String);
       case AddShopScreen.routeName:
         return AddShopScreen.route();
+            case ShopScreen.routeName:
+        return ShopScreen.route(ownerId: settings.arguments as String);
       default:
         return _errorRoute();
     }
