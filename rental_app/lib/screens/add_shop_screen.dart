@@ -41,7 +41,7 @@ class _AddShopScreenState extends State<AddShopScreen> {
       _continuousValidation.value = true;
     } else {
       Navigator.pop(context);
-      Navigator.pushNamed(context, '/user_store');
+      Navigator.pushNamed(context, '/owner_account');
       users.doc(userId).update({
         'shop.hasShop': true,
         'shop.shopName': _shopName.text,

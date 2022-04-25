@@ -55,7 +55,7 @@ class AccountScreen extends ConsumerWidget {
                             top: 50,
                             child: TextButton(
                               onPressed: () {
-                                hasShop ? Navigator.pushNamed(context, '/user_store')
+                                hasShop ? Navigator.pushNamed(context, '/owner_account')
                                 : Navigator.pushNamed(context, '/add_shop');
                               },
                               child: Row(

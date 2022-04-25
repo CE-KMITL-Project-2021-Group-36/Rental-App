@@ -24,8 +24,8 @@ class AppRouter {
         return CatalogScreen.route(category: settings.arguments as Category);
       case AddProductScreen.routeName:
         return AddProductScreen.route();
-      case UserStoreScreen.routeName:
-        return UserStoreScreen.route();
+      case OwnerAccountScreen.routeName:
+        return OwnerAccountScreen.route();
       case EditProductScreen.routeName:
         return EditProductScreen.route(product: settings.arguments as Product);
       case KYC.routeName:

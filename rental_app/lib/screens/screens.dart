@@ -18,7 +18,7 @@ export 'rent_request_screen.dart';
 export 'reset_password_screen.dart';
 export 'review_screen.dart';
 export 'search_screen.dart';
-export 'user_store_screen.dart';
+export 'owner_account_screen.dart';
 export 'wallet_init_passcode_screen.dart';
 export 'wallet_input_passcode_screen.dart';
 export 'wallet_request_withdrawal_screen.dart';
