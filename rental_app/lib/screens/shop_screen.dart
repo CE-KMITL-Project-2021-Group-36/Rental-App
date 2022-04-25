@@ -48,61 +48,94 @@ class ShopScreen extends ConsumerWidget {
                 'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Favatar.png?alt=media&token=0b9a2456-3c04-458b-a319-83f5717c5cd4';
 
             return Scaffold(
-              body: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTopBanner(avatarUrl, shopName, context),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(shopDetail),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(Icons.place),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      userName,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 4,
-                                    ),
-                                    Text(
-                                      phone,
-                                      style: const TextStyle(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                                Text(address),
-                              ],
-                            ),
-                          ),
-                        ],
+              body: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildTopBanner(avatarUrl, shopName, context),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16.0, left: 16.0),
+                        child: Text(shopDetail),
                       ),
-                    ),
-                    const Text('สินค้า'),
-                    
-                  ],
-                ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.place),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        userName,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 4,
+                                      ),
+                                      Text(
+                                        phone,
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text(address),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  StreamBuilder<QuerySnapshot>(
+                    stream:
+                        products.where('owner', isEqualTo: ownerId).snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text('Somthing went wrong');
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      final data = snapshot.requireData;
+                      return Expanded(
+                        child: GridView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2, childAspectRatio: 0.65),
+                          itemCount: data.docs.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Center(
+                              child: ProductCard(
+                                product: Product.fromSnapshot(data.docs[index]),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             );
           }
