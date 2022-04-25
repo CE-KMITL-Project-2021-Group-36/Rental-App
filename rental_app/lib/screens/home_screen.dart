@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/widgets/widget.dart';
@@ -42,7 +43,9 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             IconButton(
               icon: const Icon(Icons.search),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/search');
+              },
             ),
           ],
         ),
@@ -129,6 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: StreamBuilder<QuerySnapshot>(
                         stream: FirebaseFirestore.instance
                             .collection("products")
+                            .where('isFeature', isEqualTo: true)
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
