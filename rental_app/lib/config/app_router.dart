@@ -24,8 +24,8 @@ class AppRouter {
         return CatalogScreen.route(category: settings.arguments as Category);
       case AddProductScreen.routeName:
         return AddProductScreen.route();
-      case UserStoreScreen.routeName:
-        return UserStoreScreen.route();
+      case OwnerAccountScreen.routeName:
+        return OwnerAccountScreen.route();
       case EditProductScreen.routeName:
         return EditProductScreen.route(product: settings.arguments as Product);
       case KYC.routeName:
@@ -57,7 +57,10 @@ class AppRouter {
         return ResetPasswordScreen.route();
       case EditPhoneNumberScreen.routeName:
         return EditPhoneNumberScreen.route(phone: settings.arguments as String);
-
+      case AddShopScreen.routeName:
+        return AddShopScreen.route();
+            case ShopScreen.routeName:
+        return ShopScreen.route(ownerId: settings.arguments as String);
       default:
         return _errorRoute();
     }

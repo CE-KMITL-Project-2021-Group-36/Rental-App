@@ -39,6 +39,7 @@ class AccountScreen extends ConsumerWidget {
                       'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Favatar.png?alt=media&token=0b9a2456-3c04-458b-a319-83f5717c5cd4';
               final double? balance = data['wallet']?['balance'];
               final bool kycVerified = data['kyc']['verified'];
+              final bool hasShop = data['shop']['hasShop'];
 
               return Scaffold(
                 body: SingleChildScrollView(
@@ -54,7 +55,8 @@ class AccountScreen extends ConsumerWidget {
                             top: 50,
                             child: TextButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, '/user_store');
+                                hasShop ? Navigator.pushNamed(context, '/owner_account')
+                                : Navigator.pushNamed(context, '/add_shop');
                               },
                               child: Row(
                                 children: [
