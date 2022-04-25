@@ -57,7 +57,8 @@ class AppRouter {
         return ResetPasswordScreen.route();
       case EditPhoneNumberScreen.routeName:
         return EditPhoneNumberScreen.route(phone: settings.arguments as String);
-
+      case AddShopScreen.routeName:
+        return AddShopScreen.route();
       default:
         return _errorRoute();
     }
