@@ -34,14 +34,14 @@ class _ReviewScreenState extends State<ReviewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('รีวิว')),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.create),
-        onPressed: () {
-          Navigator.pushNamed(context, '/add_review',
-              arguments: widget.product);
-        },
-      ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+      // floatingActionButton: FloatingActionButton(
+      //   child: const Icon(Icons.create),
+      //   onPressed: () {
+      //     Navigator.pushNamed(context, '/add_review',
+      //         arguments: widget.product);
+      //   },
+      // ),
       body: StreamBuilder<QuerySnapshot>(
         stream: products
             .doc(widget.product.id)

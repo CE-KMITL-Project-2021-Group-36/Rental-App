@@ -24,15 +24,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-        floatingActionButton: FloatingActionButton(
-          // isExtended: true,
-          child: const Icon(Icons.add),
-          //backgroundColor: Colors.green,
-          onPressed: () {
-            Navigator.pushNamed(context, '/add_product');
-          },
-        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+        // floatingActionButton: FloatingActionButton(
+        //   // isExtended: true,
+        //   child: const Icon(Icons.add),
+        //   //backgroundColor: Colors.green,
+        //   onPressed: () {
+        //     FirebaseAuth.instance.signOut();
+        //   },
+        // ),
         appBar: AppBar(
           centerTitle: true,
           title: const Text(

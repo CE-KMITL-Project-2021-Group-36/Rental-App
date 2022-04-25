@@ -1,12 +1,11 @@
+import 'package:carousel_nullsafety/carousel_nullsafety.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:carousel_nullsafety/carousel_nullsafety.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/screens.dart';
-import 'package:rental_app/widgets/choice_chip.dart';
 import 'package:rental_app/widgets/product_slide_panel.dart';
 import 'package:rental_app/widgets/widget.dart';
 
@@ -31,11 +30,13 @@ class _ProductScreenState extends State<ProductScreen> {
   bool isOwner = false;
   bool isFav = false;
   final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+  final bool anonymous = FirebaseAuth.instance.currentUser!.isAnonymous;
 
   @override
   void initState() {
     super.initState();
     isOwner = currentUserId == widget.product.owner;
+    if (anonymous) isOwner = true;
     _initIsFav();
   }
 
@@ -202,7 +203,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 dotBgColor: Colors.grey[800]!.withOpacity(0.0),
               ),
             ),
-            isOwner
+            isOwner && !anonymous
                 ? Container(
                     //height: 60,
                     padding: const EdgeInsets.all(16),

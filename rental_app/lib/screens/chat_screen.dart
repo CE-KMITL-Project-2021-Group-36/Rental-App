@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/screens/screens.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -26,82 +26,86 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   Stream? userStream;
   final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+  final anonymous = FirebaseAuth.instance.currentUser!.isAnonymous;
 
   TextEditingController searchUserEditingController = TextEditingController();
 
-  Widget _buildChatsList() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection("chats")
-          .where('usersInChat', arrayContains: currentUserId)
-          .orderBy('lastestMessageCreatedOn', descending: true)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Text('มีบางอย่างผิดพลาด');
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-        final chatData = snapshot.data;
-        return chatData!.size == 0
-            ? const Center(child: Text('ไม่มีข้อความ'))
-            : ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: chatData.docs.length,
-                itemBuilder: (context, index) {
-                  DocumentSnapshot chat = chatData.docs[index];
-                  String? chatWithUserId;
-                  for (final i in chat['usersInChat']) {
-                    if (i != currentUserId) {
-                      chatWithUserId = i;
-                      break;
-                    }
-                  }
-                  return StreamBuilder<DocumentSnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection("users")
-                        .doc(chatWithUserId)
-                        .snapshots(),
-                    builder:
-                        (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        return const Text('มีบางอย่างผิดพลาด');
+  Widget _buildChatsList() => anonymous
+      ? const Center(
+          child: Text('คุณยังไม่ได้สมัครสมาชิก'),
+        )
+      : StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection("chats")
+              .where('usersInChat', arrayContains: currentUserId)
+              .orderBy('lastestMessageCreatedOn', descending: true)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('มีบางอย่างผิดพลาด');
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+            final chatData = snapshot.data;
+            return chatData!.size == 0
+                ? const Center(child: Text('ไม่มีข้อความ'))
+                : ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: chatData.docs.length,
+                    itemBuilder: (context, index) {
+                      DocumentSnapshot chat = chatData.docs[index];
+                      String? chatWithUserId;
+                      for (final i in chat['usersInChat']) {
+                        if (i != currentUserId) {
+                          chatWithUserId = i;
+                          break;
+                        }
                       }
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-                      final userData = snapshot.data;
-                      final avatarUrl = userData!['avatarUrl'];
-                      final chatWithUserName =
-                          '${userData['firstName']} ${userData['lastName']}';
-                      return _buildUserChat(
-                        chat.id,
-                        avatarUrl,
-                        chatWithUserName,
-                        chatWithUserId!,
-                        chat['lastestMessage'],
-                        chat['lastestMessageSender'],
-                        chat['lastestMessageCreatedOn'],
+                      return StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection("users")
+                            .doc(chatWithUserId)
+                            .snapshots(),
+                        builder: (context,
+                            AsyncSnapshot<DocumentSnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return const Text('มีบางอย่างผิดพลาด');
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
+                          final userData = snapshot.data;
+                          final avatarUrl = userData!['avatarUrl'];
+                          final chatWithUserName =
+                              '${userData['firstName']} ${userData['lastName']}';
+                          return _buildUserChat(
+                            chat.id,
+                            avatarUrl,
+                            chatWithUserName,
+                            chatWithUserId!,
+                            chat['lastestMessage'],
+                            chat['lastestMessageSender'],
+                            chat['lastestMessageCreatedOn'],
+                          );
+                        },
                       );
                     },
                   );
-                },
-              );
-      },
-    );
-  }
+          },
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -114,20 +118,20 @@ class _ChatScreenState extends State<ChatScreen> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.support_agent,
+            if (!anonymous)
+              IconButton(
+                icon: const Icon(
+                  Icons.support_agent,
+                ),
+                onPressed: () async {
+                  enterChatRoom(
+                      context: context,
+                      currentUserId: currentUserId,
+                      chatWithUser: 'admin');
+                },
               ),
-              onPressed: () async {
-                enterChatRoom(
-                    context: context,
-                    currentUserId: currentUserId,
-                    chatWithUser: 'admin');
-              },
-            ),
           ],
         ),
-        backgroundColor: surfaceColor,
         body: _buildChatsList(),
       ),
     );

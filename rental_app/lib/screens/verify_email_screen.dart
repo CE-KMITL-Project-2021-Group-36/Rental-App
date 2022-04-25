@@ -31,6 +31,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   void initState() {
     super.initState();
     _isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+    if (FirebaseAuth.instance.currentUser!.isAnonymous) _isEmailVerified = true;
     if (!_isEmailVerified) {
       sendVerificationEmail();
       timer = Timer.periodic(
