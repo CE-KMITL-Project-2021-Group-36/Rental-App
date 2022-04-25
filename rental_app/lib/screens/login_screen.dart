@@ -57,6 +57,16 @@ class _LoginPageState extends State<LoginPage> {
                     }));
           }
 
+          Future<void> _signInAnonymously() async {
+            await _auth
+                .signInAnonymously()
+                .whenComplete(() => _auth.authStateChange.listen((event) async {
+                      if (event == null) {
+                        return;
+                      }
+                    }));
+          }
+
           return Form(
             key: _formKey,
             autovalidateMode: _continuousValidation
@@ -138,12 +148,29 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.symmetric(vertical: 15),
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   OutlinedButton.icon(
                     onPressed: _loginWithGoogle,
                     icon: const Icon(FontAwesomeIcons.google),
                     label: const Text(
                       'ดำเนินการต่อด้วย Google',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      primary: Colors.black,
+                      backgroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  OutlinedButton.icon(
+                    onPressed: _signInAnonymously,
+                    icon: const Icon(FontAwesomeIcons.user),
+                    label: const Text(
+                      'ใช้งานโดยไม่สมัครสมาชิก',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

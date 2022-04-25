@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
@@ -30,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: const Icon(Icons.add),
           //backgroundColor: Colors.green,
           onPressed: () {
-            Navigator.pushNamed(context, '/add_product');
+            FirebaseAuth.instance.signOut();
           },
         ),
         appBar: AppBar(

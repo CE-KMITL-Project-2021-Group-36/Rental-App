@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/screens/account_screen.dart';
-import 'package:rental_app/screens/kyc_screen.dart';
 import 'package:rental_app/screens/screens.dart';
 
 class CustomNavBar extends StatefulWidget {
@@ -45,9 +44,11 @@ class _CustomNavBarState extends State<CustomNavBar> {
   void initState() {
     super.initState();
     requestPermission();
-    loadFCM();
-    listenFCM();
-    getToken();
+    if (!FirebaseAuth.instance.currentUser!.isAnonymous) {
+      loadFCM();
+      listenFCM();
+      getToken();
+    }
   }
 
   void requestPermission() async {

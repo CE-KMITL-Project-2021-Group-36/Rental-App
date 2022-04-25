@@ -160,4 +160,8 @@ class Authentication {
     await googleUser.signOut();
     await _auth.signOut();
   }
+
+  Future<void> signInAnonymously() async {
+    await _auth.signInAnonymously();
+  }
 }
