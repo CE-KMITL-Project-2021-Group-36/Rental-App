@@ -35,7 +35,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
   final pages = [
     const HomeScreen(),
     const ChatScreen(),
-    const Center(child: Text('รถเข็น')),
+    const FavouritesScreen(),
     const NotificationScreen(),
     const AccountScreen(),
   ];
@@ -159,9 +159,9 @@ class _CustomNavBarState extends State<CustomNavBar> {
             label: 'ข้อความ',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
-            activeIcon: Icon(Icons.shopping_cart),
-            label: 'รถเข็น',
+            icon: Icon(Icons.favorite_outline),
+            activeIcon: Icon(Icons.favorite),
+            label: 'รายการที่ชอบ',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications_outlined),
