@@ -400,14 +400,24 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                             itemBuilder: (context, index) {
                               return Row(
                                 children: [
-                                  Ink.image(
-                                    image: NetworkImage(widget
-                                        .contract.renterAttachments[index]),
-                                    fit: BoxFit.cover,
-                                    child: InkWell(
-                                      onTap: () {
-                                        //Go to ImageView
-                                      },
+                                  Container(
+                                    constraints:
+                                        const BoxConstraints(maxWidth: 100),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image(
+                                        image: NetworkImage(widget
+                                            .contract.renterAttachments[index]),
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            return child;
+                                          }
+                                          return const Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(
