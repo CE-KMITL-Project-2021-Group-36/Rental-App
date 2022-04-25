@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rental_app/config/palette.dart';
 import 'package:http/http.dart' as http;
+import 'package:rental_app/config/palette.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);
@@ -24,6 +24,7 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+  final anonymous = FirebaseAuth.instance.currentUser!.isAnonymous;
 
   @override
   Widget build(BuildContext context) {
@@ -59,93 +60,97 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 
-  Widget _buildRenterNotificationList() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUserId)
-          .collection('notifications')
-          .where('type', isEqualTo: 'renter')
-          .orderBy('createdOn', descending: true)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Text('มีบางอย่างผิดพลาด');
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-        final data = snapshot.data;
-        return data?.size == 0
-            ? const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Center(child: Text('ไม่มีการแจ้งเตือน')),
-              )
-            : ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: data!.docs.length,
-                itemBuilder: (context, index) {
-                  final doc = data.docs[index];
-                  return _buildNotificationWithIcon(
-                    doc['title'],
-                    doc['text'],
-                    doc['type'],
-                  );
-                },
+  Widget _buildRenterNotificationList() => anonymous
+      ? const Center(
+          child: Text('คุณยังไม่ได้สมัครสมาชิก'),
+        )
+      : StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(currentUserId)
+              .collection('notifications')
+              .where('type', isEqualTo: 'renter')
+              .orderBy('createdOn', descending: true)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('มีบางอย่างผิดพลาด');
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: CircularProgressIndicator(),
+                ),
               );
-      },
-    );
-  }
+            }
+            final data = snapshot.data;
+            return data?.size == 0
+                ? const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(child: Text('ไม่มีการแจ้งเตือน')),
+                  )
+                : ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: data!.docs.length,
+                    itemBuilder: (context, index) {
+                      final doc = data.docs[index];
+                      return _buildNotificationWithIcon(
+                        doc['title'],
+                        doc['text'],
+                        doc['type'],
+                      );
+                    },
+                  );
+          },
+        );
 
-  Widget _buildOwnerNotificationList() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUserId)
-          .collection('notifications')
-          .where('type', isEqualTo: 'owner')
-          .orderBy('createdOn', descending: true)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Text('มีบางอย่างผิดพลาด');
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-        final data = snapshot.data;
-        return data?.size == 0
-            ? const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Center(child: Text('ไม่มีการแจ้งเตือน')),
-              )
-            : ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: data!.docs.length,
-                itemBuilder: (context, index) {
-                  final doc = data.docs[index];
-                  return _buildNotificationWithIcon(
-                    doc['title'],
-                    doc['text'],
-                    doc['type'],
-                  );
-                },
+  Widget _buildOwnerNotificationList() => anonymous
+      ? const Center(
+          child: Text('คุณยังไม่ได้สมัครสมาชิก'),
+        )
+      : StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(currentUserId)
+              .collection('notifications')
+              .where('type', isEqualTo: 'owner')
+              .orderBy('createdOn', descending: true)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('มีบางอย่างผิดพลาด');
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: CircularProgressIndicator(),
+                ),
               );
-      },
-    );
-  }
+            }
+            final data = snapshot.data;
+            return data?.size == 0
+                ? const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(child: Text('ไม่มีการแจ้งเตือน')),
+                  )
+                : ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: data!.docs.length,
+                    itemBuilder: (context, index) {
+                      final doc = data.docs[index];
+                      return _buildNotificationWithIcon(
+                        doc['title'],
+                        doc['text'],
+                        doc['type'],
+                      );
+                    },
+                  );
+          },
+        );
 
   _buildNotificationWithIcon(title, text, type) {
     switch (title) {
