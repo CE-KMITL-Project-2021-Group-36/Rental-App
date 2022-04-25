@@ -27,20 +27,24 @@ class ProductScreen extends StatefulWidget {
 }
 
 class _ProductScreenState extends State<ProductScreen> {
-  bool isOwner = false;
-  bool isFav = false;
   final currentUserId = FirebaseAuth.instance.currentUser?.uid;
   final bool anonymous = FirebaseAuth.instance.currentUser!.isAnonymous;
+  bool isOwner = false;
+  bool isFav = false;
+  String shopName = '';
+  String phone = '';
+  String avatarUrl = '';
 
   @override
   void initState() {
     super.initState();
     isOwner = currentUserId == widget.product.owner;
     if (anonymous) isOwner = true;
-    _initIsFav();
+    _getIsFav();
+    _getData();
   }
 
-  _initIsFav() async {
+  _getIsFav() async {
     var docSnapshot = await FirebaseFirestore.instance
         .collection("users")
         .doc(currentUserId)
@@ -51,6 +55,20 @@ class _ProductScreenState extends State<ProductScreen> {
       isFav = true;
     } else {
       isFav = false;
+    }
+    setState(() {});
+  }
+
+  _getData() async {
+    var docSnapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(widget.product.owner)
+        .get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data();
+      shopName = data?['shop']['shopName'];
+      phone = data?['shop']['phone'];
+      avatarUrl = data?['avatarUrl'];
     }
     setState(() {});
   }
@@ -442,10 +460,9 @@ class _ProductScreenState extends State<ProductScreen> {
                 children: [
                   Row(
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 30,
-                        backgroundImage:
-                            AssetImage('assets/images/shop_profile.png'),
+                        backgroundImage: NetworkImage(avatarUrl),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -453,29 +470,41 @@ class _ProductScreenState extends State<ProductScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              children: const [
-                                Icon(Icons.storefront,
-                                    color: primaryColor, size: 16),
-                                Text(' RentKlong',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold))
+                              children: [
+                                const Icon(Icons.storefront,
+                                    color: primaryColor, size: 24),
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                Text(shopName,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18))
                               ],
                             ),
                             const SizedBox(height: 4),
                             Row(
-                              children: const [
-                                Icon(Icons.location_on,
+                              children: [
+                                const Icon(Icons.phone,
                                     color: primaryColor, size: 16),
-                                Text('บางนา, กรุงเทพมหานคร')
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                Text(phone)
                               ],
                             ),
                             const SizedBox(height: 4),
-                            const Text(' มี 3 สินค้าให้เช่า'),
                           ],
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/shop',
+                            arguments: widget.product.owner,
+                          );
+                        },
                         child: Row(
                           children: const [
                             Text(
