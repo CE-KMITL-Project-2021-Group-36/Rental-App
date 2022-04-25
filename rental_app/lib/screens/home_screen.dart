@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
@@ -25,15 +24,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-        floatingActionButton: FloatingActionButton(
-          // isExtended: true,
-          child: const Icon(Icons.add),
-          //backgroundColor: Colors.green,
-          onPressed: () {
-            FirebaseAuth.instance.signOut();
-          },
-        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+        // floatingActionButton: FloatingActionButton(
+        //   // isExtended: true,
+        //   child: const Icon(Icons.add),
+        //   //backgroundColor: Colors.green,
+        //   onPressed: () {
+        //     FirebaseAuth.instance.signOut();
+        //   },
+        // ),
         appBar: AppBar(
           centerTitle: true,
           title: const Text(

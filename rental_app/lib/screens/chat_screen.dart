@@ -132,7 +132,6 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
           ],
         ),
-        backgroundColor: surfaceColor,
         body: _buildChatsList(),
       ),
     );
