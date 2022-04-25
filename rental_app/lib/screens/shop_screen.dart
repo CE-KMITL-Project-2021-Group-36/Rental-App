@@ -23,12 +23,11 @@ class ShopScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userId = FirebaseAuth.instance.currentUser!.uid;
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     CollectionReference products =
         FirebaseFirestore.instance.collection('products');
     return FutureBuilder<DocumentSnapshot>(
-        future: users.doc(userId).get(),
+        future: users.doc(ownerId).get(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text("ข้อมูลผิดพลาด");
