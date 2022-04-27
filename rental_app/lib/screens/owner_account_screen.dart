@@ -297,7 +297,12 @@ class OwnerAccountScreen extends ConsumerWidget {
                             height: 8,
                           ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/edit_shop',
+                              );
+                            },
                             borderRadius: BorderRadius.circular(10),
                             child: Ink(
                               width: double.infinity,
