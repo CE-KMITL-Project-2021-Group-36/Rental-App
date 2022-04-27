@@ -27,3 +27,4 @@ export 'wallet_top_up_screen.dart';
 export 'favourites_screen.dart';
 export 'add_shop_screen.dart';
 export 'shop_screen.dart';
+export 'edit_shop_screen.dart';
