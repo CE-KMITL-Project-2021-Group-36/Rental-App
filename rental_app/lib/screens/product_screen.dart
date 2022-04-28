@@ -30,11 +30,13 @@ class _ProductScreenState extends State<ProductScreen> {
   final currentUserId = FirebaseAuth.instance.currentUser?.uid;
   final bool anonymous = FirebaseAuth.instance.currentUser!.isAnonymous;
   bool isOwner = false;
-  bool isFav = false;
+
   late final bool isVerified;
+
   String shopName = '';
   String phone = '';
   String avatarUrl = '';
+  ValueNotifier<bool> isFav = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -62,9 +64,9 @@ class _ProductScreenState extends State<ProductScreen> {
         .doc(widget.product.id)
         .get();
     if (docSnapshot.exists) {
-      isFav = true;
+      isFav.value = true;
     } else {
-      isFav = false;
+      isFav.value = false;
     }
     setState(() {});
   }
@@ -136,66 +138,70 @@ class _ProductScreenState extends State<ProductScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Expanded(
-                    flex: 2,
-                    child: TextButton(
-                      onPressed: () {
-                        if (isFav) {
-                          FirebaseFirestore.instance
-                              .collection("users")
-                              .doc(currentUserId)
-                              .collection('favourites')
-                              .doc(widget.product.id)
-                              .delete();
-                        } else {
-                          FirebaseFirestore.instance
-                              .collection("users")
-                              .doc(currentUserId)
-                              .collection('favourites')
-                              .doc(widget.product.id)
-                              .set({});
-                        }
-                        isFav = !isFav;
-                        setState(() {});
-                      },
-                      child: isFav
-                          ? Column(
-                              children: const [
-                                Icon(Icons.favorite),
-                                SizedBox(
-                                  height: 4,
-                                ),
-                                Text(
-                                  'เพิ่มแล้ว',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
+                  ValueListenableBuilder(
+                      valueListenable: isFav,
+                      builder: (context, value, child) {
+                        return Expanded(
+                          flex: 2,
+                          child: TextButton(
+                            onPressed: () {
+                              if (isFav.value) {
+                                FirebaseFirestore.instance
+                                    .collection("users")
+                                    .doc(currentUserId)
+                                    .collection('favourites')
+                                    .doc(widget.product.id)
+                                    .delete();
+                              } else {
+                                FirebaseFirestore.instance
+                                    .collection("users")
+                                    .doc(currentUserId)
+                                    .collection('favourites')
+                                    .doc(widget.product.id)
+                                    .set({});
+                              }
+                              isFav.value = !isFav.value;
+                              //setState(() {});
+                            },
+                            child: isFav.value
+                                ? Column(
+                                    children: const [
+                                      Icon(Icons.favorite),
+                                      SizedBox(
+                                        height: 4,
+                                      ),
+                                      Text(
+                                        'เพิ่มแล้ว',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Column(
+                                    children: const [
+                                      Icon(Icons.favorite_outline),
+                                      SizedBox(
+                                        height: 4,
+                                      ),
+                                      Text(
+                                        'เพิ่มในรายการ',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            )
-                          : Column(
-                              children: const [
-                                Icon(Icons.favorite_outline),
-                                SizedBox(
-                                  height: 4,
-                                ),
-                                Text(
-                                  'เพิ่มในรายการ',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                              ],
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                primaryColor.withOpacity(0.2),
+                              ),
                             ),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                          primaryColor.withOpacity(0.2),
-                        ),
-                      ),
-                    ),
-                  ),
+                          ),
+                        );
+                      }),
                   const SizedBox(width: 8),
                   Expanded(
                     flex: 3,
@@ -268,15 +274,15 @@ class _ProductScreenState extends State<ProductScreen> {
                               arguments: widget.product,
                             );
                           },
-                          child: const Text('แก้ไข'),
+                          child: const Text(
+                            'แก้ไข',
+                            style: TextStyle(fontSize: 16),
+                          ),
                           style: ButtonStyle(
                             foregroundColor:
                                 MaterialStateProperty.all(Colors.white),
                             backgroundColor:
                                 MaterialStateProperty.all(primaryColor),
-                            textStyle: MaterialStateProperty.all(
-                              const TextStyle(fontSize: 16),
-                            ),
                           ),
                         )
                       ],
