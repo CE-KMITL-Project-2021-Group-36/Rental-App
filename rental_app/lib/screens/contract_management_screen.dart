@@ -13,11 +13,11 @@ class ContractManagementScreen extends StatefulWidget {
   State<ContractManagementScreen> createState() =>
       _ContractManagementScreenState();
 
-  final String userType;
+  final List<String> userType;
 
   static const String routeName = '/contract_management';
 
-  static Route route({required String userType}) {
+  static Route route({required List<String> userType}) {
     return MaterialPageRoute(
       settings: const RouteSettings(name: routeName),
       builder: (_) => ContractManagementScreen(userType: userType),
@@ -62,7 +62,7 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
         itemBuilder: (BuildContext context, int index) {
           return ContractCard(
             contract: Contract.fromSnapshot(data.docs[index]),
-            userType: widget.userType,
+            userType: widget.userType.first,
           );
         });
   }
@@ -110,8 +110,9 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.userType == 'renter'
+    return widget.userType.first == 'renter'
         ? DefaultTabController(
+            initialIndex: int.parse(widget.userType.last),
             length: renterStatusList.length,
             child: Scaffold(
               appBar: AppBar(
@@ -138,6 +139,7 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
             ),
           )
         : DefaultTabController(
+            initialIndex: 2,
             length: ownerStatusList.length,
             child: Scaffold(
               appBar: AppBar(

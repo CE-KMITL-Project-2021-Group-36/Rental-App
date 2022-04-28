@@ -46,7 +46,7 @@ class AppRouter {
         return WalletRequestWithdrawal.route();
       case ContractManagementScreen.routeName:
         return ContractManagementScreen.route(
-            userType: settings.arguments as String);
+            userType: settings.arguments as List<String>);
       case EditProfileScreen.routeName:
         return EditProfileScreen.route();
       case EditAddressScreen.routeName:
