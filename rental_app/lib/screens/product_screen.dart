@@ -80,7 +80,8 @@ class _ProductScreenState extends State<ProductScreen> {
       Map<String, dynamic>? data = docSnapshot.data();
       shopName = data?['shop']['shopName'];
       phone = data?['shop']['phone'];
-      avatarUrl = data?['avatarUrl'];
+      avatarUrl = data?['avatarUrl'] ??=
+          'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Favatar.png?alt=media&token=0b9a2456-3c04-458b-a319-83f5717c5cd4';
     }
     setState(() {});
   }
@@ -251,7 +252,7 @@ class _ProductScreenState extends State<ProductScreen> {
               child: Carousel(
                 boxFit: BoxFit.cover,
                 images: [
-                  NetworkImage(widget.product.imageUrl),
+                  Image.network(widget.product.imageUrl),
                 ],
                 dotSize: 0.0,
                 dotSpacing: 25.0,
