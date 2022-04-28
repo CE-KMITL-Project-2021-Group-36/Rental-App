@@ -49,7 +49,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
 
-  bool checkedPricePerDay = false;
   bool checkedPricePerWeek = false;
   bool checkedPricePerMonth = false;
 
