@@ -976,8 +976,8 @@ class AccountScreen extends ConsumerWidget {
                               decoration: BoxDecoration(
                                   // color: Colors.redAccent.shade100,
                                   border: Border.all(
-                                    color: Colors.redAccent.shade100,
-                                    width: 1.5,
+                                    color: primaryColor,
+                                    width: 1.25,
                                   ),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
@@ -989,6 +989,7 @@ class AccountScreen extends ConsumerWidget {
                                     Icon(
                                       Icons.logout,
                                       size: 20,
+                                      color: primaryColor,
                                     ),
                                     SizedBox(
                                       width: 10,
@@ -996,8 +997,8 @@ class AccountScreen extends ConsumerWidget {
                                     Text(
                                       'ออกจากระบบ',
                                       style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                          fontWeight: FontWeight.bold,
+                                          color: primaryColor),
                                     ),
                                   ],
                                 ),
