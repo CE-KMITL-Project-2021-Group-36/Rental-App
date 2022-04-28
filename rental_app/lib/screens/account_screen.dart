@@ -249,8 +249,11 @@ class AccountScreen extends ConsumerWidget {
                                         onTap: () {},
                                         child: Column(
                                           children: const [
-                                            Icon(FontAwesomeIcons
-                                                .clipboardQuestion),
+                                            Icon(
+                                              FontAwesomeIcons
+                                                  .clipboardQuestion,
+                                              color: primaryColor,
+                                            ),
                                             SizedBox(
                                               height: 5,
                                             ),
@@ -267,7 +270,10 @@ class AccountScreen extends ConsumerWidget {
                                         onTap: () {},
                                         child: Column(
                                           children: const [
-                                            Icon(FontAwesomeIcons.wallet),
+                                            Icon(
+                                              FontAwesomeIcons.wallet,
+                                              color: primaryColor,
+                                            ),
                                             SizedBox(
                                               height: 5,
                                             ),
@@ -284,7 +290,10 @@ class AccountScreen extends ConsumerWidget {
                                         onTap: () {},
                                         child: Column(
                                           children: const [
-                                            Icon(FontAwesomeIcons.truck),
+                                            Icon(
+                                              FontAwesomeIcons.truck,
+                                              color: primaryColor,
+                                            ),
                                             SizedBox(
                                               height: 5,
                                             ),
@@ -301,7 +310,10 @@ class AccountScreen extends ConsumerWidget {
                                         onTap: () {},
                                         child: Column(
                                           children: const [
-                                            Icon(FontAwesomeIcons.box),
+                                            Icon(
+                                              FontAwesomeIcons.box,
+                                              color: primaryColor,
+                                            ),
                                             SizedBox(
                                               height: 5,
                                             ),
@@ -318,8 +330,10 @@ class AccountScreen extends ConsumerWidget {
                                         onTap: () {},
                                         child: Column(
                                           children: const [
-                                            Icon(FontAwesomeIcons
-                                                .clipboardCheck),
+                                            Icon(
+                                              FontAwesomeIcons.clipboardCheck,
+                                              color: primaryColor,
+                                            ),
                                             SizedBox(
                                               height: 5,
                                             ),
