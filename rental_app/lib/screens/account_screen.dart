@@ -14,6 +14,7 @@ class AccountScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userId = FirebaseAuth.instance.currentUser!.uid;
     CollectionReference users = FirebaseFirestore.instance.collection('users');
+    late final bool isVerified;
 
     final _auth = ref.watch(authenticationProvider);
 
@@ -40,6 +41,7 @@ class AccountScreen extends ConsumerWidget {
               final double? balance = data['wallet']?['balance'];
               final bool kycVerified = data['kyc']['verified'];
               final bool hasShop = data['shop']['hasShop'];
+              isVerified = data['kyc']['verified'];
 
               return Scaffold(
                 body: SingleChildScrollView(
@@ -54,10 +56,39 @@ class AccountScreen extends ConsumerWidget {
                           Positioned(
                             top: 50,
                             child: TextButton(
-                              onPressed: () {
-                                hasShop ? Navigator.pushNamed(context, '/owner_account')
-                                : Navigator.pushNamed(context, '/add_shop');
-                              },
+                              onPressed: () => isVerified
+                                  ? hasShop
+                                      ? Navigator.pushNamed(
+                                          context, '/owner_account')
+                                      : Navigator.pushNamed(
+                                          context, '/add_shop')
+                                  : showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                            title:
+                                                const Text('กรุณายืนยันตัวตน'),
+                                            content: const Text(
+                                                'จำเป็นต้องยืนยันตัวตนเพื่อใช้งานฟีเจอร์นี้'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                                child: const Text(
+                                                  'ดำเนินการภายหลัง',
+                                                  style: TextStyle(
+                                                      color: Colors.black54),
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pushNamed(
+                                                        context, '/kyc'),
+                                                child:
+                                                    const Text('ยืนยันตัวตน'),
+                                              ),
+                                            ],
+                                          )),
                               child: Row(
                                 children: [
                                   Text(
@@ -165,11 +196,40 @@ class AccountScreen extends ConsumerWidget {
                                     top: 10,
                                     right: 10,
                                     child: InkWell(
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                            context, '/contract_management',
-                                            arguments: 'renter');
-                                      },
+                                      onTap: () => isVerified
+                                          ? Navigator.pushNamed(
+                                              context, '/contract_management',
+                                              arguments: 'renter')
+                                          : showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) =>
+                                                  AlertDialog(
+                                                    title: const Text(
+                                                        'กรุณายืนยันตัวตน'),
+                                                    content: const Text(
+                                                        'จำเป็นต้องยืนยันตัวตนเพื่อใช้งานฟีเจอร์นี้'),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                context),
+                                                        child: const Text(
+                                                          'ดำเนินการภายหลัง',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black54),
+                                                        ),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pushNamed(
+                                                                context,
+                                                                '/kyc'),
+                                                        child: const Text(
+                                                            'ยืนยันตัวตน'),
+                                                      ),
+                                                    ],
+                                                  )),
                                       child: Row(
                                         children: const [
                                           Text(
@@ -290,10 +350,37 @@ class AccountScreen extends ConsumerWidget {
                               height: 20,
                             ),
                             InkWell(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                    context, '/wallet_input_passcode');
-                              },
+                              onTap: () => isVerified
+                                  ? Navigator.pushNamed(
+                                      context, '/wallet_input_passcode',
+                                      arguments: 'renter')
+                                  : showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                            title:
+                                                const Text('กรุณายืนยันตัวตน'),
+                                            content: const Text(
+                                                'จำเป็นต้องยืนยันตัวตนเพื่อใช้งานฟีเจอร์นี้'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                                child: const Text(
+                                                  'ดำเนินการภายหลัง',
+                                                  style: TextStyle(
+                                                      color: Colors.black54),
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pushNamed(
+                                                        context, '/kyc'),
+                                                child:
+                                                    const Text('ยืนยันตัวตน'),
+                                              ),
+                                            ],
+                                          )),
                               borderRadius: BorderRadius.circular(10),
                               child: Ink(
                                 width: double.infinity,
