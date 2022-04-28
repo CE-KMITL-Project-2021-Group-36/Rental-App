@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'package:rental_app/config/palette.dart';
@@ -28,7 +29,9 @@ class _WalletInitPasscodeState extends State<WalletInitPasscode> {
       confirmScreenText = 'ยืนยันรหัสผ่าน\nWallet';
   String displayText = initScreenText;
   final userId = FirebaseAuth.instance.currentUser!.uid;
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  final CollectionReference users =
+      FirebaseFirestore.instance.collection('users');
+  final ValueNotifier<bool> done = ValueNotifier<bool>(false);
 
   @override
   Widget build(BuildContext context) {
@@ -69,23 +72,32 @@ class _WalletInitPasscodeState extends State<WalletInitPasscode> {
                 onConfirmScreen = false;
                 passcode = '';
               });
+            } else {
+              Navigator.pop(context);
             }
           },
         ),
         actions: onConfirmScreen
             ? null
             : [
-                TextButton(
-                  onPressed: () {
-                    onConfirmScreen = true;
-                    setState(() {
-                      displayText = confirmScreenText;
-                    });
-                    passcode = pinController.text;
-                    pinController.clear();
-                  },
-                  child: const Text('ยืนยัน  '),
-                )
+                ValueListenableBuilder(
+                    valueListenable: done,
+                    builder: (context, value, child) {
+                      if (done.value) {
+                        return TextButton(
+                          onPressed: () {
+                            onConfirmScreen = true;
+                            setState(() {
+                              displayText = confirmScreenText;
+                            });
+                            passcode = pinController.text;
+                            pinController.clear();
+                          },
+                          child: const Text('ยืนยัน  '),
+                        );
+                      }
+                      return const Text('');
+                    })
               ],
       ),
       body: SafeArea(
@@ -126,6 +138,7 @@ class _WalletInitPasscodeState extends State<WalletInitPasscode> {
                       return 'รหัสผ่านไม่ตรงกัน กรุณาลองอีกครั้ง';
                     }
                   }
+                  done.value = true;
                   return null;
                 },
                 pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
