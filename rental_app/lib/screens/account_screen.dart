@@ -637,51 +637,52 @@ class AccountScreen extends ConsumerWidget {
                           const SizedBox(
                             height: 20,
                           ),
-                          InkWell(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/kyc');
-                            },
-                            borderRadius: BorderRadius.circular(10),
-                            child: Ink(
-                              width: double.infinity,
-                              height: 45,
-                              decoration: BoxDecoration(
-                                  color: primaryLightColor,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: const [
-                                        Icon(
-                                          FontAwesomeIcons.userCheck,
-                                          size: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          'ยืนยันตัวตน',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(kycStatus),
-                                        const Icon(Icons.chevron_right),
-                                      ],
-                                    ),
-                                  ],
+                          if (!isVerified)
+                            InkWell(
+                              onTap: () {
+                                Navigator.pushNamed(context, '/kyc');
+                              },
+                              borderRadius: BorderRadius.circular(10),
+                              child: Ink(
+                                width: double.infinity,
+                                height: 45,
+                                decoration: BoxDecoration(
+                                    color: primaryLightColor,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: const [
+                                          Icon(
+                                            FontAwesomeIcons.userCheck,
+                                            size: 20,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            'ยืนยันตัวตน',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(kycStatus),
+                                          const Icon(Icons.chevron_right),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
                           const SizedBox(
                             height: 5,
                           ),
