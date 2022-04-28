@@ -31,17 +31,27 @@ class _ProductScreenState extends State<ProductScreen> {
   final bool anonymous = FirebaseAuth.instance.currentUser!.isAnonymous;
   bool isOwner = false;
   bool isFav = false;
+  late final bool isVerified;
   String shopName = '';
   String phone = '';
   String avatarUrl = '';
 
   @override
   void initState() {
-    super.initState();
     isOwner = currentUserId == widget.product.owner;
     if (anonymous) isOwner = true;
     _getIsFav();
     _getData();
+    _getUserStatus();
+    super.initState();
+  }
+
+  _getUserStatus() async {
+    var snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUserId)
+        .get();
+    isVerified = snapshot['kyc']['verified'];
   }
 
   _getIsFav() async {
@@ -190,9 +200,30 @@ class _ProductScreenState extends State<ProductScreen> {
                   Expanded(
                     flex: 3,
                     child: TextButton(
-                      onPressed: () {
-                        _slidePanel();
-                      },
+                      onPressed: () => isVerified
+                          ? _slidePanel()
+                          : showDialog(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                    title: const Text('กรุณายืนยันตัวตน'),
+                                    content: const Text(
+                                        'จำเป็นต้องยืนยันตัวตนเพื่อใช้งานฟีเจอร์นี้'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text(
+                                          'ดำเนินการภายหลัง',
+                                          style:
+                                              TextStyle(color: Colors.black54),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pushNamed(
+                                            context, '/kyc'),
+                                        child: const Text('ยืนยันตัวตน'),
+                                      ),
+                                    ],
+                                  )),
                       child: const Text('ส่งคำขอเช่า'),
                       style: ButtonStyle(
                         foregroundColor:
