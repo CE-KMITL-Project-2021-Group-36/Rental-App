@@ -139,7 +139,7 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
             ),
           )
         : DefaultTabController(
-            initialIndex: 2,
+            initialIndex: int.parse(widget.userType.last),
             length: ownerStatusList.length,
             child: Scaffold(
               appBar: AppBar(
