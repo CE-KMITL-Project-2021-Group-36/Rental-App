@@ -293,6 +293,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                       ),
                       const SizedBox(
+                        height: 10,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/wallet_init_passcode');
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Ink(
+                          width: double.infinity,
+                          height: 45,
+                          decoration: BoxDecoration(
+                              color: primaryLightColor,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: const [
+                                    Icon(
+                                      Icons.account_balance_wallet,
+                                      size: 25,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      'เปลี่ยนรหัสผ่าน Wallet',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(Icons.chevron_right),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
                         height: 20,
                       ),
                       InkWell(
