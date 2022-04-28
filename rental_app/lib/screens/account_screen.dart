@@ -435,47 +435,6 @@ class AccountScreen extends ConsumerWidget {
                             height: 20,
                           ),
                           InkWell(
-                            onTap: () {},
-                            borderRadius: BorderRadius.circular(10),
-                            child: Ink(
-                              width: double.infinity,
-                              height: 45,
-                              decoration: BoxDecoration(
-                                  color: primaryLightColor,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: const [
-                                        Icon(
-                                          FontAwesomeIcons.solidHeart,
-                                          size: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          'สิ่งที่ฉันถูกใจ',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                    const Icon(Icons.chevron_right),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          InkWell(
                             onTap: () {
                               Navigator.pushNamed(context, '/kyc');
                             },
