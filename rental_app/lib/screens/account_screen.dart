@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,10 @@ class AccountScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userId = FirebaseAuth.instance.currentUser!.uid;
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    final CollectionReference users =
+        FirebaseFirestore.instance.collection('users');
+    final CollectionReference contracts =
+        FirebaseFirestore.instance.collection('contracts');
     // late final bool isVerified;
 
     final _auth = ref.watch(authenticationProvider);
@@ -239,112 +243,297 @@ class AccountScreen extends ConsumerWidget {
                                 ),
                                 Positioned(
                                   top: 55,
-                                  left: 10,
-                                  right: 10,
+                                  left: 5,
+                                  right: 5,
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
+                                    // alignment: WrapAlignment.spaceEvenly,
                                     children: [
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Column(
-                                          children: const [
-                                            Icon(
-                                              FontAwesomeIcons
-                                                  .clipboardQuestion,
-                                              color: primaryColor,
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              'รอการอนุมัติ',
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold),
-                                            )
-                                          ],
-                                        ),
+                                      Flexible(
+                                        flex: 1,
+                                        child: StreamBuilder<QuerySnapshot>(
+                                            stream: contracts
+                                                .where('renterId',
+                                                    isEqualTo: userId)
+                                                .where('renterStatus',
+                                                    isEqualTo: 'รอการอนุมัติ')
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasError) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'มีบางอย่างผิดพลาด'));
+                                              }
+
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              }
+                                              final int waitingForApproval =
+                                                  snapshot.data!.size;
+                                              return InkWell(
+                                                onTap: () {},
+                                                child: Column(
+                                                  children: [
+                                                    Badge(
+                                                      child: const Icon(
+                                                        FontAwesomeIcons
+                                                            .clipboardQuestion,
+                                                        color: primaryColor,
+                                                      ),
+                                                      badgeContent: Text(
+                                                          '$waitingForApproval'),
+                                                      showBadge:
+                                                          waitingForApproval > 0
+                                                              ? true
+                                                              : false,
+                                                      badgeColor: warningColor,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    const Text(
+                                                      'รอการอนุมัติ',
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            }),
                                       ),
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Column(
-                                          children: const [
-                                            Icon(
-                                              FontAwesomeIcons.wallet,
-                                              color: primaryColor,
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              'ที่ต้องชำระ',
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold),
-                                            )
-                                          ],
-                                        ),
+                                      Flexible(
+                                        flex: 1,
+                                        child: StreamBuilder<QuerySnapshot>(
+                                            stream: contracts
+                                                .where('renterId',
+                                                    isEqualTo: userId)
+                                                .where('renterStatus',
+                                                    isEqualTo: 'ที่ต้องชำระ')
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasError) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'มีบางอย่างผิดพลาด'));
+                                              }
+
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              }
+                                              final int needToPay =
+                                                  snapshot.data!.size;
+                                              return InkWell(
+                                                onTap: () {},
+                                                child: Column(
+                                                  children: [
+                                                    Badge(
+                                                      child: const Icon(
+                                                        FontAwesomeIcons.wallet,
+                                                        color: primaryColor,
+                                                      ),
+                                                      badgeContent:
+                                                          Text('$needToPay'),
+                                                      showBadge: needToPay > 0
+                                                          ? true
+                                                          : false,
+                                                      badgeColor: warningColor,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    const Text(
+                                                      'ที่ต้องชำระ',
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            }),
                                       ),
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Column(
-                                          children: const [
-                                            Icon(
-                                              FontAwesomeIcons.truck,
-                                              color: primaryColor,
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              'ที่ต้องได้รับ',
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold),
-                                            )
-                                          ],
-                                        ),
+                                      Flexible(
+                                        flex: 1,
+                                        child: StreamBuilder<QuerySnapshot>(
+                                            stream: contracts
+                                                .where('renterId',
+                                                    isEqualTo: userId)
+                                                .where('renterStatus',
+                                                    isEqualTo: 'ที่ต้องได้รับ')
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasError) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'มีบางอย่างผิดพลาด'));
+                                              }
+
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              }
+                                              final int onTheWay =
+                                                  snapshot.data!.size;
+                                              return InkWell(
+                                                onTap: () {},
+                                                child: Column(
+                                                  children: [
+                                                    Badge(
+                                                      child: const Icon(
+                                                        FontAwesomeIcons.truck,
+                                                        color: primaryColor,
+                                                      ),
+                                                      badgeContent:
+                                                          Text('$onTheWay'),
+                                                      showBadge: onTheWay > 0
+                                                          ? true
+                                                          : false,
+                                                      badgeColor: warningColor,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    const Text(
+                                                      'ที่ต้องได้รับ',
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            }),
                                       ),
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Column(
-                                          children: const [
-                                            Icon(
-                                              FontAwesomeIcons.box,
-                                              color: primaryColor,
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              'ที่ต้องส่งคืน',
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold),
-                                            )
-                                          ],
-                                        ),
+                                      Flexible(
+                                        flex: 1,
+                                        child: StreamBuilder<QuerySnapshot>(
+                                            stream: contracts
+                                                .where('renterId',
+                                                    isEqualTo: userId)
+                                                .where('renterStatus',
+                                                    isEqualTo: 'ที่ต้องส่งคืน')
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasError) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'มีบางอย่างผิดพลาด'));
+                                              }
+
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              }
+                                              final int needToSendBack =
+                                                  snapshot.data!.size;
+                                              return InkWell(
+                                                onTap: () {},
+                                                child: Column(
+                                                  children: [
+                                                    Badge(
+                                                      child: const Icon(
+                                                        FontAwesomeIcons.box,
+                                                        color: primaryColor,
+                                                      ),
+                                                      badgeContent: Text(
+                                                          '$needToSendBack'),
+                                                      showBadge:
+                                                          needToSendBack > 0
+                                                              ? true
+                                                              : false,
+                                                      badgeColor: warningColor,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    const Text(
+                                                      'ที่ต้องส่งคืน',
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            }),
                                       ),
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Column(
-                                          children: const [
-                                            Icon(
-                                              FontAwesomeIcons.clipboardCheck,
-                                              color: primaryColor,
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              'ยืนยันจบสัญญา',
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold),
-                                            )
-                                          ],
-                                        ),
+                                      Flexible(
+                                        flex: 1,
+                                        child: StreamBuilder<QuerySnapshot>(
+                                            stream: contracts
+                                                .where('renterId',
+                                                    isEqualTo: userId)
+                                                .where('renterStatus',
+                                                    isEqualTo: 'ยืนยันจบสัญญา')
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasError) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'มีบางอย่างผิดพลาด'));
+                                              }
+
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              }
+                                              final int needToConfirm =
+                                                  snapshot.data!.size;
+                                              return InkWell(
+                                                onTap: () {},
+                                                child: Column(
+                                                  children: [
+                                                    Badge(
+                                                      child: const Icon(
+                                                        FontAwesomeIcons
+                                                            .clipboardCheck,
+                                                        color: primaryColor,
+                                                      ),
+                                                      badgeContent: Text(
+                                                          '$needToConfirm'),
+                                                      showBadge:
+                                                          needToConfirm > 0
+                                                              ? true
+                                                              : false,
+                                                      badgeColor: warningColor,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    const Text(
+                                                      'ยืนยันจบสัญญา',
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            }),
                                       ),
                                     ],
                                   ),
