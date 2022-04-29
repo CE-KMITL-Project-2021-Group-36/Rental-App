@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/screens/contract_payment_screen.dart';
 import 'package:rental_app/screens/screens.dart';
 import 'package:rental_app/widgets/widget.dart';
 
@@ -39,7 +40,8 @@ class AppRouter {
       case WalletInitPasscode.routeName:
         return WalletInitPasscode.route();
       case WalletInputPasscode.routeName:
-        return WalletInputPasscode.route();
+        return WalletInputPasscode.route(
+            fromRoute: settings.arguments as String);
       case WalletTopUp.routeName:
         return WalletTopUp.route();
       case WalletRequestWithdrawal.routeName:
@@ -63,8 +65,12 @@ class AppRouter {
         return ShopScreen.route(ownerId: settings.arguments as String);
       case EditShopScreen.routeName:
         return EditShopScreen.route();
-            case ProductManagementScreen.routeName:
+      case ProductManagementScreen.routeName:
         return ProductManagementScreen.route();
+      case ContractPayment.routeName:
+        return ContractPayment.route(
+            amount: settings.arguments as List<String>);
+
       default:
         return _errorRoute();
     }

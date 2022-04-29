@@ -10,6 +10,7 @@ import 'package:rental_app/screens/view_dispute_screen.dart';
 renterContractAddition(context, Contract contract, Product product, userType) {
   DateTime endDate = contract.endDate.toDate();
   String formattedEndDate = DateFormat('dd-MM-yyyy').format(endDate);
+  final double totalPayment = contract.rentalPrice + contract.deposit;
   switch (contract.renterStatus) {
     case 'รอการอนุมัติ':
       return Column(
@@ -111,7 +112,7 @@ renterContractAddition(context, Contract contract, Product product, userType) {
                 ),
               ),
               Text(
-                '฿' + currencyFormat(contract.rentalPrice + contract.deposit),
+                '฿' + currencyFormat(totalPayment),
                 style: const TextStyle(
                   color: primaryColor,
                   fontSize: 24,
@@ -136,7 +137,10 @@ renterContractAddition(context, Contract contract, Product product, userType) {
                     fontSize: 14,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/contract_payment',
+                      arguments: [totalPayment.toString(), contract.id]);
+                },
                 style: TextButton.styleFrom(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
