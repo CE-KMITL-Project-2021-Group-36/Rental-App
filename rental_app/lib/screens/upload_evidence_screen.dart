@@ -10,11 +10,9 @@ import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/screens.dart';
 import 'package:file_picker/file_picker.dart';
-
 import 'package:rental_app/api/firebase_api.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UploadEvidenceScreen extends StatefulWidget {
   const UploadEvidenceScreen({Key? key, required this.contract})
@@ -35,9 +33,15 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
   bool isUploaded2 = false;
   String productName = '';
 
+  void _launchUrl(url) async {
+    url = Uri.parse(url);
+    if (!await launchUrl(url)) throw 'Could not launch $url';
+  }
+
   Future selectFile(file) async {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
+      type: FileType.video,
     );
 
     if (result == null) return;
@@ -264,6 +268,263 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                             ],
                           )
                         : const SizedBox.shrink(),
+                    isRenter
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(children: const <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(right: 4),
+                                  child: Text(
+                                    'วิดีโอหลักฐานจากผู้ให้เช่า',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(color: Colors.grey),
+                                ),
+                              ]),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              const Text(
+                                'วิดีโอส่งสินค้า',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              widget.contract.ownerDeliveryVideo == ''
+                                  ? const Padding(
+                                      padding: EdgeInsets.only(top: 8.0),
+                                      child: Text(
+                                        '- ยังไม่มีวิดีโอขณะนี้',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(
+                                      width: 100,
+                                      child: TextButton(
+                                        onPressed: () {
+                                          final url = widget
+                                              .contract.ownerDeliveryVideo;
+                                          _launchUrl(url);
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Icon(Icons.play_arrow_rounded),
+                                            Text(
+                                              'เล่นวิดีโอ',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        style: TextButton.styleFrom(
+                                          primary: Colors.white,
+                                          backgroundColor: primaryColor,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 6),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              const Text(
+                                'วิดีโอเมื่อได้รับสินค้าคืน',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              widget.contract.ownerPickupVideo == ''
+                                  ? const Padding(
+                                      padding: EdgeInsets.only(top: 8.0),
+                                      child: Text(
+                                        '- ยังไม่มีวิดีโอขณะนี้',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(
+                                      width: 100,
+                                      child: TextButton(
+                                        onPressed: () {
+                                          final url =
+                                              widget.contract.ownerPickupVideo;
+                                          _launchUrl(url);
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Icon(Icons.play_arrow_rounded),
+                                            Text(
+                                              'เล่นวิดีโอ',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        style: TextButton.styleFrom(
+                                          primary: Colors.white,
+                                          backgroundColor: primaryColor,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 6),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                            ],
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(children: const <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(right: 4),
+                                  child: Text(
+                                    'วิดีโอหลักฐานจากผู้เช่า',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(color: Colors.grey),
+                                ),
+                              ]),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              const Text(
+                                'วิดีโอเมื่อได้รับสินค้า',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              widget.contract.renterReturnVideo == ''
+                                  ? const Padding(
+                                      padding: EdgeInsets.only(top: 8.0),
+                                      child: Text(
+                                        '- ยังไม่มีวิดีโอขณะนี้',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(
+                                      width: 100,
+                                      child: TextButton(
+                                        onPressed: () {
+                                          final url =
+                                              widget.contract.renterPickupVideo;
+                                          _launchUrl(url);
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Icon(Icons.play_arrow_rounded),
+                                            Text(
+                                              'เล่นวิดีโอ',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        style: TextButton.styleFrom(
+                                          primary: Colors.white,
+                                          backgroundColor: primaryColor,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 6),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              const Text(
+                                'วิดีโอเมื่อส่งคืนสินค้า',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              widget.contract.renterPickupVideo == ''
+                                  ? const Padding(
+                                      padding: EdgeInsets.only(top: 8.0),
+                                      child: Text(
+                                        '- ยังไม่มีวิดีโอขณะนี้',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(
+                                      width: 100,
+                                      child: TextButton(
+                                        onPressed: () {
+                                          final url =
+                                              widget.contract.renterReturnVideo;
+                                          _launchUrl(url);
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Icon(Icons.play_arrow_rounded),
+                                            Text(
+                                              'เล่นวิดีโอ',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        style: TextButton.styleFrom(
+                                          primary: Colors.white,
+                                          backgroundColor: primaryColor,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 6),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                            ],
+                          ),
+
+                    const SizedBox(
+                      height: 32,
+                    ),
                     Row(children: const <Widget>[
                       Padding(
                         padding: EdgeInsets.only(right: 4),
@@ -801,13 +1062,46 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                         ),
                       ),
                 isUploaded1
-                    ? Row(
-                        children: const [
-                          Icon(Icons.done, color: primaryColor, size: 20),
-                          Text(
-                            'อัปโหลดแล้ว',
-                            style: TextStyle(
-                              color: primaryColor,
+                    ? Column(
+                        children: [
+                          Row(
+                            children: const [
+                              Icon(Icons.done, color: primaryColor, size: 20),
+                              Text(
+                                'อัปโหลดแล้ว',
+                                style: TextStyle(
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              final url = !isRenter
+                                  ? widget.contract.ownerDeliveryVideo
+                                  : widget.contract.renterPickupVideo;
+                              _launchUrl(url);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(Icons.play_arrow_rounded),
+                                Text(
+                                  'เล่นวิดีโอ',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                              ],
+                            ),
+                            style: TextButton.styleFrom(
+                              primary: Colors.white,
+                              backgroundColor: primaryColor,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 6, horizontal: 8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
                             ),
                           ),
                         ],
@@ -932,14 +1226,49 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                                   ),
                                 ),
                           isUploaded2
-                              ? Row(
-                                  children: const [
-                                    Icon(Icons.done,
-                                        color: primaryColor, size: 20),
-                                    Text(
-                                      'อัปโหลดแล้ว',
-                                      style: TextStyle(
-                                        color: primaryColor,
+                              ? Column(
+                                  children: [
+                                    Row(
+                                      children: const [
+                                        Icon(Icons.done,
+                                            color: primaryColor, size: 20),
+                                        Text(
+                                          'อัปโหลดแล้ว',
+                                          style: TextStyle(
+                                            color: primaryColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        final url = !isRenter
+                                            ? widget.contract.ownerPickupVideo
+                                            : widget.contract.renterReturnVideo;
+                                        _launchUrl(url);
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: const [
+                                          Icon(Icons.play_arrow_rounded),
+                                          Text(
+                                            'เล่นวิดีโอ',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                        ],
+                                      ),
+                                      style: TextButton.styleFrom(
+                                        primary: Colors.white,
+                                        backgroundColor: primaryColor,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 6, horizontal: 8),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
                                       ),
                                     ),
                                   ],

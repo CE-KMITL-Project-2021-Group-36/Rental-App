@@ -137,7 +137,7 @@ class OwnerAccountScreen extends ConsumerWidget {
                                     onTap: () {
                                       Navigator.pushNamed(
                                           context, '/contract_management',
-                                          arguments: 'owner');
+                                          arguments: ['owner', '0']);
                                     },
                                     child: Row(
                                       children: const [
