@@ -743,7 +743,7 @@ class AccountScreen extends ConsumerWidget {
                             onTap: () => isVerified
                                 ? Navigator.pushNamed(
                                     context, '/wallet_input_passcode',
-                                    arguments: 'renter')
+                                    arguments: 'wallet')
                                 : showDialog(
                                     context: context,
                                     builder: (BuildContext context) =>

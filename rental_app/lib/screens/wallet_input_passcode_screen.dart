@@ -8,17 +8,20 @@ import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/screens/wallet_init_passcode_screen.dart';
 
 class WalletInputPasscode extends StatefulWidget {
-  const WalletInputPasscode({Key? key}) : super(key: key);
+  const WalletInputPasscode({Key? key, required this.fromRoute})
+      : super(key: key);
+
+  final String fromRoute;
 
   @override
   State<WalletInputPasscode> createState() => _WalletInputPasscodeState();
 
   static const String routeName = '/wallet_input_passcode';
 
-  static Route route() {
+  static Route route({required String fromRoute}) {
     return MaterialPageRoute(
       settings: const RouteSettings(name: routeName),
-      builder: (_) => const WalletInputPasscode(),
+      builder: (_) => WalletInputPasscode(fromRoute: fromRoute),
     );
   }
 }
@@ -97,6 +100,7 @@ class _WalletInputPasscodeState extends State<WalletInputPasscode> {
                               ),
                             ),
                             Pinput(
+                              obscureText: true,
                               controller: pinController,
                               length: 6,
                               defaultPinTheme: defaultPinTheme,
@@ -105,8 +109,13 @@ class _WalletInputPasscodeState extends State<WalletInputPasscode> {
                               showCursor: true,
                               validator: (s) {
                                 if (s == passcode) {
-                                  Navigator.pushReplacementNamed(
-                                      context, '/wallet');
+                                  if (widget.fromRoute == 'wallet') {
+                                    Navigator.pushReplacementNamed(
+                                        context, '/wallet');
+                                  }
+                                  if (widget.fromRoute == 'payment') {
+                                    Navigator.pop(context, true);
+                                  }
                                   return null;
                                 } else {
                                   Future.delayed(
