@@ -38,6 +38,8 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
   final List<File> _image = [];
   final List _imageUrl = [];
   final picker = ImagePicker();
+  String address = '', addressName = '', addressPhone = '';
+  ValueNotifier<bool> pickedAddress = ValueNotifier(false);
 
   chooseImage() async {
     await showModalBottomSheet(
@@ -125,6 +127,9 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
       'renterReturnVideo': '',
       'ownerDeliveryVideo': '',
       'ownerPickupVideo': '',
+      'renterAddressName': addressName,
+      'renterAddressPhone': addressPhone,
+      'renterAddress': address
     });
   }
 
@@ -305,78 +310,149 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(16),
+              // Container(
+              //   padding: const EdgeInsets.all(16),
+              //   decoration: BoxDecoration(
+              //     border: Border.all(
+              //       color: outlineColor,
+              //     ),
+              //     borderRadius: const BorderRadius.all(
+              //       Radius.circular(8),
+              //     ),
+              //   ),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: const [
+              //           Text(
+              //             'ที่อยู่',
+              //             style: TextStyle(
+              //               fontWeight: FontWeight.bold,
+              //             ),
+              //           ),
+              //           Text(
+              //             'แก้ไข',
+              //             style: TextStyle(
+              //               decoration: TextDecoration.underline,
+              //               fontWeight: FontWeight.normal,
+              //               fontSize: 14,
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //       const SizedBox(height: 4),
+              //       Text(
+              //         'วัชรากร แท่นแก้ว'.replaceAll('\\n', '\n'),
+              //       ),
+              //       Text(
+              //         '086-123-1669'.replaceAll('\\n', '\n'),
+              //       ),
+              //       Text(
+              //         '9/1 ถ.พหลโยธิน 35 แขวงลาดยาว\nเขตจตุจักร, จังหวัดกรุงเทพมหานคร, 10900'
+              //             .replaceAll('\\n', '\n'),
+              //       ),
+              //     ],
+              //   ),
+              //
+              // ),
+              Ink(
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: outlineColor,
+                    color:
+                        pickedAddress.value ? primaryLightColor : primaryColor,
+                    borderRadius: BorderRadius.circular(10)),
+                child: ListTile(
+                  onTap: () async {
+                    final result =
+                        await Navigator.pushNamed(context, '/edit_address')
+                            as List<String>;
+                    debugPrint(result[0].toString());
+                    debugPrint(result[1].toString());
+                    debugPrint(result[2].toString());
+                    setState(() {
+                      addressName = result[0];
+                      addressPhone = result[1];
+                      address = result[2];
+                      pickedAddress.value = true;
+                    });
+                  },
+                  contentPadding: const EdgeInsets.all(15),
+                  trailing: const Icon(
+                    Icons.edit,
+                    color: primaryColor,
                   ),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(8),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                  title: Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Wrap(
+                      children: [
+                        (addressName != '')
+                            ? Text(
+                                addressName,
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                              )
+                            : Text(
+                                'กรุณากดเพื่อเลือกที่อยู่',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: pickedAddress.value
+                                        ? primaryColor
+                                        : surfaceColor),
+                              ),
                         Text(
-                          'ที่อยู่',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'แก้ไข',
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 14,
-                          ),
+                          '    ' + addressPhone,
+                          style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'วัชรากร แท่นแก้ว'.replaceAll('\\n', '\n'),
-                    ),
-                    Text(
-                      '086-123-1669'.replaceAll('\\n', '\n'),
-                    ),
-                    Text(
-                      '9/1 ถ.พหลโยธิน 35 แขวงลาดยาว\nเขตจตุจักร, จังหวัดกรุงเทพมหานคร, 10900'
-                          .replaceAll('\\n', '\n'),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () async {
-                        await createRentRequest();
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text('ส่งคำขอเช่าแล้ว'),
-                        ));
-                      },
-                      child: const Text('ส่งคำขอเช่า'),
-                      style: TextButton.styleFrom(
-                        primary: Colors.white,
-                        backgroundColor: primaryColor,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
+                  ),
+                  subtitle: Text(
+                    address,
+                    style: const TextStyle(
+                      fontSize: 14,
                     ),
                   ),
-                ],
-              )
+                ),
+              ),
+              const SizedBox(height: 20),
+              ValueListenableBuilder(
+                  valueListenable: pickedAddress,
+                  builder: (context, value, child) {
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: pickedAddress.value
+                                ? () async {
+                                    await createRentRequest();
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                      content: Text('ส่งคำขอเช่าแล้ว'),
+                                    ));
+                                  }
+                                : null,
+                            child: const Text('ส่งคำขอเช่า'),
+                            style: TextButton.styleFrom(
+                              primary: Colors.white,
+                              backgroundColor: pickedAddress.value
+                                  ? primaryColor
+                                  : primaryLightColor,
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  })
             ],
           ),
         ),
