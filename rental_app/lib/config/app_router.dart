@@ -63,6 +63,8 @@ class AppRouter {
         return ShopScreen.route(ownerId: settings.arguments as String);
       case EditShopScreen.routeName:
         return EditShopScreen.route();
+            case ProductManagementScreen.routeName:
+        return ProductManagementScreen.route();
       default:
         return _errorRoute();
     }
