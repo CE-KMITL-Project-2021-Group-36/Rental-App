@@ -197,10 +197,19 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             padding: const EdgeInsets.all(4.0),
             child: TextField(
               controller: _controller,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: const BorderSide(color: primaryColor, width: 2),
+                ),
                 hintText: "พิมพ์ข้อความ...",
-                enabledBorder: InputBorder.none,
-                border: InputBorder.none,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: const BorderSide(
+                      color: Color.fromARGB(255, 223, 218, 255), width: 2),
+                ),
               ),
             ),
           ),
@@ -237,6 +246,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ),
             ),
             _buildSendMessageTextField(),
+            const SizedBox(
+              height: 16,
+            )
           ],
         ),
       ),
