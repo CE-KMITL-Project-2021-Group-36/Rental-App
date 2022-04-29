@@ -162,8 +162,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               message: message['message'],
               type: message['type'],
               isMe: message['sender'] == currentUserId,
-              createdOn: DateFormat('yyyy-MM-dd hh:mm')
+              createdOn: DateFormat('dd-MM-yyyy hh:mma')
                   .format(message['createdOn'].toDate()),
+              createdTime:
+                  DateFormat('hh:mm a').format(message['createdOn'].toDate()),
             );
           },
         );
@@ -197,10 +199,19 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             padding: const EdgeInsets.all(4.0),
             child: TextField(
               controller: _controller,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: const BorderSide(color: primaryColor, width: 2),
+                ),
                 hintText: "พิมพ์ข้อความ...",
-                enabledBorder: InputBorder.none,
-                border: InputBorder.none,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: const BorderSide(
+                      color: Color.fromARGB(255, 223, 218, 255), width: 2),
+                ),
               ),
             ),
           ),
@@ -237,6 +248,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ),
             ),
             _buildSendMessageTextField(),
+            const SizedBox(
+              height: 16,
+            )
           ],
         ),
       ),
@@ -248,14 +262,31 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     required bool isMe,
     required String createdOn,
     required String type,
+    required String createdTime,
   }) {
+    Widget showMessageTime = Padding(
+      padding: const EdgeInsets.all(4),
+      child: Text(
+        createdTime,
+        style: const TextStyle(
+          fontSize: 10,
+          color: Colors.grey,
+        ),
+      ),
+    );
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 2),
-      child: Align(
-        alignment: (isMe ? Alignment.topRight : Alignment.topLeft),
-        child: Tooltip(
-          message: createdOn,
-          child: _buildContent(type, message, isMe),
+      child: Tooltip(
+        message: createdOn,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment:
+              isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+          children: [
+            isMe ? showMessageTime : const SizedBox(),
+            _buildContent(type, message, isMe),
+            !isMe ? showMessageTime : const SizedBox(),
+          ],
         ),
       ),
     );
