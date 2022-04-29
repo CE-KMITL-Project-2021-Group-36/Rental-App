@@ -96,7 +96,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
             'dateCreated': DateTime.now(),
           })
           .then((value) => debugPrint('Product Updated'))
-          .catchError((error) => debugPrint('Failed to update product: $error'));
+          .catchError(
+              (error) => debugPrint('Failed to update product: $error'));
       Navigator.pop(this.context);
       ScaffoldMessenger.of(this.context).showSnackBar(
         const SnackBar(
@@ -153,8 +154,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
               const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       onPressed: () async {
         await products.doc(widget.product.id).delete();
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+        int count = 0;
+        Navigator.of(context).popUntil((_) => count++ >= 2);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('ลบสินค้านี้แล้ว'),
         ));
@@ -184,7 +185,23 @@ class _EditProductScreenState extends State<EditProductScreen> {
   Widget build(BuildContext context) {
     return KeyboardDismisser(
       child: Scaffold(
-        appBar: AppBar(title: const Text("แก้ไขสินค้า")),
+        appBar: AppBar(
+          title: const Text("แก้ไขสินค้า"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                showAlertDialog(context);
+              },
+              child: const Text(
+                'ลบสินค้า',
+                style: TextStyle(
+                    fontSize: 14,
+                    color: primaryColor,
+                    fontWeight: FontWeight.normal),
+              ),
+            ),
+          ],
+        ),
         body: ValueListenableBuilder(
             valueListenable: _continuousValidation,
             builder: (BuildContext context, bool val, Widget? child) {
