@@ -62,7 +62,13 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                                   color: primaryLightColor,
                                   borderRadius: BorderRadius.circular(10)),
                               child: ListTile(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.pop(context, [
+                                    data['name'].toString(),
+                                    data['phone'].toString(),
+                                    data['address'].toString()
+                                  ]);
+                                },
                                 contentPadding: const EdgeInsets.all(15),
                                 trailing: IconButton(
                                   onPressed: () {
@@ -102,7 +108,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                           ],
