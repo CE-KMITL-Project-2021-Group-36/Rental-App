@@ -21,6 +21,7 @@ class OwnerAccountScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userId = FirebaseAuth.instance.currentUser!.uid;
     CollectionReference users = FirebaseFirestore.instance.collection('users');
+
     return FutureBuilder<DocumentSnapshot>(
         future: users.doc(userId).get(),
         builder: (context, snapshot) {
@@ -36,6 +37,7 @@ class OwnerAccountScreen extends ConsumerWidget {
             final String shopName = data['shop']['shopName'];
             final String avatarUrl = data['avatarUrl'] ??
                 'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Favatar.png?alt=media&token=0b9a2456-3c04-458b-a319-83f5717c5cd4';
+            final bool isVerified = data['kyc']['verified'];
 
             return Scaffold(
               body: SingleChildScrollView(
@@ -82,18 +84,24 @@ class OwnerAccountScreen extends ConsumerWidget {
                           ),
                         ),
                         Positioned(
-                          top: 40,
+                          top: 50,
                           left: 16,
                           child: GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Icon(
-                              Icons.arrow_back,
-                              size: 24,
-                              color: Colors.white,
-                            ),
-                          ),
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Theme.of(context).platform ==
+                                      TargetPlatform.android
+                                  ? const Icon(
+                                      Icons.arrow_back,
+                                      size: 24,
+                                      color: Colors.white,
+                                    )
+                                  : const Icon(
+                                      Icons.arrow_back_ios,
+                                      size: 24,
+                                      color: Colors.white,
+                                    )),
                         ),
                       ],
                     ),
