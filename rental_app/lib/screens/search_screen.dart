@@ -46,7 +46,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
       ),
-      body: Column(
+      body: query != '' ? Column(
         children: [
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
@@ -66,7 +66,7 @@ class _SearchScreenState extends State<SearchScreen> {
               final data = snapshot.requireData;
               return Expanded(
                 child: GridView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.all(16),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2, childAspectRatio: 0.65),
                   itemCount: data.docs.length,
@@ -82,7 +82,7 @@ class _SearchScreenState extends State<SearchScreen> {
             },
           ),
         ],
-      ),
+      ) : const SizedBox(),
     );
   }
 }
