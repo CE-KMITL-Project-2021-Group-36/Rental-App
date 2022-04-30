@@ -18,7 +18,6 @@ class AccountScreen extends ConsumerWidget {
         FirebaseFirestore.instance.collection('users');
     final CollectionReference contracts =
         FirebaseFirestore.instance.collection('contracts');
-    // late final bool isVerified;
 
     final _auth = ref.watch(authenticationProvider);
 
@@ -248,7 +247,6 @@ class AccountScreen extends ConsumerWidget {
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
-                                    // alignment: WrapAlignment.spaceEvenly,
                                     children: [
                                       Flexible(
                                         flex: 1,
