@@ -62,6 +62,7 @@ class ProductCard extends StatelessWidget {
                             .collection("products")
                             .doc(product.id)
                             .collection("reviews")
+                            .where('rating', isNotEqualTo: 0)
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
