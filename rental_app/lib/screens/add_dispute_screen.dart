@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:path/path.dart' as path;
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
@@ -123,141 +124,143 @@ class _AddDisputeScreenState extends State<AddDisputeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("เปิดข้อพิพาท")),
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'หมายเลขสัญญาเช่า:' + widget.contract.id,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  // color: primaryColor,
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'หัวข้อ/สาเหตุ',
-                style: TextStyle(
+    return KeyboardDismisser(
+      child: Scaffold(
+        appBar: AppBar(title: const Text("เปิดข้อพิพาท")),
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'หมายเลขสัญญาเช่า:' + widget.contract.id,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: primaryColor),
-              ),
-              const SizedBox(height: 4),
-              TextFormField(
-                onChanged: (value) {
-                  _title = value;
-                },
-                maxLines: 1,
-                decoration: const InputDecoration(
-                  hintText: 'ใส่หัวข้อ/สาเหตุ',
-                  alignLabelWithHint: true,
+                    // color: primaryColor,
+                  ),
                 ),
-                maxLength: 100,
-              ),
-              const Text(
-                'รายละเอียด',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: primaryColor),
-              ),
-              const SizedBox(height: 4),
-              TextFormField(
-                onChanged: (value) {
-                  _detail = value;
-                },
-                maxLines: 4,
-                decoration: const InputDecoration(
-                  hintText: 'ใส่ข้อความรายละเอียด',
-                  alignLabelWithHint: true,
+                const SizedBox(height: 16),
+                const Text(
+                  'หัวข้อ/สาเหตุ',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor),
                 ),
-                maxLength: 100,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'ภาพหลักฐานเพิ่มเติม',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: primaryColor),
-              ),
-              const SizedBox(height: 16),
-              GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: _image.length + 1,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3),
-                itemBuilder: (context, index) {
-                  return index == 0
-                      ? InkWell(
-                          splashColor: primaryColor,
-                          onTap: (() => !uploading ? chooseImage() : null),
-                          child: Ink(
-                            decoration: BoxDecoration(
-                              color: primaryColor[50],
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(8)),
-                            ),
-                            child: const Icon(Icons.add_rounded,
-                                color: primaryColor, size: 60),
-                          ),
-                        )
-                      : Stack(
-                          alignment: Alignment.topRight,
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.all(4),
+                const SizedBox(height: 4),
+                TextFormField(
+                  onChanged: (value) {
+                    _title = value;
+                  },
+                  maxLines: 1,
+                  decoration: const InputDecoration(
+                    hintText: 'ใส่หัวข้อ/สาเหตุ',
+                    alignLabelWithHint: true,
+                  ),
+                  maxLength: 100,
+                ),
+                const Text(
+                  'รายละเอียด',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor),
+                ),
+                const SizedBox(height: 4),
+                TextFormField(
+                  onChanged: (value) {
+                    _detail = value;
+                  },
+                  maxLines: 4,
+                  decoration: const InputDecoration(
+                    hintText: 'ใส่ข้อความรายละเอียด',
+                    alignLabelWithHint: true,
+                  ),
+                  maxLength: 100,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'ภาพหลักฐานเพิ่มเติม',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor),
+                ),
+                const SizedBox(height: 16),
+                GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: _image.length + 1,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3),
+                  itemBuilder: (context, index) {
+                    return index == 0
+                        ? InkWell(
+                            splashColor: primaryColor,
+                            onTap: (() => !uploading ? chooseImage() : null),
+                            child: Ink(
                               decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: FileImage(_image[index - 1]),
-                                  fit: BoxFit.cover,
-                                ),
+                                color: primaryColor[50],
                                 borderRadius:
                                     const BorderRadius.all(Radius.circular(8)),
                               ),
+                              child: const Icon(Icons.add_rounded,
+                                  color: primaryColor, size: 60),
                             ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.remove_circle,
-                                color: errorColor,
+                          )
+                        : Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: FileImage(_image[index - 1]),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  borderRadius:
+                                      const BorderRadius.all(Radius.circular(8)),
+                                ),
                               ),
-                              tooltip: 'ลบรูปนี้',
-                              onPressed: () {
-                                setState(() {
-                                  _image.removeAt(index - 1);
-                                });
-                              },
-                            ),
-                          ],
-                        );
-                },
-              ),
-              const SizedBox(height: 32),
-              TextButton(
-                child: const Text('เปิดข้อพิพาท'),
-                onPressed: () async {
-                  await createDispute();
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('เปิดข้อพิพาทสำเร็จ'),
-                  ));
-                },
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  primary: Colors.white,
-                  backgroundColor: primaryColor,
-                  textStyle: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.remove_circle,
+                                  color: errorColor,
+                                ),
+                                tooltip: 'ลบรูปนี้',
+                                onPressed: () {
+                                  setState(() {
+                                    _image.removeAt(index - 1);
+                                  });
+                                },
+                              ),
+                            ],
+                          );
+                  },
                 ),
-              )
-            ],
+                const SizedBox(height: 32),
+                TextButton(
+                  child: const Text('เปิดข้อพิพาท'),
+                  onPressed: () async {
+                    await createDispute();
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('เปิดข้อพิพาทสำเร็จ'),
+                    ));
+                  },
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    primary: Colors.white,
+                    backgroundColor: primaryColor,
+                    textStyle: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
