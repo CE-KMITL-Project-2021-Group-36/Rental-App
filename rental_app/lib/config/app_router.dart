@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/about_screen.dart';
 import 'package:rental_app/screens/contract_payment_screen.dart';
+import 'package:rental_app/screens/report_screen.dart';
 import 'package:rental_app/screens/screens.dart';
 import 'package:rental_app/widgets/widget.dart';
 
@@ -73,6 +74,8 @@ class AppRouter {
             amount: settings.arguments as List<String>);
       case AboutScreen.routeName:
         return AboutScreen.route();
+      case ReportScreen.routeName:
+        return ReportScreen.route(name: settings.arguments as String);
 
       default:
         return _errorRoute();
