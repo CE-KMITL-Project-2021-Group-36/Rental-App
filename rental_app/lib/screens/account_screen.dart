@@ -116,6 +116,19 @@ class AccountScreen extends ConsumerWidget {
                           ),
                         ),
                         Positioned(
+                            top: 40,
+                            right: 5,
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.help,
+                                color: primaryLightColor,
+                                size: 28,
+                              ),
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/about');
+                              },
+                            )),
+                        Positioned(
                           bottom: 15,
                           left: 20,
                           child: CircleAvatar(
