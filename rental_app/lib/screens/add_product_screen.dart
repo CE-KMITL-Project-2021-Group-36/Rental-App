@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
-import 'package:path/path.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
+import 'package:path/path.dart' as path;
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({Key? key}) : super(key: key);
@@ -39,13 +39,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController _deposit = TextEditingController();
   final TextEditingController _location = TextEditingController();
 
-  String? _imageUrl = 'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Fno_image.png?alt=media&token=8ad93981-0365-4bbb-8acf-55be80fe7013';
+  final List<String> _imageUrl = [];
   String? _category;
-
   final String? _owner = FirebaseAuth.instance.currentUser?.uid;
-
   final ValueNotifier<bool> _continuousValidation = ValueNotifier(false);
-
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
 
@@ -55,8 +52,65 @@ class _AddProductScreenState extends State<AddProductScreen> {
   CollectionReference products =
       FirebaseFirestore.instance.collection('products');
 
-  File? image;
-  final ImagePicker _picker = ImagePicker();
+  bool uploading = false;
+  double val = 0;
+  late firebase_storage.Reference ref;
+  final List<File> _imageFile = [];
+  final picker = ImagePicker();
+
+  chooseImage() async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) => BottomSheet(
+        onClosing: () {},
+        builder: (context) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera),
+              title: const Text('กล้องถ่ายรูป'),
+              onTap: () async {
+                Navigator.of(context).pop();
+                pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo),
+              title: const Text('เลือกจากคลัง'),
+              onTap: () async {
+                Navigator.of(context).pop();
+                pickImage(ImageSource.gallery);
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future pickImage(ImageSource source) async {
+    XFile? pickedFile = await picker.pickImage(source: source);
+    setState(() {
+      _imageFile.add(File(pickedFile!.path));
+    });
+  }
+
+  Future uploadFile() async {
+    int i = 1;
+    for (var img in _imageFile) {
+      setState(() {
+        val = i / _imageFile.length;
+      });
+      ref = storage.ref().child(
+          'product_images/${FirebaseAuth.instance.currentUser?.uid}/${path.basename(img.path)}');
+      await ref.putFile(img).whenComplete(() async {
+        await ref.getDownloadURL().then((value) {
+          _imageUrl.add(value);
+          i++;
+        });
+      });
+    }
+  }
 
   Future<void> _onPressedFunction() async {
     if (!_formKey.currentState!.validate()) {
@@ -70,7 +124,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             'pricePerDay': double.tryParse(_pricePerDay.text) ?? 0,
             'pricePerWeek': double.tryParse(_pricePerWeek.text) ?? 0,
             'pricePerMonth': double.tryParse(_pricePerMonth.text) ?? 0,
-            'imageUrl': _imageUrl,
+            'imageUrl': FieldValue.arrayUnion(_imageUrl),
             'category': _category,
             'deposit': _deposit.text,
             'description': _description.text,
@@ -86,30 +140,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
           content: Text('เพิ่มสินค้าแล้ว'),
         ),
       );
-    }
-  }
-
-  Future pickImage() async {
-    try {
-      XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-      final imageTemporary = File(image.path);
-      setState(() => this.image = imageTemporary);
-    } on PlatformException catch (e) {
-      debugPrint('Failed to pick image: $e');
-    }
-  }
-
-  Future uploadFile() async {
-    if (image == null) return;
-    final fileName = basename(image!.path);
-    final destination = 'files/$fileName';
-    try {
-      final ref = firebase_storage.FirebaseStorage.instance.ref(destination);
-      await ref.putFile(image!);
-      await ref.getDownloadURL().then((loc) => setState(() => _imageUrl = loc));
-    } catch (e) {
-      debugPrint('error occurred');
     }
   }
 
@@ -129,53 +159,94 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 child: ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
-                    image != null
-                        ? InkWell(
-                            onTap: () => pickImage(),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Container(
+                    GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: _imageFile.length + 1,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 2,
+                        crossAxisSpacing: 2,
+                      ),
+                      itemBuilder: (context, index) {
+                        const maxValue = 10;
+                        final isMax = _imageFile.length == maxValue;
+                        return index == 0
+                            ? InkWell(
+                                splashColor: primaryColor,
+                                onTap: isMax
+                                    ? null
+                                    : (() {
+                                        !uploading ? chooseImage() : null;
+                                      }),
+                                child: Ink(
                                   decoration: BoxDecoration(
-                                      color: primaryColor[50],
-                                      borderRadius: BorderRadius.circular(4)),
-                                  height: 300,
-                                  clipBehavior: Clip.antiAlias,
-                                  child: Image.file(
-                                    image!,
-                                    fit: BoxFit.cover,
+                                    color: isMax
+                                        ? Colors.grey[200]
+                                        : primaryColor[50],
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(8)),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      const SizedBox(
+                                        height: 24,
+                                      ),
+                                      Icon(
+                                        Icons.add_photo_alternate,
+                                        size: 56,
+                                        color:
+                                            isMax ? Colors.grey : primaryColor,
+                                      ),
+                                      Text(
+                                        '${_imageFile.length}/$maxValue',
+                                        style: TextStyle(
+                                          color: isMax
+                                              ? Colors.grey
+                                              : primaryColor,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                CircleAvatar(
-                                  radius: 48,
-                                  backgroundColor: primaryColor[50],
-                                  child: const Icon(Icons.add_photo_alternate,
-                                      size: 56, color: primaryColor),
-                                ),
-                              ],
-                            ),
-                          )
-                        : InkWell(
-                            onTap: () => pickImage(),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: primaryColor[50],
-                                      borderRadius: BorderRadius.circular(4)),
-                                  height: 300,
-                                ),
-                                CircleAvatar(
-                                  radius: 48,
-                                  backgroundColor: primaryColor[50],
-                                  child: const Icon(Icons.add_photo_alternate,
-                                      size: 56, color: primaryColor),
-                                ),
-                              ],
-                            ),
-                          ),
-                    const SizedBox(height: 16),
+                              )
+                            : Stack(
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: FileImage(_imageFile[index - 1]),
+                                        fit: BoxFit.cover,
+                                      ),
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(8),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 2,
+                                    child: IconButton(
+                                      icon: const Icon(
+                                        Icons.remove_circle,
+                                        color: errorColor,
+                                      ),
+                                      tooltip: 'ลบรูปนี้',
+                                      onPressed: () {
+                                        setState(() {
+                                          _imageFile.removeAt(index - 1);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                      },
+                    ),
+                    const SizedBox(height: 32),
                     const Text('ชื่อสินค้าที่ให้เช่า'),
                     const SizedBox(height: 4),
                     TextFormField(

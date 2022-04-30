@@ -251,12 +251,14 @@ class _ProductScreenState extends State<ProductScreen> {
               height: MediaQuery.of(context).size.width,
               child: Carousel(
                 boxFit: BoxFit.cover,
-                images: [
-                  Image.network(widget.product.imageUrl),
-                ],
-                dotSize: 0.0,
-                dotSpacing: 25.0,
-                dotBgColor: Colors.grey[800]!.withOpacity(0.0),
+                images: widget.product.imageUrl.map((e) => Image.network(e)).toList(),
+                autoplay: false,
+                dotColor: primaryColor[50],
+                dotIncreasedColor: primaryColor,
+                dotSize: 6.0,
+                dotIncreaseSize: 1.6,
+                dotSpacing: 16.0,
+                dotBgColor: Colors.transparent,
               ),
             ),
             isOwner && !anonymous

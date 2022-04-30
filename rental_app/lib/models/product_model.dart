@@ -4,7 +4,7 @@ class Product {
   final String id;
   final String owner;
   final String name;
-  final String imageUrl;
+  final List<String> imageUrl;
   final String category;
   final double pricePerDay;
   final double pricePerWeek;
@@ -37,7 +37,7 @@ class Product {
       owner: snapshot['owner'],
       name: snapshot['name'],
       category: snapshot['category'],
-      imageUrl: snapshot['imageUrl'],
+      imageUrl: List.from(snapshot['imageUrl']),
       pricePerDay: snapshot['pricePerDay'].toDouble(),
       pricePerWeek: snapshot['pricePerWeek'].toDouble(),
       pricePerMonth: snapshot['pricePerMonth'].toDouble(),

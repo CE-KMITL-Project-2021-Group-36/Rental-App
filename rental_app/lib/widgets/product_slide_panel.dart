@@ -150,7 +150,7 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
                     borderRadius: BorderRadius.circular(8),
                     child: SizedBox.fromSize(
                       child: Image.network(
-                        widget.product.imageUrl,
+                        widget.product.imageUrl[0],
                         fit: BoxFit.cover,
                         height: 100.0,
                         width: 100.0,
