@@ -649,8 +649,23 @@ class _ProductScreenState extends State<ProductScreen> {
                         shrinkWrap: true,
                         itemCount: data.docs.length.clamp(0, 3),
                         itemBuilder: (context, index) {
-                          return ReviewCard(
-                            review: Review.fromSnapshot(data.docs[index]),
+                          return StreamBuilder<DocumentSnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(data.docs[index].id)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              final userData = snapshot.data;
+                              var reviewUserName =
+                                  '${userData?['firstName']} ${userData?['lastName']}';
+                              var reviewAvatarUrl = userData?['avatarUrl'];
+                              return ReviewCard(
+                                review: Review.fromSnapshot(data.docs[index]),
+                                product: widget.product,
+                                userName: reviewUserName,
+                                avatarUrl: reviewAvatarUrl,
+                              );
+                            },
                           );
                         },
                       ),

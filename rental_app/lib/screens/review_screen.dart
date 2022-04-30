@@ -29,19 +29,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
   final userId = FirebaseAuth.instance.currentUser?.uid;
 
-  //QuerySnapshot eventsQuery = products.doc(product.id).collection("reviews").where('userId', isEqualTo: 'Yew').isExists();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('รีวิว')),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-      // floatingActionButton: FloatingActionButton(
-      //   child: const Icon(Icons.create),
-      //   onPressed: () {
-      //     Navigator.pushNamed(context, '/add_review',
-      //         arguments: widget.product);
-      //   },
-      // ),
       body: StreamBuilder<QuerySnapshot>(
         stream: products
             .doc(widget.product.id)
@@ -60,9 +51,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
           if (snapshot.hasData) {
             final data = snapshot.requireData;
             double sum = 0;
-            data.docs.forEach((m) {
+            for (var m in data.docs) {
               sum = sum + m['rating']!;
-            });
+            }
+
             double avg = sum / data.docs.length;
             return SingleChildScrollView(
               child: Column(
@@ -105,8 +97,23 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     shrinkWrap: true,
                     itemCount: data.docs.length,
                     itemBuilder: (context, index) {
-                      return ReviewCard(
-                        review: Review.fromSnapshot(data.docs[index]),
+                      return StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(data.docs[index].id)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          final userData = snapshot.data;
+                          var userName =
+                              '${userData?['firstName']} ${userData?['lastName']}';
+                          var avatarUrl = userData?['avatarUrl'];
+                          return ReviewCard(
+                            review: Review.fromSnapshot(data.docs[index]),
+                            product: widget.product,
+                            userName: userName,
+                            avatarUrl: avatarUrl,
+                          );
+                        },
                       );
                     },
                   ),
