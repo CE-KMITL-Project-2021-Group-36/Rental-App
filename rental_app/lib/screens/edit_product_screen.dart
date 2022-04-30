@@ -41,7 +41,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final TextEditingController _deposit = TextEditingController();
   final TextEditingController _location = TextEditingController();
 
-  String? _imageUrl;
+  List<String>? _imageUrl;
   String? _category;
 
   final ValueNotifier<bool> _continuousValidation = ValueNotifier(false);
@@ -126,7 +126,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     try {
       final ref = firebase_storage.FirebaseStorage.instance.ref(destination);
       await ref.putFile(image!);
-      await ref.getDownloadURL().then((loc) => setState(() => _imageUrl = loc));
+      await ref.getDownloadURL().then((loc) => setState(() => _imageUrl![0] = loc));
       //(imageUrl);
     } catch (e) {
       debugPrint('error occurred');
@@ -251,7 +251,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                   height: 300,
                                   clipBehavior: Clip.antiAlias,
                                   child: Image.network(
-                                    _imageUrl!,
+                                    _imageUrl![0],
                                     fit: BoxFit.cover,
                                   ),
                                 ),
