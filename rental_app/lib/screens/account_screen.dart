@@ -18,6 +18,7 @@ class AccountScreen extends ConsumerWidget {
         FirebaseFirestore.instance.collection('users');
     final CollectionReference contracts =
         FirebaseFirestore.instance.collection('contracts');
+    late final String displayName;
 
     final _auth = ref.watch(authenticationProvider);
 
@@ -37,9 +38,8 @@ class AccountScreen extends ConsumerWidget {
 
             Map<String, dynamic> data =
                 snapshot.data!.data() as Map<String, dynamic>;
-            final String displayName =
-                    '${data['firstName']} ${data['lastName']}',
-                kycStatus = data['kyc']['status'],
+            displayName = '${data['firstName']} ${data['lastName']}';
+            final String kycStatus = data['kyc']['status'],
                 avatarUrl = data['avatarUrl'] ??=
                     'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Favatar.png?alt=media&token=0b9a2456-3c04-458b-a319-83f5717c5cd4';
             final double? balance = data['wallet']?['balance'];
@@ -936,7 +936,10 @@ class AccountScreen extends ConsumerWidget {
                             height: 5,
                           ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.pushNamed(context, '/report',
+                                  arguments: displayName);
+                            },
                             borderRadius: BorderRadius.circular(10),
                             child: Ink(
                               width: double.infinity,
