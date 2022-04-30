@@ -37,7 +37,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
         stream: products
             .doc(widget.product.id)
             .collection("reviews")
-            .orderBy('dateCreated', descending: true)
+            .where('rating', isNotEqualTo: 0)
+            .orderBy('rating', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
