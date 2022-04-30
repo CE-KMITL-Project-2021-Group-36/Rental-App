@@ -254,18 +254,19 @@ class _WalletState extends State<Wallet> {
                               Map<String, dynamic> data =
                                   snapshot.data()! as Map<String, dynamic>;
                               final String type = data['type'];
+                              final String status = data['status'] ??= '';
                               late String amount;
                               final DateTime date =
                                   DateTime.fromMillisecondsSinceEpoch(
                                       int.parse(data['timestamp']) * 1000);
                               if (type.contains('เติมเงิน') == true ||
                                   type.contains('ได้รับเงิน') == true) {
-                                amount = '+ ${data['amount']}';
+                                amount = '+ ฿${currencyFormat(data['amount'])}';
                               } else {
-                                amount = '- ${data['amount']}';
+                                amount = '- ฿${currencyFormat(data['amount'])}';
                               }
                               return ListTile(
-                                title: Text(type),
+                                title: Text('$type ($status)'),
                                 subtitle: Text(DateFormat('dd-MM-yyyy    hh:mm')
                                     .format(date)),
                                 trailing: Text(
