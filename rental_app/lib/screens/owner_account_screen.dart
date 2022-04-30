@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,11 @@ class OwnerAccountScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userId = FirebaseAuth.instance.currentUser!.uid;
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    final CollectionReference users =
+        FirebaseFirestore.instance.collection('users');
+    final CollectionReference contracts =
+        FirebaseFirestore.instance.collection('contracts');
+
     return FutureBuilder<DocumentSnapshot>(
         future: users.doc(userId).get(),
         builder: (context, snapshot) {
@@ -65,7 +70,7 @@ class OwnerAccountScreen extends ConsumerWidget {
                               const Icon(
                                 Icons.storefront,
                                 color: Colors.white,
-                                size: 24,
+                                size: 30,
                               ),
                               const SizedBox(
                                 width: 4,
@@ -82,18 +87,24 @@ class OwnerAccountScreen extends ConsumerWidget {
                           ),
                         ),
                         Positioned(
-                          top: 40,
+                          top: 50,
                           left: 16,
                           child: GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Icon(
-                              Icons.arrow_back,
-                              size: 24,
-                              color: Colors.white,
-                            ),
-                          ),
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Theme.of(context).platform ==
+                                      TargetPlatform.android
+                                  ? const Icon(
+                                      Icons.arrow_back,
+                                      size: 24,
+                                      color: Colors.white,
+                                    )
+                                  : const Icon(
+                                      Icons.arrow_back_ios,
+                                      size: 24,
+                                      color: Colors.white,
+                                    )),
                         ),
                       ],
                     ),
@@ -151,98 +162,330 @@ class OwnerAccountScreen extends ConsumerWidget {
                                 ),
                                 Positioned(
                                   top: 55,
-                                  left: 10,
-                                  right: 10,
+                                  left: 5,
+                                  right: 5,
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Column(
-                                          children: const [
-                                            Icon(FontAwesomeIcons
-                                                .clipboardQuestion),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              'รอการอนุมัติ',
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold),
-                                            )
-                                          ],
-                                        ),
+                                      Flexible(
+                                        flex: 1,
+                                        child: StreamBuilder<QuerySnapshot>(
+                                            stream: contracts
+                                                .where('ownerId',
+                                                    isEqualTo: userId)
+                                                .where('ownerStatus',
+                                                    isEqualTo: 'รอการอนุมัติ')
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasError) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'มีบางอย่างผิดพลาด'));
+                                              }
+
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              }
+                                              final int
+                                                  waitingForApprovalCount =
+                                                  snapshot.data!.size;
+                                              return InkWell(
+                                                onTap: () =>
+                                                    Navigator.pushNamed(context,
+                                                        '/contract_management',
+                                                        arguments: [
+                                                      'owner',
+                                                      '0'
+                                                    ]),
+                                                child: Column(
+                                                  children: [
+                                                    Badge(
+                                                      child: const Icon(
+                                                        FontAwesomeIcons
+                                                            .clipboardQuestion,
+                                                        color: primaryColor,
+                                                      ),
+                                                      badgeContent: Text(
+                                                          '$waitingForApprovalCount'),
+                                                      showBadge:
+                                                          waitingForApprovalCount >
+                                                                  0
+                                                              ? true
+                                                              : false,
+                                                      badgeColor: warningColor,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    const Text(
+                                                      'รอการอนุมัติ',
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            }),
                                       ),
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Column(
-                                          children: const [
-                                            Icon(FontAwesomeIcons.wallet),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              'ที่ต้องชำระ',
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold),
-                                            )
-                                          ],
-                                        ),
+                                      Flexible(
+                                        flex: 1,
+                                        child: StreamBuilder<QuerySnapshot>(
+                                            stream: contracts
+                                                .where('ownerId',
+                                                    isEqualTo: userId)
+                                                .where('ownerStatus',
+                                                    isEqualTo: 'รอการชำระ')
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasError) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'มีบางอย่างผิดพลาด'));
+                                              }
+
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              }
+                                              final int waitingForPaymentCount =
+                                                  snapshot.data!.size;
+                                              return InkWell(
+                                                onTap: () =>
+                                                    Navigator.pushNamed(context,
+                                                        '/contract_management',
+                                                        arguments: [
+                                                      'owner',
+                                                      '1'
+                                                    ]),
+                                                child: Column(
+                                                  children: [
+                                                    Badge(
+                                                      child: const Icon(
+                                                        FontAwesomeIcons.wallet,
+                                                        color: primaryColor,
+                                                      ),
+                                                      badgeContent: Text(
+                                                          '$waitingForPaymentCount'),
+                                                      showBadge:
+                                                          waitingForPaymentCount >
+                                                                  0
+                                                              ? true
+                                                              : false,
+                                                      badgeColor: warningColor,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    const Text(
+                                                      'รอการชำระ',
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            }),
                                       ),
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Column(
-                                          children: const [
-                                            Icon(FontAwesomeIcons.truck),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              'ที่ต้องได้รับ',
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold),
-                                            )
-                                          ],
-                                        ),
+                                      Flexible(
+                                        flex: 1,
+                                        child: StreamBuilder<QuerySnapshot>(
+                                            stream: contracts
+                                                .where('ownerId',
+                                                    isEqualTo: userId)
+                                                .where('ownerStatus',
+                                                    isEqualTo: 'ที่ต้องจัดส่ง')
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasError) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'มีบางอย่างผิดพลาด'));
+                                              }
+
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              }
+                                              final int readyToShipCount =
+                                                  snapshot.data!.size;
+                                              return InkWell(
+                                                onTap: () =>
+                                                    Navigator.pushNamed(context,
+                                                        '/contract_management',
+                                                        arguments: [
+                                                      'owner',
+                                                      '2'
+                                                    ]),
+                                                child: Column(
+                                                  children: [
+                                                    Badge(
+                                                      child: const Icon(
+                                                        FontAwesomeIcons.box,
+                                                        color: primaryColor,
+                                                      ),
+                                                      badgeContent: Text(
+                                                          '$readyToShipCount'),
+                                                      showBadge:
+                                                          readyToShipCount > 0
+                                                              ? true
+                                                              : false,
+                                                      badgeColor: warningColor,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    const Text(
+                                                      'ที่ต้องจัดส่ง',
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            }),
                                       ),
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Column(
-                                          children: const [
-                                            Icon(FontAwesomeIcons.box),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              'ที่ต้องส่งคืน',
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold),
-                                            )
-                                          ],
-                                        ),
+                                      Flexible(
+                                        flex: 1,
+                                        child: StreamBuilder<QuerySnapshot>(
+                                            stream: contracts
+                                                .where('ownerId',
+                                                    isEqualTo: userId)
+                                                .where('ownerStatus',
+                                                    isEqualTo: 'ที่ต้องได้คืน')
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasError) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'มีบางอย่างผิดพลาด'));
+                                              }
+
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              }
+                                              final int toReceiveCount =
+                                                  snapshot.data!.size;
+                                              return InkWell(
+                                                onTap: () =>
+                                                    Navigator.pushNamed(context,
+                                                        '/contract_management',
+                                                        arguments: [
+                                                      'owner',
+                                                      '3'
+                                                    ]),
+                                                child: Column(
+                                                  children: [
+                                                    Badge(
+                                                      child: const Icon(
+                                                        FontAwesomeIcons.truck,
+                                                        color: primaryColor,
+                                                      ),
+                                                      badgeContent: Text(
+                                                          '$toReceiveCount'),
+                                                      showBadge:
+                                                          toReceiveCount > 0
+                                                              ? true
+                                                              : false,
+                                                      badgeColor: warningColor,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    const Text(
+                                                      'ที่ต้องได้คืน',
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            }),
                                       ),
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Column(
-                                          children: const [
-                                            Icon(FontAwesomeIcons
-                                                .clipboardCheck),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              'ยืนยันจบสัญญา',
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold),
-                                            )
-                                          ],
-                                        ),
+                                      Flexible(
+                                        flex: 1,
+                                        child: StreamBuilder<QuerySnapshot>(
+                                            stream: contracts
+                                                .where('ownerId',
+                                                    isEqualTo: userId)
+                                                .where('ownerStatus',
+                                                    isEqualTo: 'ข้อพิพาท')
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasError) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'มีบางอย่างผิดพลาด'));
+                                              }
+
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              }
+                                              final int disputeCount =
+                                                  snapshot.data!.size;
+                                              return InkWell(
+                                                onTap: () =>
+                                                    Navigator.pushNamed(context,
+                                                        '/contract_management',
+                                                        arguments: [
+                                                      'owner',
+                                                      '6'
+                                                    ]),
+                                                child: Column(
+                                                  children: [
+                                                    Badge(
+                                                      child: const Icon(
+                                                        Icons.gavel,
+                                                        color: primaryColor,
+                                                      ),
+                                                      badgeContent:
+                                                          Text('$disputeCount'),
+                                                      showBadge:
+                                                          disputeCount > 0
+                                                              ? true
+                                                              : false,
+                                                      badgeColor: warningColor,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    const Text(
+                                                      'ข้อพิพาท',
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            }),
                                       ),
                                     ],
                                   ),
@@ -294,7 +537,7 @@ class OwnerAccountScreen extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(
-                            height: 8,
+                            height: 5,
                           ),
                           InkWell(
                             onTap: () {
@@ -340,7 +583,7 @@ class OwnerAccountScreen extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(
-                            height: 8,
+                            height: 20,
                           ),
                           InkWell(
                             onTap: () {
@@ -386,7 +629,7 @@ class OwnerAccountScreen extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(
-                            height: 8,
+                            height: 5,
                           ),
                           InkWell(
                             onTap: () {
@@ -413,7 +656,7 @@ class OwnerAccountScreen extends ConsumerWidget {
                                     Row(
                                       children: const [
                                         Icon(
-                                          Icons.storefront,
+                                          Icons.storefront_rounded,
                                           size: 20,
                                         ),
                                         SizedBox(

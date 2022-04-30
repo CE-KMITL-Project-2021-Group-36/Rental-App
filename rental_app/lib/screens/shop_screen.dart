@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/widgets/widget.dart';
@@ -186,18 +184,23 @@ class ShopScreen extends ConsumerWidget {
           ),
         ),
         Positioned(
-          top: 40,
+          top: 50,
           left: 16,
           child: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: const Icon(
-              Icons.arrow_back,
-              size: 24,
-              color: Colors.white,
-            ),
-          ),
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Theme.of(context).platform == TargetPlatform.android
+                  ? const Icon(
+                      Icons.arrow_back,
+                      size: 24,
+                      color: Colors.white,
+                    )
+                  : const Icon(
+                      Icons.arrow_back_ios,
+                      size: 24,
+                      color: Colors.white,
+                    )),
         ),
       ],
     );
