@@ -258,7 +258,7 @@ void sendNotification(receiver, title, text, type) async {
     }
   }
 
-  if (type == 'chat') return;
+  if (type == 'chat' || type == 'wallet') return;
 
   await notification.add({
     'createdOn': DateTime.now(),
