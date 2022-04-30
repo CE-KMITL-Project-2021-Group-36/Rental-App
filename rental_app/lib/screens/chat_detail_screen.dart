@@ -400,7 +400,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                     borderRadius: BorderRadius.circular(8),
                                     child: SizedBox.fromSize(
                                         child: Image.network(
-                                      data!['imageUrl'],
+                                      data!['imageUrl'][0],
                                       fit: BoxFit.cover,
                                       height: 80,
                                       width: 80,
@@ -527,7 +527,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                             borderRadius: BorderRadius.circular(8),
                             child: SizedBox.fromSize(
                               child: Image.network(
-                                productData!['imageUrl'],
+                                productData!['imageUrl'][0],
                                 fit: BoxFit.cover,
                                 height: 80,
                                 width: 80,
