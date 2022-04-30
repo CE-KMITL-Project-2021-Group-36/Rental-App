@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
-import 'package:path/path.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:path/path.dart' as path;
@@ -61,7 +60,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   chooseImage() async {
     await showModalBottomSheet(
-      context: this.context,
+      context: context,
       builder: (context) => BottomSheet(
         onClosing: () {},
         builder: (context) => Column(
