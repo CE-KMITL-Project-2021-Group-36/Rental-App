@@ -10,6 +10,7 @@ import 'package:path/path.dart' as path;
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/screens/screens.dart';
 
 class RentRequestScreen extends StatefulWidget {
   const RentRequestScreen(
@@ -131,6 +132,12 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
       'renterAddressPhone': addressPhone,
       'renterAddress': address
     });
+
+    final receiver = widget.product.owner;
+    String title = 'มีคำขอเช่าใหม่';
+    String text = 'รายการ: ${widget.product.name}';
+    String type = 'owner';
+    sendNotification(receiver, title, text, type);
   }
 
   @override
@@ -371,7 +378,7 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                                 ],
                               )
                             : Center(
-                              child: Row(
+                                child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: const [
                                     Icon(
@@ -390,7 +397,7 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                                     ),
                                   ],
                                 ),
-                            ),
+                              ),
                       ],
                     ),
                   ),
