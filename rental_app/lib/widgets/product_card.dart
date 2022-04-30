@@ -58,58 +58,55 @@ class ProductCard extends StatelessWidget {
                       ),
                       //Star
                       StreamBuilder<QuerySnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection("products")
-                              .doc(product.id)
-                              .collection("reviews")
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            // if (!snapshot.hasData) {
-
-                            // }
-                            if (snapshot.hasError) {
-                              return const Text('Something went wrong');
+                        stream: FirebaseFirestore.instance
+                            .collection("products")
+                            .doc(product.id)
+                            .collection("reviews")
+                            .where('rating', isNotEqualTo: 0)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return const Text('Something went wrong');
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          final data = snapshot.requireData;
+                          if (snapshot.hasData) {
+                            double sum = 0;
+                            for (var m in data.docs) {
+                              sum = sum + m['rating']!;
                             }
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            final data = snapshot.requireData;
-                            if (snapshot.hasData) {
-                              double sum = 0;
-                              data.docs.forEach((m) {
-                                sum = sum + m['rating']!;
-                              });
-                              double avg = sum / data.docs.length;
-                              // var productRating = data.docs
-                              //         .map((m) => m['rating']!)
-                              //         .reduce((a, b) => a + b) /
-                              //     data.docs.length;
-
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 4),
-                                child: Row(
-                                  children: [
-                                    StarRating(rating: avg),
-                                    data.docs.isNotEmpty
-                                        ? Text(
-                                            '(' +
-                                                data.docs.length.toString() +
-                                                ')',
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey),
-                                          )
-                                        : const SizedBox.shrink(),
-                                  ],
-                                ),
-                              );
-                            }
-                            return const StarRating(rating: -1);
-                          }),
+                            double avg = sum / data.docs.length;
+                            return sum > 0
+                                ? Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 4),
+                                    child: Row(
+                                      children: [
+                                        StarRating(rating: avg),
+                                        data.docs.isNotEmpty
+                                            ? Text(
+                                                '(' +
+                                                    data.docs.length
+                                                        .toString() +
+                                                    ')',
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey),
+                                              )
+                                            : const SizedBox.shrink(),
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox();
+                          }
+                          return const StarRating(rating: -1);
+                        },
+                      ),
                       //Price
                       Expanded(
                         child: Align(

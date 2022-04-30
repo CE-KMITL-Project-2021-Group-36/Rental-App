@@ -34,17 +34,14 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
       FirebaseFirestore.instance.collection('products');
 
   final _userId = FirebaseAuth.instance.currentUser!.uid;
-  int _rating = 0;
+  final ValueNotifier<int> _rating = ValueNotifier<int>(0);
   String _text = '';
 
-  bool uploading = false;
-  double val = 0;
   late firebase_storage.Reference ref;
-  List<File> _image = [];
-  List _imageUrl = [];
   final picker = ImagePicker();
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
+
   @override
   void initState() {
     super.initState();
@@ -57,7 +54,7 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
         .collection("reviews")
         .doc(_userId)
         .get();
-    if (snapshot.exists) {
+    if (snapshot.exists && snapshot.data()!['rating'] != 0) {
       await products
           .doc(widget.product.id)
           .collection("reviews")
@@ -65,9 +62,17 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
           .get()
           .then((doc) {
         setState(() {
-          _rating = doc.data()!['rating'];
+          _rating.value = doc.data()!['rating'];
           _text = doc.data()!['text'];
         });
+      });
+    } else {
+      products.doc(widget.product.id).collection("reviews").doc(_userId).set({
+        'userId': _userId,
+        'rating': _rating.value,
+        'text': _text,
+        'imageUrl': [],
+        'dateCreated': DateTime.now(),
       });
     }
   }
@@ -177,205 +182,233 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("รีวิวของคุณ"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              showAlertDialog(context);
-            },
-          )
-        ],
-      ),
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'ให้คะแนน',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: primaryColor,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                SetRating((rating) {
-                  setState(
-                    () {
-                      _rating = rating;
+    return KeyboardDismisser(
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text("รีวิวของคุณ"),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      showAlertDialog(context);
                     },
-                  );
-                }, _rating, 5),
-                const SizedBox(width: 8),
-                Text(
-                  _rating.toString(),
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(height: 32),
-            const Text(
-              'ข้อความรีวิว',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: primaryColor),
-            ),
-            const SizedBox(height: 4),
-            TextFormField(
-              key: Key(_text),
-              initialValue: _text,
-              onChanged: (value) {
-                _text = value;
-              },
-              maxLines: 4,
-              decoration: const InputDecoration(
-                hintText: 'ใส่ข้อความรีวิว',
-                alignLabelWithHint: true,
+                  )
+                ],
               ),
-              maxLength: 100,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'รูปภาพ',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: primaryColor),
-            ),
-            const SizedBox(height: 16),
-            StreamBuilder<DocumentSnapshot>(
-                stream: products
-                    .doc(widget.product.id)
-                    .collection("reviews")
-                    .doc(_userId)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text('Something went wrong');
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  final data = snapshot.data;
-                  return GridView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: data!['imageUrl'].length + 1,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 4.0,
-                      crossAxisSpacing: 4.0,
+              resizeToAvoidBottomInset: false,
+              backgroundColor: Colors.white,
+              body: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      'ให้คะแนน',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: primaryColor,
+                      ),
                     ),
-                    itemBuilder: (context, index) {
-                      return index == 0
-                          ? InkWell(
-                              splashColor: primaryColor,
-                              onTap: data['imageUrl'].length == 5 ? null : (() {
-                                !uploading ? chooseImage() : null;
-                              }),
-                              child: Ink(
-                                decoration: BoxDecoration(
-                                  color: data['imageUrl'].length == 5 ? Colors.grey[200] :primaryColor[50],
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(8)),
-                                ),
-                                child: Icon(Icons.add_rounded,
-                                    color: data['imageUrl'].length == 5 ? Colors.grey : primaryColor, size: 60),
+                    const SizedBox(height: 4),
+                    ValueListenableBuilder(
+                        valueListenable: _rating,
+                        builder: (context, value, child) {
+                          return Row(
+                            children: [
+                              SetRating(
+                                (rating) {
+                                  _rating.value = rating;
+                                },
+                                _rating.value,
+                                5,
                               ),
-                            )
-                          : Stack(
-                              alignment: Alignment.topRight,
-                              children: [
-                                Center(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image(
-                                      image: NetworkImage(
-                                        data['imageUrl'][index - 1],
-                                      ),
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                        if (loadingProgress == null) {
-                                          return child;
-                                        }
-                                        return const Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      },
-                                    ),
-                                  ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _rating.value.toString(),
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.remove_circle,
-                                    color: errorColor,
-                                  ),
-                                  tooltip: 'ลบรูปนี้',
-                                  onPressed: () async {
+                              )
+                            ],
+                          );
+                        }),
+                    const SizedBox(height: 32),
+                    const Text(
+                      'ข้อความรีวิว',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: primaryColor),
+                    ),
+                    const SizedBox(height: 4),
+                    TextFormField(
+                      key: Key(_text),
+                      initialValue: _text,
+                      onChanged: (value) {
+                        _text = value;
+                      },
+                      maxLines: 4,
+                      decoration: const InputDecoration(
+                        hintText: 'ใส่ข้อความรีวิว',
+                        alignLabelWithHint: true,
+                      ),
+                      maxLength: 100,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'รูปภาพ',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: primaryColor),
+                    ),
+                    const SizedBox(height: 16),
+                    StreamBuilder<DocumentSnapshot>(
+                        stream: products
+                            .doc(widget.product.id)
+                            .collection("reviews")
+                            .doc(_userId)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return const Text('Something went wrong');
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          final data = snapshot.data;
+                          return GridView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: data!['imageUrl'].length + 1,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 4.0,
+                              crossAxisSpacing: 4.0,
+                            ),
+                            itemBuilder: (context, index) {
+                              return index == 0
+                                  ? InkWell(
+                                      splashColor: primaryColor,
+                                      onTap: data['imageUrl'].length == 5
+                                          ? null
+                                          : (() {
+                                              chooseImage();
+                                            }),
+                                      child: Ink(
+                                        decoration: BoxDecoration(
+                                          color: data['imageUrl'].length == 5
+                                              ? Colors.grey[200]
+                                              : primaryColor[50],
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(8)),
+                                        ),
+                                        child: Icon(Icons.add_rounded,
+                                            color: data['imageUrl'].length == 5
+                                                ? Colors.grey
+                                                : primaryColor,
+                                            size: 60),
+                                      ),
+                                    )
+                                  : Stack(
+                                      alignment: Alignment.topRight,
+                                      children: [
+                                        Center(
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            child: Image(
+                                              image: NetworkImage(
+                                                data['imageUrl'][index - 1],
+                                              ),
+                                              loadingBuilder: (context, child,
+                                                  loadingProgress) {
+                                                if (loadingProgress == null) {
+                                                  return child;
+                                                }
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.remove_circle,
+                                            color: errorColor,
+                                          ),
+                                          tooltip: 'ลบรูปนี้',
+                                          onPressed: () async {
+                                            await products
+                                                .doc(widget.product.id)
+                                                .collection("reviews")
+                                                .doc(_userId)
+                                                .update({
+                                              'imageUrl':
+                                                  FieldValue.arrayRemove([
+                                                data['imageUrl'][index - 1]
+                                              ]),
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    );
+                            },
+                          );
+                        }),
+                    const SizedBox(height: 16),
+                    const Expanded(child: SizedBox()),
+                    ValueListenableBuilder(
+                        valueListenable: _rating,
+                        builder: (context, value, child) {
+                          return TextButton(
+                            child: const Text('บันทึกรีวิว'),
+                            onPressed: _rating.value == 0
+                                ? null
+                                : () async {
                                     await products
                                         .doc(widget.product.id)
                                         .collection("reviews")
                                         .doc(_userId)
                                         .update({
-                                      'imageUrl': FieldValue.arrayRemove(
-                                          [data['imageUrl'][index - 1]]),
-                                    });
+                                          'userId': _userId,
+                                          'rating': _rating.value,
+                                          'text': _text,
+                                          //'imageUrl': [],
+                                          'dateCreated': DateTime.now(),
+                                        })
+                                        .then((value) =>
+                                            debugPrint('Review Added'))
+                                        .catchError((error) => debugPrint(
+                                            'Failed to add review: $error'));
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                      content: Text('อัพเดทรีวิว'),
+                                    ));
                                   },
-                                ),
-                              ],
-                            );
-                    },
-                  );
-                }),
-            const SizedBox(height: 16),
-            const Expanded(child: SizedBox()),
-            TextButton(
-              child: const Text('บันทึกรีวิว'),
-              onPressed: _rating == 0
-                  ? null
-                  : () async {
-                      await products
-                          .doc(widget.product.id)
-                          .collection("reviews")
-                          .doc(_userId)
-                          .update({
-                            'userId': _userId,
-                            'rating': _rating,
-                            'text': _text,
-                            'dateCreated': DateTime.now(),
-                          })
-                          .then((value) => debugPrint('Review Added'))
-                          .catchError((error) =>
-                              debugPrint('Failed to add review: $error'));
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('อัพเดทรีวิว'),
-                      ));
-                    },
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                primary: Colors.white,
-                backgroundColor: _rating == 0 ? primaryColor[50] : primaryColor,
+                            style: TextButton.styleFrom(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12.0),
+                              primary: Colors.white,
+                              backgroundColor: _rating.value == 0
+                                  ? primaryColor[50]
+                                  : primaryColor,
+                            ),
+                          );
+                        })
+                  ],
+                ),
               ),
-            )
-          ],
-        ),
-      ),
-    );
+            ),
+          );
   }
 }
