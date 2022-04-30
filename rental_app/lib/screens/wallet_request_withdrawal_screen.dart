@@ -90,17 +90,20 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
             'userId': userId,
             'destination': _accountNumber.text,
             'bank': selectedBank,
-            'amount': _amount.text,
+            'amount': double.parse(_amount.text),
+            'walletTransactionId': _timestamp,
             'timestamp': FieldValue.serverTimestamp(),
+            'finished': false
           });
           await users
               .doc(userId)
               .collection('wallet_transactions')
               .doc(_timestamp)
               .set({
-            'amount': _amount.text,
+            'amount': double.parse(_amount.text),
             'type': 'ถอนเงิน',
-            'timestamp': _timestamp
+            'timestamp': _timestamp,
+            'status': 'รอดำเนินการ'
           });
           await users.doc(userId).update({
             'wallet.balance': FieldValue.increment(-double.parse(_amount.text))
@@ -126,17 +129,20 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
             'fullName': _fullName,
             'userId': userId,
             'destination': _promptpayNumber.text,
-            'amount': _amount.text,
-            'timestamp': _timestamp,
+            'amount': double.parse(_amount.text),
+            'walletTransactionId': _timestamp,
+            'timestamp': FieldValue.serverTimestamp(),
+            'finished': false
           });
           await users
               .doc(userId)
               .collection('wallet_transactions')
               .doc(_timestamp)
               .set({
-            'amount': _amount.text,
+            'amount': double.parse(_amount.text),
             'type': 'ถอนเงิน',
-            'timestamp': _timestamp
+            'timestamp': _timestamp,
+            'status': 'รอดำเนินการ'
           });
           await users.doc(userId).update({
             'wallet.balance': FieldValue.increment(-double.parse(_amount.text))
