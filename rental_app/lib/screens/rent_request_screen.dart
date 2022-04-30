@@ -10,6 +10,7 @@ import 'package:path/path.dart' as path;
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
+import 'package:rental_app/screens/screens.dart';
 
 class RentRequestScreen extends StatefulWidget {
   const RentRequestScreen(
@@ -131,6 +132,12 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
       'renterAddressPhone': addressPhone,
       'renterAddress': address
     });
+
+    final receiver = widget.product.owner;
+    String title = 'มีคำขอเช่าใหม่';
+    String text = 'รายการ: ${widget.product.name}';
+    String type = 'owner';
+    sendNotification(receiver, title, text, type);
   }
 
   @override
@@ -250,14 +257,14 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 32),
               const Text(
                 'เอกสารแนบเพิ่มเติม',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               GridView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
@@ -309,59 +316,21 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                         );
                 },
               ),
-              const SizedBox(height: 16),
-              // Container(
-              //   padding: const EdgeInsets.all(16),
-              //   decoration: BoxDecoration(
-              //     border: Border.all(
-              //       color: outlineColor,
-              //     ),
-              //     borderRadius: const BorderRadius.all(
-              //       Radius.circular(8),
-              //     ),
-              //   ),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: const [
-              //           Text(
-              //             'ที่อยู่',
-              //             style: TextStyle(
-              //               fontWeight: FontWeight.bold,
-              //             ),
-              //           ),
-              //           Text(
-              //             'แก้ไข',
-              //             style: TextStyle(
-              //               decoration: TextDecoration.underline,
-              //               fontWeight: FontWeight.normal,
-              //               fontSize: 14,
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //       const SizedBox(height: 4),
-              //       Text(
-              //         'วัชรากร แท่นแก้ว'.replaceAll('\\n', '\n'),
-              //       ),
-              //       Text(
-              //         '086-123-1669'.replaceAll('\\n', '\n'),
-              //       ),
-              //       Text(
-              //         '9/1 ถ.พหลโยธิน 35 แขวงลาดยาว\nเขตจตุจักร, จังหวัดกรุงเทพมหานคร, 10900'
-              //             .replaceAll('\\n', '\n'),
-              //       ),
-              //     ],
-              //   ),
-              //
-              // ),
+              const SizedBox(height: 32),
+              const Text(
+                'ที่อยู่ของคุณ',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
               Ink(
                 decoration: BoxDecoration(
-                    color:
-                        pickedAddress.value ? primaryLightColor : primaryColor,
-                    borderRadius: BorderRadius.circular(10)),
+                  color: pickedAddress.value
+                      ? primaryLightColor
+                      : primaryColor[50],
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: ListTile(
                   onTap: () async {
                     final result =
@@ -378,48 +347,71 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                     });
                   },
                   contentPadding: const EdgeInsets.all(15),
-                  trailing: const Icon(
-                    Icons.edit,
-                    color: primaryColor,
-                  ),
+                  trailing: pickedAddress.value
+                      ? const Icon(
+                          Icons.edit,
+                          color: primaryColor,
+                        )
+                      : null,
                   title: Padding(
                     padding: const EdgeInsets.only(bottom: 5),
                     child: Wrap(
                       children: [
-                        (addressName != '')
-                            ? Text(
-                                addressName,
-                                style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
+                        pickedAddress.value
+                            ? Row(
+                                children: [
+                                  Text(
+                                    addressName,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    '  ' + addressPhone,
+                                    style: const TextStyle(
+                                      color: Colors.black54,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                               )
-                            : Text(
-                                'กรุณากดเพื่อเลือกที่อยู่',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: pickedAddress.value
-                                        ? primaryColor
-                                        : surfaceColor),
+                            : Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.add_rounded,
+                                      color: primaryColor,
+                                      size: 32,
+                                    ),
+                                    SizedBox(height: 8),
+                                    Text(
+                                      'เลือกที่อยู่',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: primaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                        Text(
-                          '    ' + addressPhone,
-                          style: const TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600),
-                        ),
                       ],
                     ),
                   ),
-                  subtitle: Text(
-                    address,
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
-                  ),
+                  subtitle: pickedAddress.value
+                      ? Text(
+                          address,
+                          style: const TextStyle(
+                            fontSize: 14,
+                          ),
+                        )
+                      : null,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 64),
               ValueListenableBuilder(
                   valueListenable: pickedAddress,
                   builder: (context, value, child) {

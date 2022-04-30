@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
+import 'package:rental_app/screens/notification_screen.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class WalletTopUp extends StatefulWidget {
@@ -81,6 +82,12 @@ class _WalletTopUpState extends State<WalletTopUp> {
       } on Exception catch (e) {
         debugPrint(e.toString());
       }
+
+      final receiver = userId;
+      String title = 'เติมเงินเข้าสำเร็จ';
+      String text = 'เติมเงิน ${_amount.text}';
+      String type = 'wallet';
+      sendNotification(receiver, title, text, type);
     }
   }
 

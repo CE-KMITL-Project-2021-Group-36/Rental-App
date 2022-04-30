@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
@@ -116,333 +117,413 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('คำขอเช่า'),
-        actions: <Widget>[
-          TextButton(
-            child: Row(
-              children: [
-                isRenter
-                    ? const Text(
-                        'ติดต่อผู้ให้เช่า',
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: primaryColor,
-                            fontWeight: FontWeight.normal),
-                      )
-                    : const Text(
-                        'ติดต่อผู้เช่า',
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: primaryColor,
-                            fontWeight: FontWeight.normal),
-                      )
-              ],
-            ),
-            onPressed: () {
-              isRenter
-                  ? enterChatRoom(
-                      context: context,
-                      currentUserId: currentUserId,
-                      chatWithUser: widget.contract.ownerId,
-                      message: widget.contract.id,
-                      messageType: 'contract')
-                  : enterChatRoom(
-                      context: context,
-                      currentUserId: currentUserId,
-                      chatWithUser: widget.contract.renterId,
-                      message: widget.contract.id,
-                      messageType: 'contract');
-            },
-          ),
-        ],
-      ),
-      backgroundColor: Colors.white,
-      body: StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection("products")
-              .doc(widget.contract.productId)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text('Something went wrong');
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            final product = snapshot.data;
-            return product != null
-                ? SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
+    return KeyboardDismisser(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('คำขอเช่า'),
+          actions: <Widget>[
+            TextButton(
+              child: Row(
+                children: [
+                  isRenter
+                      ? const Text(
+                          'ติดต่อผู้ให้เช่า',
+                          style: TextStyle(
+                              fontSize: 14,
                               color: primaryColor,
-                              border: Border.all(
-                                color: outlineColor,
-                              ),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(8),
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.schedule, color: Colors.white),
-                                const SizedBox(
-                                  width: 8,
+                              fontWeight: FontWeight.normal),
+                        )
+                      : const Text(
+                          'ติดต่อผู้เช่า',
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: primaryColor,
+                              fontWeight: FontWeight.normal),
+                        )
+                ],
+              ),
+              onPressed: () {
+                isRenter
+                    ? enterChatRoom(
+                        context: context,
+                        currentUserId: currentUserId,
+                        chatWithUser: widget.contract.ownerId,
+                        message: widget.contract.id,
+                        messageType: 'contract')
+                    : enterChatRoom(
+                        context: context,
+                        currentUserId: currentUserId,
+                        chatWithUser: widget.contract.renterId,
+                        message: widget.contract.id,
+                        messageType: 'contract');
+              },
+            ),
+          ],
+        ),
+        backgroundColor: Colors.white,
+        body: StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection("products")
+                .doc(widget.contract.productId)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Something went wrong');
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              final product = snapshot.data;
+              return product != null
+                  ? SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: primaryColor,
+                                border: Border.all(
+                                  color: outlineColor,
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: const [
-                                        Text(
-                                          'รอการอนุมัติ',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'โปรดตรวจสอบข้อมูลและเอกสารอย่างละเอียด'
-                                          .replaceAll('\\n', '\n'),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(8),
                                 ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: outlineColor,
                               ),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(8),
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: SizedBox.fromSize(
-                                        child: Image.network(
-                                          product['imageUrl'][0],
-                                          fit: BoxFit.cover,
-                                          height: 100.0,
-                                          width: 100.0,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 16,
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.schedule, color: Colors.white),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: const [
                                           Text(
-                                            product['name'],
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.left,
-                                          ),
-                                          const SizedBox(
-                                            height: 8,
-                                          ),
-                                          Text(
-                                            'เช่าวันที่ $formattedStartDate ถึง $formattedEndDate',
-                                            style: TextStyle(
-                                              color: Colors.grey[600],
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 8,
-                                          ),
-                                          const Text(
-                                            'ค่าเช่าไม่รวมมัดจำ',
+                                            'รอการอนุมัติ',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
+                                              color: Colors.white,
                                             ),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                '฿' +
-                                                    currencyFormat(widget
-                                                        .contract.rentalPrice),
-                                                style: const TextStyle(
-                                                  fontSize: 24,
-                                                  color: primaryColor,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
                                           ),
                                         ],
                                       ),
-                                    )
-                                  ],
-                                ),
-                                const Divider(thickness: 0.6, height: 32),
-                                const Text(
-                                  'เงื่อนไขค่ามัดจำ',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'โปรดตรวจสอบข้อมูลและเอกสารอย่างละเอียด'
+                                            .replaceAll('\\n', '\n'),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
                                   ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: outlineColor,
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  product['deposit'].replaceAll('\\n', '\n'),
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: SizedBox.fromSize(
+                                          child: Image.network(
+                                            product['imageUrl'][0],
+                                            fit: BoxFit.cover,
+                                            height: 100.0,
+                                            width: 100.0,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 16,
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              product['name'],
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              textAlign: TextAlign.left,
+                                            ),
+                                            const SizedBox(
+                                              height: 8,
+                                            ),
+                                            Text(
+                                              'เช่าวันที่ $formattedStartDate ถึง $formattedEndDate',
+                                              style: TextStyle(
+                                                color: Colors.grey[600],
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 8,
+                                            ),
+                                            const Text(
+                                              'ค่าเช่าไม่รวมมัดจำ',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  '฿' +
+                                                      currencyFormat(widget
+                                                          .contract.rentalPrice),
+                                                  style: const TextStyle(
+                                                    fontSize: 24,
+                                                    color: primaryColor,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ],
                                   ),
+                                  const Divider(thickness: 0.6, height: 32),
+                                  const Text(
+                                    'เงื่อนไขค่ามัดจำ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    product['deposit'].replaceAll('\\n', '\n'),
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'เอกสารแนบเพิ่มเติม',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            widget.contract.renterAttachments.isNotEmpty
+                                ? GridView.builder(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount:
+                                        widget.contract.renterAttachments.length,
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 3),
+                                    itemBuilder: (context, index) {
+                                      return Row(
+                                        children: [
+                                          Container(
+                                            constraints: const BoxConstraints(
+                                                maxWidth: 100),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: Image(
+                                                image: NetworkImage(widget
+                                                    .contract
+                                                    .renterAttachments[index]),
+                                                loadingBuilder: (context, child,
+                                                    loadingProgress) {
+                                                  if (loadingProgress == null) {
+                                                    return child;
+                                                  }
+                                                  return const Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 4,
+                                          ),
+                                        ],
+                                      );
+                                    })
+                                : const Text(
+                                    'ไม่มีเอกสารแนบ',
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.grey),
+                                  ),
+                            const SizedBox(height: 32),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: outlineColor,
                                 ),
-                              ],
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: const [
+                                      Text(
+                                        'ที่อยู่',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'วัชรากร แท่นแก้ว'.replaceAll('\\n', '\n'),
+                                  ),
+                                  Text(
+                                    '086-123-1669'.replaceAll('\\n', '\n'),
+                                  ),
+                                  Text(
+                                    '9/1 ถ.พหลโยธิน 35 แขวงลาดยาว\nเขตจตุจักร, จังหวัดกรุงเทพมหานคร, 10900'
+                                        .replaceAll('\\n', '\n'),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'เอกสารแนบเพิ่มเติม',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          widget.contract.renterAttachments.isNotEmpty
-                              ? GridView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount:
-                                      widget.contract.renterAttachments.length,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3),
-                                  itemBuilder: (context, index) {
-                                    return Row(
-                                      children: [
-                                        Container(
-                                          constraints: const BoxConstraints(
-                                              maxWidth: 100),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            child: Image(
-                                              image: NetworkImage(widget
-                                                  .contract
-                                                  .renterAttachments[index]),
-                                              loadingBuilder: (context, child,
-                                                  loadingProgress) {
-                                                if (loadingProgress == null) {
-                                                  return child;
-                                                }
-                                                return const Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                );
+                            const SizedBox(height: 32),
+                            widget.userType == 'renter'
+                                ? Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextButton(
+                                              onPressed: () {
+                                                showAlertDialog(context);
                                               },
+                                              child: const Text('ยกเลิกคำขอเช่า'),
+                                              style: TextButton.styleFrom(
+                                                primary: Colors.white,
+                                                backgroundColor: errorColor,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 12),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8.0),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )
+                                : Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Divider(thickness: 0.6, height: 32),
+                                      const Text(
+                                        'ระบุค่าเช่า',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      TextFormField(
+                                        onChanged: (text) {
+                                          if (text.isNotEmpty) {
+                                            inputDeposit = double.parse(text);
+                                          }
+                                        },
+                                        decoration: const InputDecoration(
+                                          hintText: 'ใส่จำนวนค่ามัดจำ',
+                                          suffix: Text('บาท'),
+                                          alignLabelWithHint: true,
+                                        ),
+                                        keyboardType: TextInputType.number,
+                                      ),
+                                      const SizedBox(height: 32),
+                                      Row(children: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            showAlertDialog(context);
+                                          },
+                                          child: const SizedBox(
+                                            width: 140,
+                                            child: Center(child: Text("ยกเลิก")),
+                                          ),
+                                          style: TextButton.styleFrom(
+                                            primary: errorColor,
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              side: const BorderSide(
+                                                  color: errorColor, width: 1),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(
-                                          width: 4,
-                                        ),
-                                      ],
-                                    );
-                                  })
-                              : const Text(
-                                  'ไม่มีเอกสารแนบ',
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.grey),
-                                ),
-                          const SizedBox(height: 32),
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: outlineColor,
-                              ),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(8),
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: const [
-                                    Text(
-                                      'ที่อยู่',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'วัชรากร แท่นแก้ว'.replaceAll('\\n', '\n'),
-                                ),
-                                Text(
-                                  '086-123-1669'.replaceAll('\\n', '\n'),
-                                ),
-                                Text(
-                                  '9/1 ถ.พหลโยธิน 35 แขวงลาดยาว\nเขตจตุจักร, จังหวัดกรุงเทพมหานคร, 10900'
-                                      .replaceAll('\\n', '\n'),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 32),
-                          widget.userType == 'renter'
-                              ? Column(
-                                  children: [
-                                    Row(
-                                      children: [
+                                        const SizedBox(width: 8),
                                         Expanded(
                                           child: TextButton(
                                             onPressed: () {
-                                              showAlertDialog(context);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ConfirmDeposit(
+                                                    contract: widget.contract,
+                                                    deposit: inputDeposit,
+                                                    productName: productName,
+                                                  ),
+                                                ),
+                                              );
                                             },
-                                            child: const Text('ยกเลิกคำขอเช่า'),
+                                            child: const Text("อนุมัติ"),
                                             style: TextButton.styleFrom(
                                               primary: Colors.white,
-                                              backgroundColor: errorColor,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 12),
+                                              backgroundColor: primaryColor,
+                                              padding: const EdgeInsets.symmetric(
+                                                  vertical: 12),
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(8.0),
@@ -450,97 +531,19 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ],
-                                )
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Divider(thickness: 0.6, height: 32),
-                                    const Text(
-                                      'ระบุค่าเช่า',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    TextFormField(
-                                      onChanged: (text) {
-                                        if (text.isNotEmpty) {
-                                          inputDeposit = double.parse(text);
-                                        }
-                                      },
-                                      decoration: const InputDecoration(
-                                        hintText: 'ใส่จำนวนค่ามัดจำ',
-                                        suffix: Text('บาท'),
-                                        alignLabelWithHint: true,
-                                      ),
-                                      keyboardType: TextInputType.number,
-                                    ),
-                                    const SizedBox(height: 32),
-                                    Row(children: <Widget>[
-                                      TextButton(
-                                        onPressed: () {
-                                          showAlertDialog(context);
-                                        },
-                                        child: const SizedBox(
-                                          width: 140,
-                                          child: Center(child: Text("ยกเลิก")),
-                                        ),
-                                        style: TextButton.styleFrom(
-                                          primary: errorColor,
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 12),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            side: const BorderSide(
-                                                color: errorColor, width: 1),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: TextButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ConfirmDeposit(
-                                                  contract: widget.contract,
-                                                  deposit: inputDeposit,
-                                                  productName: productName,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          child: const Text("อนุมัติ"),
-                                          style: TextButton.styleFrom(
-                                            primary: Colors.white,
-                                            backgroundColor: primaryColor,
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 12),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ])
-                                  ],
-                                ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                        ],
+                                      ])
+                                    ],
+                                  ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                : const Text('ไม่มีสินค้านี้');
-          }),
+                    )
+                  : const Text('ไม่มีสินค้านี้');
+            }),
+      ),
     );
   }
 }

@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:rental_app/config/palette.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -100,6 +102,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         doc['title'],
                         doc['text'],
                         doc['type'],
+                        doc['createdOn'],
                       );
                     },
                   );
@@ -146,13 +149,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         doc['title'],
                         doc['text'],
                         doc['type'],
+                        doc['createdOn'],
                       );
                     },
                   );
           },
         );
 
-  _buildNotificationWithIcon(title, text, type) {
+  _buildNotificationWithIcon(title, text, type, createdOn) {
     switch (title) {
       case 'กรุณาชำระค่าเช่า':
         return _buildNotificationCard(
@@ -160,6 +164,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           title: title,
           subtitle: text,
           type: type,
+          createdOn: createdOn,
         );
       case 'สินค้าจัดส่งแล้ว':
         return _buildNotificationCard(
@@ -167,6 +172,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           title: title,
           subtitle: text,
           type: type,
+          createdOn: createdOn,
         );
       case 'การเช่าสำเร็จ':
         return _buildNotificationCard(
@@ -174,6 +180,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           title: title,
           subtitle: text,
           type: type,
+          createdOn: createdOn,
         );
       case 'มีคำขอเช่าใหม่':
         return _buildNotificationCard(
@@ -181,6 +188,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           title: title,
           subtitle: text,
           type: type,
+          createdOn: createdOn,
         );
       case 'ผู้เช่าได้รับสินค้าแล้ว':
         return _buildNotificationCard(
@@ -188,6 +196,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           title: title,
           subtitle: text,
           type: type,
+          createdOn: createdOn,
         );
       case 'ผู้เช่าจัดส่งสินค้าแล้ว':
         return _buildNotificationCard(
@@ -195,11 +204,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
           title: title,
           subtitle: text,
           type: type,
+          createdOn: createdOn,
         );
     }
   }
 
-  Widget _buildNotificationCard({icon, title, subtitle, type}) {
+  Widget _buildNotificationCard({icon, title, subtitle, type, createdOn}) {
+    
+    initializeDateFormatting('th', null);
+    String date =
+        DateFormat('dd MMM', 'th').format(createdOn.toDate());
+    String time =
+        DateFormat('hh:mm a').format(createdOn.toDate());
     return GestureDetector(
       onTap: () {
         type == 'renter'
@@ -234,6 +250,27 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 color: Colors.grey,
               ),
             ),
+            trailing: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                time,
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 10,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              Text(
+                date,
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 10,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
           ),
         ),
       ),
@@ -258,7 +295,7 @@ void sendNotification(receiver, title, text, type) async {
     }
   }
 
-  if (type == 'chat') return;
+  if (type == 'chat' || type == 'wallet') return;
 
   await notification.add({
     'createdOn': DateTime.now(),
