@@ -535,8 +535,10 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                             onPressed: canSubmit.value
                                 ? () async {
                                     await createRentRequest();
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      '/',
+                                    );
                                     Navigator.pushNamed(
                                       context,
                                       '/contract_management',
