@@ -117,7 +117,8 @@ class _AddDisputeScreenState extends State<AddDisputeScreen> {
       'title': _title.text,
       'detail': _detail.text,
       'imageUrls': FieldValue.arrayUnion(_imageUrl),
-      'dateCreated': DateTime.now(),
+      'active': true,
+      'timestamp': FieldValue.serverTimestamp()
     });
     await contractRef.update({
       'renterStatus': 'ข้อพิพาท',
