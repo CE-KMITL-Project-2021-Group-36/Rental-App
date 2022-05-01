@@ -10,17 +10,21 @@ import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 
 class KYC extends StatefulWidget {
-  const KYC({Key? key}) : super(key: key);
+  const KYC({Key? key, required this.status}) : super(key: key);
+
+  final String status;
 
   @override
   State<KYC> createState() => _KYCState();
 
   static const String routeName = '/kyc';
 
-  static Route route() {
+  static Route route({required String status}) {
     return MaterialPageRoute(
       settings: const RouteSettings(name: routeName),
-      builder: (_) => const KYC(),
+      builder: (_) => KYC(
+        status: status,
+      ),
     );
   }
 }
@@ -103,176 +107,185 @@ class _KYCState extends State<KYC> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'ยืนยันตัวตน KYC',
-                  style: textTheme().headline4,
-                ),
-                const SizedBox(height: 20),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'รูปถ่ายหน้าบัตรประชาชน',
-                        style: textTheme().subtitle2,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Stack(
-                        alignment: Alignment.center,
+  Widget build(BuildContext context) => (widget.status == 'ยังไม่ยืนยันตัวตน' ||
+          widget.status == 'โปรดยืนยันตัวตนอีกครั้ง')
+      ? Scaffold(
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'ยืนยันตัวตน KYC',
+                      style: textTheme().headline4,
+                    ),
+                    const SizedBox(height: 20),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Positioned(
-                              child: DottedBorder(
-                                  dashPattern: const [8, 8],
-                                  strokeWidth: 2,
-                                  color: primaryColor,
-                                  child: _frontPhoto == null
-                                      ? const SizedBox(
-                                          height: 200,
-                                          width: double.infinity,
-                                        )
-                                      : Image.file(
-                                          File(_frontPhoto!.path),
-                                          width: double.infinity,
-                                          height: 200,
-                                        ))),
-                          Positioned(
-                            child: CircleAvatar(
-                                radius: 50,
-                                child: IconButton(
-                                  onPressed: () =>
-                                      _selectPhoto(PhotoType.front),
-                                  icon: const Icon(Icons.photo_camera),
-                                  iconSize: 50,
-                                )),
-                          )
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
-                          'รูปถ่ายถือบัตรประชาชนคู่กับใบหน้า',
-                          style: textTheme().subtitle2,
-                        ),
-                      ),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Positioned(
-                              child: DottedBorder(
-                                  dashPattern: const [8, 8],
-                                  strokeWidth: 2,
-                                  color: primaryColor,
-                                  child: _selfiePhoto == null
-                                      ? const SizedBox(
-                                          height: 200,
-                                          width: double.infinity,
-                                        )
-                                      : Image.file(
-                                          File(_selfiePhoto!.path),
-                                          width: double.infinity,
-                                          height: 200,
-                                        ))),
-                          Positioned(
-                            child: CircleAvatar(
-                                radius: 50,
-                                child: IconButton(
-                                  onPressed: () =>
-                                      _selectPhoto(PhotoType.selfie),
-                                  icon: const Icon(Icons.photo_camera),
-                                  iconSize: 50,
-                                )),
-                          )
-                        ],
-                      ),
-                      Center(
-                        child: TextButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    insetPadding: EdgeInsets.zero,
-                                    title: const Text(
-                                        'รูปถ่ายถือบัตรประชาชนคู่กับใบหน้า'),
-                                    content: Image.network(
-                                      'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Fkyc_example.jpg?alt=media&token=fd0f7c20-becd-4497-8b8d-3c09f4b3c537',
-                                      width: 300,
-                                    ),
-                                    actions: [
-                                      Center(
-                                        child: TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: const Text('ปิด'),
+                          Text(
+                            'รูปถ่ายหน้าบัตรประชาชน',
+                            style: textTheme().subtitle2,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Positioned(
+                                  child: DottedBorder(
+                                      dashPattern: const [8, 8],
+                                      strokeWidth: 2,
+                                      color: primaryColor,
+                                      child: _frontPhoto == null
+                                          ? const SizedBox(
+                                              height: 200,
+                                              width: double.infinity,
+                                            )
+                                          : Image.file(
+                                              File(_frontPhoto!.path),
+                                              width: double.infinity,
+                                              height: 200,
+                                            ))),
+                              Positioned(
+                                child: CircleAvatar(
+                                    radius: 50,
+                                    child: IconButton(
+                                      onPressed: () =>
+                                          _selectPhoto(PhotoType.front),
+                                      icon: const Icon(Icons.photo_camera),
+                                      iconSize: 50,
+                                    )),
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Text(
+                              'รูปถ่ายถือบัตรประชาชนคู่กับใบหน้า',
+                              style: textTheme().subtitle2,
+                            ),
+                          ),
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Positioned(
+                                  child: DottedBorder(
+                                      dashPattern: const [8, 8],
+                                      strokeWidth: 2,
+                                      color: primaryColor,
+                                      child: _selfiePhoto == null
+                                          ? const SizedBox(
+                                              height: 200,
+                                              width: double.infinity,
+                                            )
+                                          : Image.file(
+                                              File(_selfiePhoto!.path),
+                                              width: double.infinity,
+                                              height: 200,
+                                            ))),
+                              Positioned(
+                                child: CircleAvatar(
+                                    radius: 50,
+                                    child: IconButton(
+                                      onPressed: () =>
+                                          _selectPhoto(PhotoType.selfie),
+                                      icon: const Icon(Icons.photo_camera),
+                                      iconSize: 50,
+                                    )),
+                              )
+                            ],
+                          ),
+                          Center(
+                            child: TextButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        insetPadding: EdgeInsets.zero,
+                                        title: const Text(
+                                            'รูปถ่ายถือบัตรประชาชนคู่กับใบหน้า'),
+                                        content: Image.network(
+                                          'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Fkyc_example.jpg?alt=media&token=fd0f7c20-becd-4497-8b8d-3c09f4b3c537',
+                                          width: 300,
                                         ),
-                                      ),
-                                    ],
-                                  );
-                                });
-                          },
-                          child: Text(
-                            'แสดงตัวอย่าง',
-                            style: textTheme().bodyText1,
+                                        actions: [
+                                          Center(
+                                            child: TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text('ปิด'),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              },
+                              child: Text(
+                                'แสดงตัวอย่าง',
+                                style: textTheme().bodyText1,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: picked
+                                ? () {
+                                    _uploadPhotosAndCreateKYC();
+                                    // show success pop-up dialog
+                                    // then press 'รับทราบ' and navigate to home screen
+                                    Navigator.of(context)
+                                        .pushReplacementNamed('/');
+                                  }
+                                : null,
+                            child: Text(
+                              'ดำเนินการต่อ',
+                              style: textTheme().button,
+                            ),
+                            style: TextButton.styleFrom(
+                              primary: Colors.white,
+                              backgroundColor:
+                                  picked ? primaryColor : primaryLightColor,
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: picked
-                            ? () {
-                                _uploadPhotosAndCreateKYC();
-                                // show success pop-up dialog
-                                // then press 'รับทราบ' and navigate to home screen
-                                Navigator.of(context).pushReplacementNamed('/');
-                              }
-                            : null,
-                        child: Text(
-                          'ดำเนินการต่อ',
-                          style: textTheme().button,
-                        ),
-                        style: TextButton.styleFrom(
-                          primary: Colors.white,
-                          backgroundColor:
-                              picked ? primaryColor : primaryLightColor,
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacementNamed('/');
+                      },
+                      child: Text(
+                        'ดำเนินการภายหลัง',
+                        style: textTheme().bodyText1,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacementNamed('/');
-                  },
-                  child: Text(
-                    'ดำเนินการภายหลัง',
-                    style: textTheme().bodyText1,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-    );
-  }
+        )
+      : Scaffold(
+          appBar: AppBar(
+            title: Text('ยืนยันตัวตน'),
+          ),
+          body: Center(
+            child: Text('อยู่ระหว่างการตรวจสอบ'),
+          ),
+        );
 }
