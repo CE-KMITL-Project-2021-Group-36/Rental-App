@@ -40,7 +40,7 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
   final List _imageUrl = [];
   final picker = ImagePicker();
   String address = '', addressName = '', addressPhone = '';
-  ValueNotifier<bool> pickedAddress = ValueNotifier(false);
+  ValueNotifier<bool> canSubmit = ValueNotifier(false);
 
   int selectedRadioTile = 0;
   String selectedDeliveryType = '';
@@ -48,6 +48,7 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
   setSelectedRadioTile(int val) {
     setState(() {
       selectedRadioTile = val;
+      canSubmit.value = selectedRadioTile == 1;
     });
   }
 
@@ -421,110 +422,117 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                   _buildRadioListTiles()
                 ],
               ),
-              const SizedBox(height: 32),
-              const Text(
-                'ที่อยู่ของคุณ',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Ink(
-                decoration: BoxDecoration(
-                  color: pickedAddress.value
-                      ? primaryLightColor
-                      : primaryColor[50],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ListTile(
-                  onTap: () async {
-                    final result =
-                        await Navigator.pushNamed(context, '/edit_address')
-                            as List<String>;
-                    debugPrint(result[0].toString());
-                    debugPrint(result[1].toString());
-                    debugPrint(result[2].toString());
-                    setState(() {
-                      addressName = result[0];
-                      addressPhone = result[1];
-                      address = result[2];
-                      pickedAddress.value = true;
-                    });
-                  },
-                  contentPadding: const EdgeInsets.all(15),
-                  trailing: pickedAddress.value
-                      ? const Icon(
-                          Icons.edit,
-                          color: primaryColor,
-                        )
-                      : null,
-                  title: Padding(
-                    padding: const EdgeInsets.only(bottom: 5),
-                    child: Wrap(
+              const SizedBox(height: 24),
+              selectedRadioTile == 1
+                  ? const SizedBox()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        pickedAddress.value
-                            ? Row(
+                        const Text(
+                          'ที่อยู่ของคุณ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Ink(
+                          decoration: BoxDecoration(
+                            color: canSubmit.value
+                                ? primaryLightColor
+                                : primaryColor[50],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: ListTile(
+                            onTap: () async {
+                              final result = await Navigator.pushNamed(
+                                  context, '/edit_address') as List<String>;
+                              debugPrint(result[0].toString());
+                              debugPrint(result[1].toString());
+                              debugPrint(result[2].toString());
+                              setState(() {
+                                addressName = result[0];
+                                addressPhone = result[1];
+                                address = result[2];
+                                canSubmit.value = true;
+                              });
+                            },
+                            contentPadding: const EdgeInsets.all(15),
+                            trailing: canSubmit.value
+                                ? const Icon(
+                                    Icons.edit,
+                                    color: primaryColor,
+                                  )
+                                : null,
+                            title: Padding(
+                              padding: const EdgeInsets.only(bottom: 5),
+                              child: Wrap(
                                 children: [
-                                  Text(
-                                    addressName,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    '  ' + addressPhone,
-                                    style: const TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
+                                  canSubmit.value
+                                      ? Row(
+                                          children: [
+                                            Text(
+                                              addressName,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            Text(
+                                              '  ' + addressPhone,
+                                              style: const TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : Center(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: const [
+                                              Icon(
+                                                Icons.add_rounded,
+                                                color: primaryColor,
+                                                size: 32,
+                                              ),
+                                              SizedBox(height: 8),
+                                              Text(
+                                                'เลือกที่อยู่',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: primaryColor,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                 ],
-                              )
-                            : Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Icon(
-                                      Icons.add_rounded,
-                                      color: primaryColor,
-                                      size: 32,
-                                    ),
-                                    SizedBox(height: 8),
-                                    Text(
-                                      'เลือกที่อยู่',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        color: primaryColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ),
+                            ),
+                            subtitle: canSubmit.value
+                                ? Text(
+                                    address,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                  subtitle: pickedAddress.value
-                      ? Text(
-                          address,
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ),
-                        )
-                      : null,
-                ),
-              ),
-              const SizedBox(height: 64),
+              const SizedBox(height: 24),
               ValueListenableBuilder(
-                  valueListenable: pickedAddress,
+                  valueListenable: canSubmit,
                   builder: (context, value, child) {
                     return Row(
                       children: [
                         Expanded(
                           child: TextButton(
-                            onPressed: pickedAddress.value
+                            onPressed: canSubmit.value
                                 ? () async {
                                     await createRentRequest();
                                     Navigator.pop(context);
@@ -543,7 +551,7 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                             child: const Text('ส่งคำขอเช่า'),
                             style: TextButton.styleFrom(
                               primary: Colors.white,
-                              backgroundColor: pickedAddress.value
+                              backgroundColor: canSubmit.value
                                   ? primaryColor
                                   : primaryLightColor,
                               padding: const EdgeInsets.symmetric(vertical: 15),

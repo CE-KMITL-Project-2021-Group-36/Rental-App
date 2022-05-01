@@ -700,37 +700,40 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                             style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),
                     const SizedBox(height: 32),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: outlineColor,
-                        ),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(8),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Text(
-                                'ที่อยู่ผู้เช่า',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                    widget.contract.renterAddressName == ''
+                        ? const SizedBox()
+                        : Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: outlineColor,
                               ),
-                            ],
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: const [
+                                    Text(
+                                      'ที่อยู่ผู้เช่า',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(widget.contract.renterAddressName),
+                                Text(widget.contract.renterAddressPhone),
+                                Text(widget.contract.renterAddress),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 4),
-                          Text(widget.contract.renterAddressName),
-                          Text(widget.contract.renterAddressPhone),
-                          Text(widget.contract.renterAddress),
-                        ],
-                      ),
-                    ),
                     const SizedBox(height: 16),
                     const Text(
                       'ค่าเช่าทั้งหมด',
