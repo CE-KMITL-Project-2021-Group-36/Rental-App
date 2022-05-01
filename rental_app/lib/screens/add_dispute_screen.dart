@@ -114,8 +114,8 @@ class _AddDisputeScreenState extends State<AddDisputeScreen> {
     await uploadFile();
     await disputes.doc(widget.contract.id).set({
       'contractId': widget.contract.id,
-      'title': _title.value,
-      'detail': _detail.value,
+      'title': _title.text,
+      'detail': _detail.text,
       'imageUrls': FieldValue.arrayUnion(_imageUrl),
       'dateCreated': DateTime.now(),
     });
