@@ -85,7 +85,7 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
           await FirebaseFirestore.instance
               .collection('withdrawal_requests')
               .add({
-            'type': 'บัญชีธนาคาร',
+            'type': 'ธนาคาร',
             'fullName': _fullName,
             'userId': userId,
             'destination': _accountNumber.text,
