@@ -113,6 +113,16 @@ class _ContractManagementScreenState extends State<ContractManagementScreen> {
               child: CircularProgressIndicator(),
             );
           }
+          if (snapshot.data!.size == 0) {
+            return const Center(
+              child: Text(
+                'ไม่มีสัญญาเช่าขณะนี้',
+                style: TextStyle(
+                  color: Colors.grey,
+                ),
+              ),
+            );
+          }
           final data = snapshot.requireData;
           return _buildContractList(data);
         });
