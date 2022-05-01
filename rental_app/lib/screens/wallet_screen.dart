@@ -254,26 +254,33 @@ class _WalletState extends State<Wallet> {
                               Map<String, dynamic> data =
                                   snapshot.data()! as Map<String, dynamic>;
                               final String type = data['type'];
-                              final String status = data['status'] ??= '';
+                              final String? status = data['status'];
                               late String amount;
+                              final double amountDouble =
+                                  data['amount'].toDouble();
                               final DateTime date =
                                   DateTime.fromMillisecondsSinceEpoch(
                                       int.parse(data['timestamp']) * 1000);
                               if (type.contains('เติมเงิน') == true ||
-                                  type.contains('ได้รับเงิน') == true) {
-                                amount = '+ ฿${currencyFormat(data['amount'])}';
+                                  type.contains('ได้รับเงิน') == true ||
+                                  type.contains('คืนเงิน') == true) {
+                                amount = '+ ฿${currencyFormat(amountDouble)}';
                               } else {
-                                amount = '- ฿${currencyFormat(data['amount'])}';
+                                amount = '- ฿${currencyFormat(amountDouble)}';
                               }
                               return ListTile(
-                                title: Text('$type ($status)'),
+                                title: status == null
+                                    ? Text(type)
+                                    : Text('$type ($status)'),
                                 subtitle: Text(DateFormat('dd-MM-yyyy    hh:mm')
                                     .format(date)),
                                 trailing: Text(
                                   amount,
                                   style: TextStyle(
                                     color: type.contains('เติมเงิน') == true ||
-                                            type.contains('ได้รับเงิน') == true
+                                            type.contains('ได้รับเงิน') ==
+                                                true ||
+                                            type.contains('คืนเงิน') == true
                                         ? secondaryColor
                                         : errorColor,
                                     fontSize: 24,
