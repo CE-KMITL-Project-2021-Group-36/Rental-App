@@ -105,6 +105,36 @@ class ContractCard extends StatelessWidget {
                                     color: Colors.grey[600],
                                   ),
                                 ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                Row(
+                                  children: [
+                                    contract.deliveryType == 'รับสินค้าที่ร้าน' ? 
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 4.0),
+                                      child: Icon(
+                                        Icons.local_mall,
+                                        size: 16,
+                                        color: primaryColor,
+                                      ),
+                                    ) :
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 4.0),
+                                      child: Icon(
+                                        Icons.local_shipping,
+                                        size: 16,
+                                        color: primaryColor,
+                                      ),
+                                    ),
+                                    Text(
+                                      contract.deliveryType,
+                                      style: const TextStyle(
+                                        color: primaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           )
@@ -112,8 +142,10 @@ class ContractCard extends StatelessWidget {
                       ),
                       const Divider(thickness: 0.6, height: 32),
                       userType == 'renter'
-                          ? renterContractAddition(context, contract, Product.fromSnapshot(product), userType)
-                          : ownerContractAddition(context, contract, Product.fromSnapshot(product), userType),
+                          ? renterContractAddition(context, contract,
+                              Product.fromSnapshot(product), userType)
+                          : ownerContractAddition(context, contract,
+                              Product.fromSnapshot(product), userType),
                     ],
                   ),
                 )

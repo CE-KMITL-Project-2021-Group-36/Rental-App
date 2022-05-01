@@ -42,6 +42,87 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
   String address = '', addressName = '', addressPhone = '';
   ValueNotifier<bool> pickedAddress = ValueNotifier(false);
 
+  int selectedRadioTile = 0;
+  String selectedDeliveryType = '';
+
+  setSelectedRadioTile(int val) {
+    setState(() {
+      selectedRadioTile = val;
+    });
+  }
+
+  
+
+  Widget _buildRadioListTiles() {
+    if (widget.product.deliveryType == 'รับสินค้าที่ร้าน/จัดส่งสินค้า') {
+      return Column(
+        children: [
+          RadioListTile(
+            value: 1,
+            groupValue: selectedRadioTile,
+            title: const Text(
+              'รับสินค้าที่ร้าน',
+              style: TextStyle(fontSize: 14),
+            ),
+            onChanged: (val) {
+              setSelectedRadioTile(val as int);
+            },
+            dense: true,
+            contentPadding: const EdgeInsets.all(0),
+          ),
+          RadioListTile(
+            value: 2,
+            groupValue: selectedRadioTile,
+            title: const Text(
+              'จัดส่งสินค้า',
+              style: TextStyle(fontSize: 14),
+            ),
+            onChanged: (val) {
+              setSelectedRadioTile(val as int);
+            },
+            dense: true,
+            contentPadding: const EdgeInsets.all(0),
+          ),
+        ],
+      );
+    } else if (widget.product.deliveryType == 'รับสินค้าที่ร้าน') {
+      return RadioListTile(
+        value: 1,
+        groupValue: selectedRadioTile,
+        title: const Text(
+          'รับสินค้าที่ร้าน',
+          style: TextStyle(fontSize: 14),
+        ),
+        onChanged: (val) {
+          setSelectedRadioTile(val as int);
+        },
+        dense: true,
+        contentPadding: const EdgeInsets.all(0),
+      );
+    } else if (widget.product.deliveryType == 'จัดส่งสินค้า') {
+      return RadioListTile(
+        value: 2,
+        groupValue: selectedRadioTile,
+        title: const Text(
+          'จัดส่งสินค้า',
+          style: TextStyle(fontSize: 14),
+        ),
+        onChanged: (val) {
+          setSelectedRadioTile(val as int);
+        },
+        dense: true,
+        contentPadding: const EdgeInsets.all(0),
+      );
+    }
+    return const Text(
+      'โปรดติดต่อเจ้าของสินค้า',
+      style: TextStyle(
+        fontSize: 14,
+        color: Colors.grey,
+      ),
+    );
+  }
+
   chooseImage() async {
     await showModalBottomSheet(
       context: context,
@@ -112,6 +193,7 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
   }
 
   createRentRequest() async {
+    selectedDeliveryType = selectedRadioTile == 1 ? 'รับสินค้าที่ร้าน' : 'จัดส่งสินค้า';
     await uploadFile();
     await contractRef.add({
       'productId': widget.product.id,
@@ -130,7 +212,8 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
       'ownerPickupVideo': '',
       'renterAddressName': addressName,
       'renterAddressPhone': addressPhone,
-      'renterAddress': address
+      'renterAddress': address,
+      'deliveryType': selectedDeliveryType,
     });
 
     final receiver = widget.product.owner;
@@ -315,6 +398,20 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                           ],
                         );
                 },
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const SizedBox(height: 32),
+                  const Text(
+                    'การจัดส่ง',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildRadioListTiles()
+                ],
               ),
               const SizedBox(height: 32),
               const Text(

@@ -48,6 +48,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   bool checkedPricePerWeek = false;
   bool checkedPricePerMonth = false;
+  bool checkedPickUpAtShop = false;
+  bool checkedDelivery = false;
+
+  String _deliveryType = '';
 
   CollectionReference products =
       FirebaseFirestore.instance.collection('products');
@@ -116,6 +120,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
     if (!_formKey.currentState!.validate()) {
       _continuousValidation.value = true;
     } else {
+      if (checkedPickUpAtShop && checkedDelivery) {
+        _deliveryType = 'รับสินค้าที่ร้าน/จัดส่งสินค้า';
+      } else if (checkedPickUpAtShop){
+        _deliveryType = 'รับสินค้าที่ร้าน';
+      } else if (checkedDelivery){
+        _deliveryType = 'จัดส่งสินค้า';
+      } else {
+        _deliveryType = 'ไม่ระบุ';
+      }
       await uploadFile();
       products
           .add({
@@ -130,6 +143,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             'description': _description.text,
             'location': _location.text,
             'isFeature': false,
+            'deliveryType': _deliveryType,
             'dateCreated': DateTime.now(),
           })
           .then((value) => debugPrint('Product Added'))
@@ -417,6 +431,39 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             keyboardType: TextInputType.number,
                           )
                         : const SizedBox(),
+                    const SizedBox(height: 32),
+                    const Text('ช่องทางการจัดส่ง'),
+                    const SizedBox(height: 8),
+                    CheckboxListTile(
+                      title: const Text(
+                        'รับสินค้าที่ร้าน',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      value: checkedPickUpAtShop,
+                      onChanged: (newValue) {
+                        setState(() {
+                          checkedPickUpAtShop = newValue!;
+                        });
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: const EdgeInsets.all(0),
+                      dense: true,
+                    ),
+                    CheckboxListTile(
+                      title: const Text(
+                        'จัดส่งสินค้า',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      value: checkedDelivery,
+                      onChanged: (newValue) {
+                        setState(() {
+                          checkedDelivery = newValue!;
+                        });
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: const EdgeInsets.all(0),
+                      dense: true,
+                    ),
                     const SizedBox(height: 32),
                     const Text('ที่อยู่ของสินค้าให้เช่า'),
                     const SizedBox(height: 4),
