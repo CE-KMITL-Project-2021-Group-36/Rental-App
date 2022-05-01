@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_app/providers/authentication_provider.dart';
+import 'package:rental_app/screens/register_with_google_screen.dart';
 import 'package:rental_app/screens/verify_email_screen.dart';
 
 import 'error_screen.dart';
@@ -14,7 +16,15 @@ class AuthChecker extends ConsumerWidget {
     final _authState = ref.watch(authStateProvider);
     return _authState.when(
         data: (data) {
-          if (data != null) return const VerifyEmailPage();
+          if (data != null) {
+            if (FirebaseAuth
+                    .instance.currentUser!.providerData.first.providerId ==
+                'google.com') {
+              return const RegisterWithGoogleScreen();
+            } else {
+              return const VerifyEmailPage();
+            }
+          }
           return const LoginPage();
         },
         loading: () => const CircularProgressIndicator(),

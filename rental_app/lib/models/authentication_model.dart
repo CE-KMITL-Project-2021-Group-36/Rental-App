@@ -123,6 +123,35 @@ class Authentication {
     }
   }
 
+  Future<void> signUpWithGoogle(
+    String email,
+    String idCardNumber,
+    String firstName,
+    String lastName,
+    String phoneNumber,
+    String userId,
+    BuildContext context,
+  ) async {
+    _firestore.collection('users').doc(userId).set({
+      'email': email,
+      'idCardNumber': idCardNumber,
+      'firstName': firstName,
+      'lastName': lastName,
+      'phoneNumber': phoneNumber,
+      'kyc': {
+        'verified': false,
+        'status': 'ยังไม่ยืนยันตัวตน',
+      },
+      'role': 'User',
+      'shop': {
+        'hasShop': false,
+      },
+      'wallet': {
+        'balance': 0.00,
+      }
+    });
+  }
+
   Future<void> signInWithGoogle(BuildContext context) async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
