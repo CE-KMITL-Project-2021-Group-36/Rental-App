@@ -51,8 +51,6 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
     });
   }
 
-  
-
   Widget _buildRadioListTiles() {
     if (widget.product.deliveryType == 'รับสินค้าที่ร้าน/จัดส่งสินค้า') {
       return Column(
@@ -193,7 +191,8 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
   }
 
   createRentRequest() async {
-    selectedDeliveryType = selectedRadioTile == 1 ? 'รับสินค้าที่ร้าน' : 'จัดส่งสินค้า';
+    selectedDeliveryType =
+        selectedRadioTile == 1 ? 'รับสินค้าที่ร้าน' : 'จัดส่งสินค้า';
     await uploadFile();
     await contractRef.add({
       'productId': widget.product.id,
@@ -520,6 +519,12 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                                 ? () async {
                                     await createRentRequest();
                                     Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/contract_management',
+                                      arguments: ['renter', '0'],
+                                    );
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(const SnackBar(
                                       content: Text('ส่งคำขอเช่าแล้ว'),
