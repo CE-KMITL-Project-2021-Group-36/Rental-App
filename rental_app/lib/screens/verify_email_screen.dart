@@ -34,6 +34,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     if (FirebaseAuth.instance.currentUser!.isAnonymous) _isEmailVerified = true;
     if (!_isEmailVerified) {
       sendVerificationEmail();
+      Future.delayed(const Duration(seconds: 2));
       timer = Timer.periodic(
           const Duration(seconds: 3), (_) => checkEmailVerified());
     }
