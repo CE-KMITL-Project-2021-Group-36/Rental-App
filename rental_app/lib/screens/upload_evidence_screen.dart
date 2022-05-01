@@ -945,8 +945,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
           .set({
         'amount': widget.contract.deposit,
         'timestamp': timestamp,
-        'type': 'คืนเงิน',
-        'status': 'ค่ามัดจำ'
+        'type': 'คืนเงินค่ามัดจำ',
       });
       await FirebaseFirestore.instance
           .collection('users')
