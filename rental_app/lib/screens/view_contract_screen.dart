@@ -196,12 +196,14 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.schedule, color: Colors.white),
+                                  const Icon(Icons.schedule,
+                                      color: Colors.white),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
@@ -246,7 +248,8 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(8),
@@ -302,7 +305,8 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                                 Text(
                                                   '฿' +
                                                       currencyFormat(widget
-                                                          .contract.rentalPrice),
+                                                          .contract
+                                                          .rentalPrice),
                                                   style: const TextStyle(
                                                     fontSize: 24,
                                                     color: primaryColor,
@@ -343,10 +347,11 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                             const SizedBox(height: 16),
                             widget.contract.renterAttachments.isNotEmpty
                                 ? GridView.builder(
-                                    physics: const NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
-                                    itemCount:
-                                        widget.contract.renterAttachments.length,
+                                    itemCount: widget
+                                        .contract.renterAttachments.length,
                                     gridDelegate:
                                         const SliverGridDelegateWithFixedCrossAxisCount(
                                             crossAxisCount: 3),
@@ -406,7 +411,7 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                         MainAxisAlignment.spaceBetween,
                                     children: const [
                                       Text(
-                                        'ที่อยู่',
+                                        'ที่อยู่ผู้เช่า',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -414,16 +419,9 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                     ],
                                   ),
                                   const SizedBox(height: 4),
-                                  Text(
-                                    'วัชรากร แท่นแก้ว'.replaceAll('\\n', '\n'),
-                                  ),
-                                  Text(
-                                    '086-123-1669'.replaceAll('\\n', '\n'),
-                                  ),
-                                  Text(
-                                    '9/1 ถ.พหลโยธิน 35 แขวงลาดยาว\nเขตจตุจักร, จังหวัดกรุงเทพมหานคร, 10900'
-                                        .replaceAll('\\n', '\n'),
-                                  ),
+                                  Text(widget.contract.renterAddressName),
+                                  Text(widget.contract.renterAddressPhone),
+                                  Text(widget.contract.renterAddress),
                                 ],
                               ),
                             ),
@@ -438,7 +436,8 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                               onPressed: () {
                                                 showAlertDialog(context);
                                               },
-                                              child: const Text('ยกเลิกคำขอเช่า'),
+                                              child:
+                                                  const Text('ยกเลิกคำขอเช่า'),
                                               style: TextButton.styleFrom(
                                                 primary: Colors.white,
                                                 backgroundColor: errorColor,
@@ -447,7 +446,8 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                                         vertical: 12),
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(8.0),
+                                                      BorderRadius.circular(
+                                                          8.0),
                                                 ),
                                               ),
                                             ),
@@ -457,11 +457,12 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                     ],
                                   )
                                 : Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       const Divider(thickness: 0.6, height: 32),
                                       const Text(
-                                        'ระบุค่าเช่า',
+                                        'ระบุค่ามัดจำ',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -488,7 +489,8 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                           },
                                           child: const SizedBox(
                                             width: 140,
-                                            child: Center(child: Text("ยกเลิก")),
+                                            child:
+                                                Center(child: Text("ยกเลิก")),
                                           ),
                                           style: TextButton.styleFrom(
                                             primary: errorColor,
@@ -522,8 +524,9 @@ class _ViewContractScreenState extends State<ViewContractScreen> {
                                             style: TextButton.styleFrom(
                                               primary: Colors.white,
                                               backgroundColor: primaryColor,
-                                              padding: const EdgeInsets.symmetric(
-                                                  vertical: 12),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12),
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(8.0),
