@@ -262,7 +262,7 @@ class _WalletState extends State<Wallet> {
                                   DateTime.fromMillisecondsSinceEpoch(
                                       int.parse(data['timestamp']) * 1000);
                               if (type.contains('เติมเงิน') == true ||
-                                  type.contains('ได้รับเงิน') == true ||
+                                  type.contains('รายได้ค่าเช่า') == true ||
                                   type.contains('คืนเงิน') == true) {
                                 amount = '+ ฿${currencyFormat(amountDouble)}';
                               } else {
@@ -278,7 +278,7 @@ class _WalletState extends State<Wallet> {
                                   amount,
                                   style: TextStyle(
                                     color: type.contains('เติมเงิน') == true ||
-                                            type.contains('ได้รับเงิน') ==
+                                            type.contains('รายได้ค่าเช่า') ==
                                                 true ||
                                             type.contains('คืนเงิน') == true
                                         ? secondaryColor
