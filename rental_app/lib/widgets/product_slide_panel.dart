@@ -121,7 +121,7 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
     return Container(
       color: const Color(0xFF737373),
       child: Container(
-        height: 400,
+        height: 420,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(8), topRight: Radius.circular(8)),
@@ -201,24 +201,6 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
                   )
                 ],
               ),
-              // const SizedBox(
-              //   height: 24,
-              // ),
-              // const Text(
-              //   'รูปแบบการเช่า',
-              //   style: TextStyle(
-              //     fontSize: 16,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              // Row(children: [
-              //   ChoiceChipWidget(
-              //     chipList,
-              //     (selectedChoice) {
-              //       _selectedChoice = selectedChoice;
-              //     },
-              //   ),
-              // ]),
               const SizedBox(
                 height: 16,
               ),
@@ -272,7 +254,6 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
                   ),
                 ],
               ),
-
               Text('ระยะเวลา ${duration.inDays + 1} วัน'),
               const SizedBox(height: 16),
               Row(
@@ -292,6 +273,7 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
                   ),
                 ],
               ),
+              const Expanded(child: SizedBox()),
               Center(
                 child: TextButton(
                   onPressed: () {
@@ -322,7 +304,10 @@ class _ProductSlidePanelState extends State<ProductSlidePanel> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => RentRequestScreen(product: widget.product, dateRange: dateRange, price: price)),
+                              builder: (context) => RentRequestScreen(
+                                  product: widget.product,
+                                  dateRange: dateRange,
+                                  price: price)),
                         );
                       },
                       child: const Text('ส่งคำขอเช่า'),
