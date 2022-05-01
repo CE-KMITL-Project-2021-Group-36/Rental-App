@@ -73,6 +73,8 @@ class Authentication {
                 _firestore.collection('users').doc(value.user!.uid).set({
                   // 'userId': _auth.currentUser!.uid,
                   'email': email,
+                  'avatarUrl':
+                      'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Favatar.png?alt=media&token=0b9a2456-3c04-458b-a319-83f5717c5cd4',
                   'idCardNumber': idCardNumber,
                   'firstName': firstName,
                   'lastName': lastName,
