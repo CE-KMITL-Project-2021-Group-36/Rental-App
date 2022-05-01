@@ -491,6 +491,31 @@ class _ProductScreenState extends State<ProductScreen> {
                     ),
                   ],
                 )),
+                Container(
+                color: Colors.white,
+                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'การจัดส่ง',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.product.deliveryType.replaceAll("\\n", "\n"),
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                )),
             Container(
               color: Colors.white,
               padding: const EdgeInsets.all(16),

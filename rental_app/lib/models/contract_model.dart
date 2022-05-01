@@ -16,6 +16,7 @@ class Contract {
   final String renterReturnVideo;
   final String ownerDeliveryVideo;
   final String ownerPickupVideo;
+  final String deliveryType;
 
   const Contract({
     required this.id,
@@ -33,6 +34,7 @@ class Contract {
     required this.renterReturnVideo,
     required this.ownerDeliveryVideo,
     required this.ownerPickupVideo,
+     required this.deliveryType,
   });
 
   static Contract fromSnapshot(DocumentSnapshot snapshot) {
@@ -52,6 +54,7 @@ class Contract {
       renterReturnVideo: snapshot['renterReturnVideo'],
       ownerDeliveryVideo: snapshot['ownerDeliveryVideo'],
       ownerPickupVideo: snapshot['ownerPickupVideo'],
+      deliveryType: snapshot['deliveryType'],
     );
     return contract;
   }

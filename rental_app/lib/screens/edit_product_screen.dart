@@ -51,6 +51,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   bool checkedPricePerWeek = false;
   bool checkedPricePerMonth = false;
+  bool checkedPickUpAtShop = false;
+  bool checkedDelivery = false;
+
+  String _deliveryType = '';
 
   CollectionReference products =
       FirebaseFirestore.instance.collection('products');
@@ -74,9 +78,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
     _description.text = widget.product.description;
     _location.text = widget.product.location;
     _deposit.text = widget.product.deposit;
+    _deliveryType = widget.product.deliveryType;
 
     checkedPricePerWeek = widget.product.pricePerWeek > 0;
     checkedPricePerMonth = widget.product.pricePerMonth > 0;
+    if (_deliveryType == 'รับสินค้าที่ร้าน/จัดส่งสินค้า') {
+      checkedPickUpAtShop = true;
+      checkedDelivery = true;
+    } else if (_deliveryType == 'รับสินค้าที่ร้าน') {
+      checkedPickUpAtShop = true;
+    } else if (_deliveryType == 'จัดส่งสินค้า') {
+      checkedDelivery = true;
+    }
   }
 
   chooseImage() async {
@@ -132,6 +145,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
     if (!_formKey.currentState!.validate()) {
       _continuousValidation.value = true;
     } else {
+      if (checkedPickUpAtShop && checkedDelivery) {
+        _deliveryType = 'รับสินค้าที่ร้าน/จัดส่งสินค้า';
+      } else if (checkedPickUpAtShop) {
+        _deliveryType = 'รับสินค้าที่ร้าน';
+      } else if (checkedDelivery) {
+        _deliveryType = 'จัดส่งสินค้า';
+      } else {
+        _deliveryType = 'ไม่ระบุ';
+      }
       await uploadFile();
       products.doc(widget.product.id).update({'imageUrl': []});
       products
@@ -533,6 +555,39 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             keyboardType: TextInputType.number,
                           )
                         : const SizedBox(),
+                    const SizedBox(height: 32),
+                    const Text('ช่องทางการจัดส่ง'),
+                    const SizedBox(height: 8),
+                    CheckboxListTile(
+                      title: const Text(
+                        'รับสินค้าที่ร้าน',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      value: checkedPickUpAtShop,
+                      onChanged: (newValue) {
+                        setState(() {
+                          checkedPickUpAtShop = newValue!;
+                        });
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: const EdgeInsets.all(0),
+                      dense: true,
+                    ),
+                    CheckboxListTile(
+                      title: const Text(
+                        'จัดส่งสินค้า',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      value: checkedDelivery,
+                      onChanged: (newValue) {
+                        setState(() {
+                          checkedDelivery = newValue!;
+                        });
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: const EdgeInsets.all(0),
+                      dense: true,
+                    ),
                     const SizedBox(height: 32),
                     const Text('ที่อยู่ของสินค้าให้เช่า'),
                     const SizedBox(height: 4),

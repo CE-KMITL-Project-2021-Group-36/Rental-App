@@ -14,6 +14,7 @@ class Product {
   final String location;
   final Timestamp dateCreated;
   final bool isFeature;
+  final String deliveryType;
 
   Product({
     required this.id,
@@ -29,6 +30,7 @@ class Product {
     required this.location,
     required this.dateCreated,
     required this.isFeature,
+    required this.deliveryType,
   });
 
   static Product fromSnapshot(DocumentSnapshot snapshot) {
@@ -46,6 +48,7 @@ class Product {
       location: snapshot['location'],
       dateCreated: snapshot['dateCreated'],
       isFeature: snapshot['isFeature'],
+      deliveryType: snapshot['deliveryType'],
     );
     return product;
   }
