@@ -165,7 +165,30 @@ class _KYCState extends State<KYC> {
                             style: textTheme().subtitle2,
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      insetPadding: EdgeInsets.zero,
+                                      title: const Text(
+                                          'รูปถ่ายถือบัตรประชาชนคู่กับใบหน้า'),
+                                      content: Image.network(
+                                        'https://firebasestorage.googleapis.com/v0/b/rental-app-dcdbf.appspot.com/o/app_files%2Fkyc_example.jpg?alt=media&token=fd0f7c20-becd-4497-8b8d-3c09f4b3c537',
+                                        width: 300,
+                                      ),
+                                      actions: [
+                                        Center(
+                                          child: TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text('ปิด'),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            },
                             child: Text(
                               'แสดงตัวอย่าง',
                               style: textTheme().bodyText1,
