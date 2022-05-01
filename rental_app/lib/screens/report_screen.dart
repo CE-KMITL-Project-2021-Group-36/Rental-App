@@ -122,6 +122,7 @@ class _ReportScreenState extends State<ReportScreen> {
   createReport() async {
     await uploadFile();
     await reports.add({
+      'active': true,
       'reporterId': FirebaseAuth.instance.currentUser!.uid,
       'reporterName': widget.name,
       'title': _title.text,
