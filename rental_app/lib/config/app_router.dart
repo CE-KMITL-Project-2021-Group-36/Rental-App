@@ -32,7 +32,7 @@ class AppRouter {
       case EditProductScreen.routeName:
         return EditProductScreen.route(product: settings.arguments as Product);
       case KYC.routeName:
-        return KYC.route();
+        return KYC.route(status: settings.arguments as String);
       case ReviewScreen.routeName:
         return ReviewScreen.route(product: settings.arguments as Product);
       case AddReviewScreen.routeName:
