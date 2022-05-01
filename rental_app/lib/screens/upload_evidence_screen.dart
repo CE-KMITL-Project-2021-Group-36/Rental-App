@@ -1,17 +1,17 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
+import 'package:rental_app/api/firebase_api.dart';
 import 'package:rental_app/config/palette.dart';
 import 'package:rental_app/config/theme.dart';
 import 'package:rental_app/models/models.dart';
 import 'package:rental_app/screens/screens.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:rental_app/api/firebase_api.dart';
-import 'package:path/path.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UploadEvidenceScreen extends StatefulWidget {
@@ -934,6 +934,44 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
         'renterStatus': 'สำเร็จ',
         'ownerStatus': 'สำเร็จ',
       });
+      final String timestamp =
+          (DateTime.now().millisecondsSinceEpoch / 1000).ceil().toString();
+      //Refund Deposit to Renter
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.contract.renterId)
+          .collection('wallet_transactions')
+          .doc(timestamp)
+          .set({
+        'amount': widget.contract.deposit,
+        'timestamp': timestamp,
+        'type': 'คืนเงิน',
+        'status': 'ค่ามัดจำ'
+      });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.contract.renterId)
+          .update({
+        'wallet.balance': FieldValue.increment(widget.contract.deposit)
+      });
+      //Transfer rental fee to Owner
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.contract.ownerId)
+          .collection('wallet_transactions')
+          .doc(timestamp)
+          .set({
+        'amount': widget.contract.rentalPrice,
+        'timestamp': timestamp,
+        'type': 'รายได้ค่าเช่า',
+      });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.contract.ownerId)
+          .update({
+        'wallet.balance': FieldValue.increment(widget.contract.rentalPrice)
+      });
+
       sendNotification(
         widget.contract.renterId,
         'การเช่าสำเร็จ',
