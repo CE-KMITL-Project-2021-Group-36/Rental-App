@@ -18,7 +18,6 @@ class AccountScreen extends ConsumerWidget {
         FirebaseFirestore.instance.collection('users');
     final CollectionReference contracts =
         FirebaseFirestore.instance.collection('contracts');
-    late final String fullName;
 
     final _auth = ref.watch(authenticationProvider);
 
@@ -47,7 +46,6 @@ class AccountScreen extends ConsumerWidget {
             final bool kycVerified = data['kyc']['verified'];
             final bool hasShop = data['shop']['hasShop'];
             final bool isVerified = data['kyc']['verified'];
-            fullName = displayName;
 
             return Scaffold(
               body: SingleChildScrollView(
@@ -968,7 +966,7 @@ class AccountScreen extends ConsumerWidget {
                           InkWell(
                             onTap: () {
                               Navigator.pushNamed(context, '/report',
-                                  arguments: fullName);
+                                  arguments: displayName);
                             },
                             borderRadius: BorderRadius.circular(10),
                             child: Ink(
