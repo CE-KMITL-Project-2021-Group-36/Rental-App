@@ -558,14 +558,23 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: SizedBox.fromSize(
-                                  child: Image.network(
-                                    product!['imageUrl'][0],
-                                    fit: BoxFit.cover,
-                                    height: 100.0,
-                                    width: 100.0,
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/product',
+                                    arguments: Product.fromSnapshot(product!),
+                                  );
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: SizedBox.fromSize(
+                                    child: Image.network(
+                                      product!['imageUrl'][0],
+                                      fit: BoxFit.cover,
+                                      height: 100.0,
+                                      width: 100.0,
+                                    ),
                                   ),
                                 ),
                               ),

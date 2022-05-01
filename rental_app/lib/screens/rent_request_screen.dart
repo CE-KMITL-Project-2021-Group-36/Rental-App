@@ -256,14 +256,23 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: SizedBox.fromSize(
-                            child: Image.network(
-                              widget.product.imageUrl[0],
-                              fit: BoxFit.cover,
-                              height: 100.0,
-                              width: 100.0,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/product',
+                              arguments: widget.product,
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: SizedBox.fromSize(
+                              child: Image.network(
+                                widget.product.imageUrl[0],
+                                fit: BoxFit.cover,
+                                height: 100.0,
+                                width: 100.0,
+                              ),
                             ),
                           ),
                         ),
