@@ -674,7 +674,7 @@ class AccountScreen extends ConsumerWidget {
                                                 .where('renterId',
                                                     isEqualTo: userId)
                                                 .where('renterStatus',
-                                                    isEqualTo: 'ยืนยันจบสัญญา')
+                                                    isEqualTo: 'สำเร็จ')
                                                 .snapshots(),
                                             builder: (context, snapshot) {
                                               if (snapshot.hasError) {
@@ -690,7 +690,7 @@ class AccountScreen extends ConsumerWidget {
                                                       CircularProgressIndicator(),
                                                 );
                                               }
-                                              final int needToConfirm =
+                                              final int finishedCount =
                                                   snapshot.data!.size;
                                               return InkWell(
                                                 onTap: () => isVerified
@@ -699,7 +699,7 @@ class AccountScreen extends ConsumerWidget {
                                                         '/contract_management',
                                                         arguments: [
                                                             'renter',
-                                                            '4'
+                                                            '5'
                                                           ])
                                                     : showDialog(
                                                         context: context,
@@ -746,9 +746,9 @@ class AccountScreen extends ConsumerWidget {
                                                         color: primaryColor,
                                                       ),
                                                       badgeContent: Text(
-                                                          '$needToConfirm'),
+                                                          '$finishedCount'),
                                                       showBadge:
-                                                          needToConfirm > 0
+                                                          finishedCount > 0
                                                               ? true
                                                               : false,
                                                       badgeColor: warningColor,
@@ -757,7 +757,7 @@ class AccountScreen extends ConsumerWidget {
                                                       height: 5,
                                                     ),
                                                     const Text(
-                                                      'ยืนยันจบสัญญา',
+                                                      'สำเร็จ',
                                                       style: TextStyle(
                                                           fontSize: 10,
                                                           fontWeight:
