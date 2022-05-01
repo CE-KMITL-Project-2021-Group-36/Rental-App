@@ -24,6 +24,7 @@ class _RegisterWithGoogleScreenState extends State<RegisterWithGoogleScreen> {
 
   final String _email = FirebaseAuth.instance.currentUser!.email.toString();
   final String userId = FirebaseAuth.instance.currentUser!.uid;
+  final String photo = FirebaseAuth.instance.currentUser!.photoURL.toString();
   final _idCardNumber = TextEditingController();
   final _firstName = TextEditingController();
   final _lastName = TextEditingController();
@@ -67,6 +68,7 @@ class _RegisterWithGoogleScreenState extends State<RegisterWithGoogleScreen> {
                               _lastName.text,
                               _phoneNumber.text,
                               userId,
+                              photo,
                               context)
                           .whenComplete(
                               () => Navigator.pushNamed(context, '/'));

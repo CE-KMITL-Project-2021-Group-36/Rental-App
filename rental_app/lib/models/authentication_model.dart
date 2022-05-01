@@ -130,10 +130,12 @@ class Authentication {
     String lastName,
     String phoneNumber,
     String userId,
+    String photo,
     BuildContext context,
   ) async {
     _firestore.collection('users').doc(userId).set({
       'email': email,
+      'avatarUrl': photo,
       'idCardNumber': idCardNumber,
       'firstName': firstName,
       'lastName': lastName,
