@@ -336,66 +336,66 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       const SizedBox(
                         height: 20,
                       ),
-                      InkWell(
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text(
-                                      'คุณต้องการลบบัญชีและข้อมูลทั้งหมดใช่หรือไม่'),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text(
-                                          'ยกเลิก',
-                                          style:
-                                              TextStyle(color: Colors.black54),
-                                        )),
-                                    TextButton(
-                                        onPressed: _deleteUser,
-                                        child: const Text(
-                                          'ยืนยัน',
-                                          style: TextStyle(color: errorColor),
-                                        )),
-                                  ],
-                                );
-                              });
-                        },
-                        child: Ink(
-                          width: double.infinity,
-                          height: 45,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.redAccent.shade100,
-                                width: 1.5,
-                              ),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: const [
-                                Icon(
-                                  Icons.delete,
-                                  size: 20,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  'ลบบัญชี',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                      // InkWell(
+                      //   onTap: () {
+                      //     showDialog(
+                      //         context: context,
+                      //         builder: (BuildContext context) {
+                      //           return AlertDialog(
+                      //             title: const Text(
+                      //                 'คุณต้องการลบบัญชีและข้อมูลทั้งหมดใช่หรือไม่'),
+                      //             actions: [
+                      //               TextButton(
+                      //                   onPressed: () {
+                      //                     Navigator.pop(context);
+                      //                   },
+                      //                   child: const Text(
+                      //                     'ยกเลิก',
+                      //                     style:
+                      //                         TextStyle(color: Colors.black54),
+                      //                   )),
+                      //               TextButton(
+                      //                   onPressed: _deleteUser,
+                      //                   child: const Text(
+                      //                     'ยืนยัน',
+                      //                     style: TextStyle(color: errorColor),
+                      //                   )),
+                      //             ],
+                      //           );
+                      //         });
+                      //   },
+                      //   child: Ink(
+                      //     width: double.infinity,
+                      //     height: 45,
+                      //     decoration: BoxDecoration(
+                      //         border: Border.all(
+                      //           color: Colors.redAccent.shade100,
+                      //           width: 1.5,
+                      //         ),
+                      //         borderRadius: BorderRadius.circular(10)),
+                      //     child: Padding(
+                      //       padding: const EdgeInsets.symmetric(horizontal: 10),
+                      //       child: Row(
+                      //         mainAxisAlignment: MainAxisAlignment.start,
+                      //         children: const [
+                      //           Icon(
+                      //             Icons.delete,
+                      //             size: 20,
+                      //           ),
+                      //           SizedBox(
+                      //             width: 10,
+                      //           ),
+                      //           Text(
+                      //             'ลบบัญชี',
+                      //             style: TextStyle(
+                      //               fontWeight: FontWeight.bold,
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
