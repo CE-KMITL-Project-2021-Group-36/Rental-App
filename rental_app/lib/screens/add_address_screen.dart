@@ -82,119 +82,125 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   Widget build(BuildContext context) {
     return KeyboardDismisser(
       child: Scaffold(
-        appBar: AppBar(title: const Text('เพิ่มที่อยู่ใหม่')),
+        appBar: AppBar(
+          title: widget.documentId == ''
+              ? const Text('เพิ่มที่อยู่ใหม่')
+              : const Text('แก้ไขที่อยู่ใหม่'),
+        ),
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                ValueListenableBuilder(
-                    valueListenable: _continuousValidation,
-                    builder: (BuildContext context, bool val, Widget? child) {
-                      return Form(
-                        autovalidateMode: _continuousValidation.value
-                            ? AutovalidateMode.always
-                            : AutovalidateMode.disabled,
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              controller: _name,
-                              decoration: const InputDecoration(
-                                prefixIcon: Icon(Icons.person),
-                                labelText: 'ชื่อผู้รับ',
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  ValueListenableBuilder(
+                      valueListenable: _continuousValidation,
+                      builder: (BuildContext context, bool val, Widget? child) {
+                        return Form(
+                          autovalidateMode: _continuousValidation.value
+                              ? AutovalidateMode.always
+                              : AutovalidateMode.disabled,
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                controller: _name,
+                                decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.person),
+                                  labelText: 'ชื่อผู้รับ',
+                                ),
+                                autocorrect: false,
+                                validator: (input) {
+                                  if (input!.isEmpty) {
+                                    return 'โปรดระบุชื่อ';
+                                  } else if (!RegExp(
+                                          r"""^[ กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรฤลฦวศษสหฬอฮฯะัาำิีึืฺุูเแโใไๅ็่้๊๋์]+$""")
+                                      .hasMatch(input)) {
+                                    return 'ต้องเป็นภาษาไทยเท่านั้น';
+                                  }
+                                  return null;
+                                },
                               ),
-                              autocorrect: false,
-                              validator: (input) {
-                                if (input!.isEmpty) {
-                                  return 'โปรดระบุชื่อ';
-                                } else if (!RegExp(
-                                        r"""^[ กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรฤลฦวศษสหฬอฮฯะัาำิีึืฺุูเแโใไๅ็่้๊๋์]+$""")
-                                    .hasMatch(input)) {
-                                  return 'ต้องเป็นภาษาไทยเท่านั้น';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            TextFormField(
-                              controller: _phone,
-                              decoration: const InputDecoration(
-                                prefixIcon: Icon(Icons.phone),
-                                labelText: 'เบอร์โทรศัพท์',
-                                counterText: '',
+                              const SizedBox(height: 20),
+                              TextFormField(
+                                controller: _phone,
+                                decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.phone),
+                                  labelText: 'เบอร์โทรศัพท์',
+                                  counterText: '',
+                                ),
+                                autocorrect: false,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
+                                maxLength: 10,
+                                maxLengthEnforcement:
+                                    MaxLengthEnforcement.enforced,
+                                validator: (input) {
+                                  if (input!.isEmpty) {
+                                    return 'โปรดระบุเบอร์โทรศัพท์';
+                                  } else if (input.length < 10) {
+                                    return 'เบอร์โทรศัพท์ไม่ครบ';
+                                  }
+                                  return null;
+                                },
                               ),
-                              autocorrect: false,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              maxLength: 10,
-                              maxLengthEnforcement:
-                                  MaxLengthEnforcement.enforced,
-                              validator: (input) {
-                                if (input!.isEmpty) {
-                                  return 'โปรดระบุเบอร์โทรศัพท์';
-                                } else if (input.length < 10) {
-                                  return 'เบอร์โทรศัพท์ไม่ครบ';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            TextFormField(
-                              controller: _address,
-                              decoration: const InputDecoration(
-                                prefixIcon: Icon(Icons.location_on),
-                                labelText: 'ที่อยู่',
+                              const SizedBox(height: 20),
+                              TextFormField(
+                                controller: _address,
+                                decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.location_on),
+                                  labelText: 'ที่อยู่',
+                                ),
+                                maxLines: 5,
+                                maxLength: 150,
+                                autocorrect: false,
+                                validator: (input) {
+                                  if (input!.isEmpty) {
+                                    return 'โปรดระบุที่อยู่';
+                                  }
+                                  return null;
+                                },
                               ),
-                              maxLines: 5,
-                              maxLength: 150,
-                              autocorrect: false,
-                              validator: (input) {
-                                if (input!.isEmpty) {
-                                  return 'โปรดระบุที่อยู่';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            ValueListenableBuilder<TextEditingValue>(
-                                valueListenable: _address,
-                                builder: (context, value, child) {
-                                  return Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextButton(
-                                          child: Text(
-                                            'บันทึก',
-                                            style: textTheme().button,
-                                          ),
-                                          style: TextButton.styleFrom(
-                                            primary: Colors.white,
-                                            backgroundColor:
-                                                value.text.isNotEmpty
-                                                    ? primaryColor
-                                                    : primaryLightColor,
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 15,
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              ValueListenableBuilder<TextEditingValue>(
+                                  valueListenable: _address,
+                                  builder: (context, value, child) {
+                                    return Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextButton(
+                                            child: Text(
+                                              'บันทึก',
+                                              style: textTheme().button,
                                             ),
+                                            style: TextButton.styleFrom(
+                                              primary: Colors.white,
+                                              backgroundColor:
+                                                  value.text.isNotEmpty
+                                                      ? primaryColor
+                                                      : primaryLightColor,
+                                              padding: const EdgeInsets.symmetric(
+                                                vertical: 15,
+                                              ),
+                                            ),
+                                            onPressed: value.text.isNotEmpty
+                                                ? _onPressedFunction
+                                                : null,
                                           ),
-                                          onPressed: value.text.isNotEmpty
-                                              ? _onPressedFunction
-                                              : null,
                                         ),
-                                      ),
-                                    ],
-                                  );
-                                })
-                          ],
-                        ),
-                      );
-                    }),
-              ],
+                                      ],
+                                    );
+                                  })
+                            ],
+                          ),
+                        );
+                      }),
+                ],
+              ),
             ),
           ),
         ),
