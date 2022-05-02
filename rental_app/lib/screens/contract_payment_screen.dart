@@ -61,7 +61,7 @@ class _ContractPaymentState extends State<ContractPayment> {
                     if (snapshot.connectionState == ConnectionState.done) {
                       Map<String, dynamic> data =
                           snapshot.data!.data() as Map<String, dynamic>;
-                      balance = data['wallet']['balance'];
+                      balance = data['wallet']['balance'].toDouble();
                       return Column(
                         children: [
                           Container(

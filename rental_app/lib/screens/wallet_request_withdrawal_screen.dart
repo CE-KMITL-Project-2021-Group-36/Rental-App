@@ -191,7 +191,7 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
                               ConnectionState.done) {
                             Map<String, dynamic> data =
                                 snapshot.data!.data() as Map<String, dynamic>;
-                            _balance = data['wallet']['balance'];
+                            _balance = data['wallet']['balance'].toDouble();
                             _fullName =
                                 '${data['firstName']} ${data['lastName']}';
                             return Container(
