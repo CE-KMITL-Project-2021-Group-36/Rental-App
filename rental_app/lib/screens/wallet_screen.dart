@@ -94,8 +94,9 @@ class _WalletState extends State<Wallet> {
                             right: 10,
                             child: Text(
                               '฿' +
-                                  currencyFormat(snapshot.data.data()['wallet']
-                                      ['balance']),
+                                  currencyFormat(snapshot.data
+                                      .data()['wallet']['balance']
+                                      .toDouble()),
                               style: const TextStyle(
                                 fontSize: 36,
                                 fontWeight: FontWeight.w600,
