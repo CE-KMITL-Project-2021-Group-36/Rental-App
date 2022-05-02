@@ -423,7 +423,7 @@ class _RentRequestScreenState extends State<RentRequestScreen> {
                 ],
               ),
               const SizedBox(height: 24),
-              selectedRadioTile == 1
+              selectedRadioTile != 2
                   ? const SizedBox()
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
