@@ -46,6 +46,7 @@ class _WalletRequestWithdrawalState extends State<WalletRequestWithdrawal> {
     'กสิกรไทย',
     'กรุงไทย',
     'กรุงเทพ',
+    'ไทยพาณิชย์',
     'ทีทีบี',
     'ออมสิน',
     'กรุงศรี',
